@@ -27,20 +27,4 @@ export class EventStream {
     }
     this.listeners.push(listener);
   }
-
-  unregisterListener(listener: EventListener) {
-    let indexFound: number = undefined;
-    const listenersFound = this.listeners.filter((x, index) => {
-      if (x === listener) {
-        indexFound = index;
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-    if (listenersFound.length <= 0) {
-      throw new Error('No listener found');
-    }
-    this.listeners.splice(indexFound, 1);
-  }
 }

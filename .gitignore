@@ -1,5 +1,7 @@
 node_modules
 npm-debug.log
 **/*.js
+**/*.js.map
+**/*.d.ts
 coverage
 .nyc_output

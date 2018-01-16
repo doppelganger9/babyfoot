@@ -2,17 +2,22 @@
   "name": "babyfoot",
   "version": "1.0.0",
   "description": "sample CQRS/ES backend + PWA app ",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "prettier": "prettier src/**/*.ts --write"
   },
-  "keywords": [
-    "PWA",
-    "CQRS/ES",
-    "typescript",
-    "babyfoot"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doppelganger9/babyfoot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/doppelganger9/babyfoot/issues"
+  },
+  "homepage":"https://github.com/doppelganger9/babyfoot",
+  "keywords": ["PWA", "CQRS/ES", "typescript", "babyfoot"],
   "author": "David LACOURT <david.lacourt@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -29,22 +34,10 @@
     "typescript": "2.6.2"
   },
   "nyc": {
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html",
-      "lcov"
-    ],
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "extension": [".ts", ".tsx"],
+    "require": ["ts-node/register"],
+    "reporter": ["text-summary", "html", "lcov"],
     "sourceMap": true,
     "instrument": true
   }

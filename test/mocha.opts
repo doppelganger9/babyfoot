@@ -1,0 +1,3 @@
+src
+--require ts-node/register
+--recursive **/*.spec.ts

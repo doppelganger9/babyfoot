@@ -1,0 +1,9 @@
+--print-width 100
+--tab-width 2
+--use-tabs false
+--no-semi false
+--trailing-comma all
+--no-bracket-spacing true
+--arrow-parens avoid
+--parser typescript
+--prose-wrap never

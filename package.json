@@ -1,0 +1,51 @@
+{
+  "name": "babyfoot",
+  "version": "1.0.0",
+  "description": "sample CQRS/ES backend + PWA app ",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "nyc mocha"
+  },
+  "keywords": [
+    "PWA",
+    "CQRS/ES",
+    "typescript",
+    "babyfoot"
+  ],
+  "author": "David LACOURT <david.lacourt@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "4.1.0",
+    "@types/chai-as-promised": "7.1.0",
+    "@types/mocha": "2.2.46",
+    "chai": "4.1.2",
+    "chai-as-promised": "7.1.1",
+    "mocha": "4.1.0",
+    "nyc": "11.4.1",
+    "prettier": "1.10.2",
+    "source-map-support": "0.5.0",
+    "ts-node": "4.1.0",
+    "typescript": "2.6.2"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html",
+      "lcov"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  }
+}

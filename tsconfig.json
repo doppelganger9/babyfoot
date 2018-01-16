@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "noImplicitAny": true,
+        "lib": [
+            "es2015",
+            "esnext"
+        ]
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

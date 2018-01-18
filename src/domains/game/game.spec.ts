@@ -2,7 +2,8 @@ import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
-import { Game, GameCreated, GameDeleted, GameEnded, GameStarted, GameUpdated, Event, PlayerAddedToGameWithTeam, PlayerRemovedFromGame, AddedGoalFromPlayerToGame } from '.';
+import { Game } from '.';
+import { Event, GameCreated, GameDeleted, GameEnded, GameStarted, GameUpdated, PlayerAddedToGameWithTeam, PlayerRemovedFromGame, AddedGoalFromPlayerToGame } from './events';
 
 describe('Game', () => {
   let t: Game;

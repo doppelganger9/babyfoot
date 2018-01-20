@@ -16,14 +16,20 @@
   "bugs": {
     "url": "https://github.com/doppelganger9/babyfoot/issues"
   },
-  "homepage":"https://github.com/doppelganger9/babyfoot",
-  "keywords": ["PWA", "CQRS/ES", "typescript", "babyfoot"],
+  "homepage": "https://github.com/doppelganger9/babyfoot",
+  "keywords": [
+    "PWA",
+    "CQRS/ES",
+    "typescript",
+    "babyfoot"
+  ],
   "author": "David LACOURT <david.lacourt@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/chai": "4.1.0",
     "@types/chai-as-promised": "7.1.0",
     "@types/mocha": "2.2.46",
+    "@types/node": "9.3.0",
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "mocha": "4.1.0",
@@ -34,10 +40,22 @@
     "typescript": "2.6.2"
   },
   "nyc": {
-    "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "extension": [".ts", ".tsx"],
-    "require": ["ts-node/register"],
-    "reporter": ["text-summary", "html", "lcov"],
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-summary",
+      "html",
+      "lcov"
+    ],
     "sourceMap": true,
     "instrument": true
   }

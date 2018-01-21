@@ -4,7 +4,7 @@ import * as bodyParser from 'body-parser';
 import { registerRoutes } from './routes';
 import { Application } from 'express';
 
-var createExpressMiddleware = function createExpressMiddleware(port: number): Application {
+var createExpressMiddleware = function createExpressMiddleware(port: string | number): Application {
   var app = express();
   app.set('port', port);
 
@@ -18,15 +18,15 @@ var createExpressMiddleware = function createExpressMiddleware(port: number): Ap
   return app;
 };
 
-var startServer = function startServer(app: Application) {
+var startServer = function startServer(app: Application): void {
   var server = http.createServer(app);
   server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
   });
 };
 
-exports.run = function run(port: number) {
-  var app = createExpressMiddleware(port);
+export function run(port: string | number) {
+  const app = createExpressMiddleware(port);
 
   registerRoutes(app);
 

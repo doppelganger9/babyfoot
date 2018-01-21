@@ -1,9 +1,13 @@
 import { EventEmitter } from 'events';
+import { Event } from '..';
 
 export class EventPublisher {
-  eventEmitter = new EventEmitter();
+  eventEmitter: EventEmitter;
+  constructor() {
+    this.eventEmitter = new EventEmitter();
+  }
 
-  on(eventType:any, action: (...args: any[]) => void): EventPublisher {
+  on(eventType: any, action: (...args: any[]) => void): EventPublisher {
     this.eventEmitter.on(eventType.name, action);
     return this;
   }
@@ -13,10 +17,10 @@ export class EventPublisher {
     return this;
   }
 
-  publish(event: string|symbol) {
+  publish(event: Event): void {
     this.eventEmitter.emit('*', event);
 
-    var eventName = event.constructor.name;
+    const eventName = event.constructor.name;
     this.eventEmitter.emit(eventName, event);
   }
 

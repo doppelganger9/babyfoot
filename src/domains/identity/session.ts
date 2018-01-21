@@ -1,8 +1,4 @@
-import { ValueType } from "../../value-type";
-import { Event } from "../../infrastructure/event-store";
-import { DecisionProjection } from "../decision-projection";
-import { generateUUID } from '../../id-generator';
-import { UserId, DecisionApplierFunction } from "../../index";
+import { ValueType, UserId, DecisionApplierFunction, EventPublisher, DecisionProjection, generateUUID, Event } from "../..";
 
 export class SessionId extends ValueType {
 
@@ -70,17 +66,17 @@ export class Session {
       .apply(events);
   }
 
-  logOut(publishEvent: (event: Event)=>void) {
+  logOut(publishEvent: EventPublisher) {
     if (this.projection.data.get('isDisconnected')) {
       return;
     }
 
-    publishEvent(new UserDisconnected(this.projection.data.get('sessionId'), this.projection.data.get('userId')));
+    publishEvent.publish(new UserDisconnected(this.projection.data.get('sessionId'), this.projection.data.get('userId')));
   }
 
-  static logIn(publishEvent: any, userId: UserId) {
+  static logIn(publishEvent: EventPublisher, userId: UserId) {
     const sessionId: SessionId = new SessionId(generateUUID());
-    publishEvent(new UserConnected(sessionId, userId, new Date()));
+    publishEvent.publish(new UserConnected(sessionId, userId, new Date()));
 
     return sessionId;
   }

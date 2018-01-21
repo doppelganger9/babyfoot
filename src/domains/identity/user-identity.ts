@@ -1,5 +1,12 @@
-import { UserId, Session, DecisionProjection, Event, DecisionApplierFunction, SessionId } from "../..";
-
+import {
+  UserId,
+  Session,
+  DecisionProjection,
+  Event,
+  DecisionApplierFunction,
+  SessionId,
+  EventPublisher
+} from '../..';
 
 export class UserRegistered implements Event {
   userId: UserId;
@@ -20,19 +27,22 @@ export class UserIdentity {
 
   constructor(events: Array<Event>) {
     this.projection = DecisionProjection.create()
-      .register('UserRegistered', function (this: DecisionProjection, event: UserRegistered): void {
+      .register('UserRegistered', function(
+        this: DecisionProjection,
+        event: UserRegistered
+      ): void {
         this.data.set('id', event.userId);
       } as DecisionApplierFunction)
       .apply(events);
   }
 
-  logIn(publishEvent: (event: Event) => void): SessionId {
+  logIn(publishEvent: EventPublisher): SessionId {
     return Session.logIn(publishEvent, this.projection.data.get('id'));
   }
 
-  static register(publishEvent: (event: Event) => void, email: string): void {
+  static register(eventPublisher: EventPublisher, email: string): void {
     var id = new UserId(email);
-    publishEvent(new UserRegistered(id));
+    eventPublisher.publish(new UserRegistered(id));
   }
 
   static create(events: Array<Event>): UserIdentity {

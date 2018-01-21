@@ -1,6 +1,6 @@
 
 import { expect } from 'chai';
-import { Event, UserRegistered, UserId, UserEmailCannotBeEmpty } from '../..';
+import { Event, UserRegistered, UserId, UserEmailCannotBeEmpty, EventPublisher } from '../..';
 import { UserIdentity } from '.';
 import { UserConnected } from './session';
 
@@ -8,9 +8,17 @@ describe('User Identity Aggregate', function() {
   const email = 'user@mix-it.fr';
 
   let eventsRaised = [];
-  const publishEvent = function publishEvent(evt: Event) {
-    eventsRaised.push(evt);
-  };
+  class SimpleEventPublisher extends EventPublisher {
+    constructor() {
+      super();
+    }
+
+    publish(event: Event) {
+      eventsRaised.push(event);
+    }
+   }
+
+  const publishEvent = new SimpleEventPublisher();
 
   beforeEach(function() {
     eventsRaised = [];

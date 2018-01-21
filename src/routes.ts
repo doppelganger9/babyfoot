@@ -1,8 +1,8 @@
 import { Response, Application, Request } from 'express';
-import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository } from '.';
+import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository, EventPublisher } from '.';
 
-var updateTimeline = require('./domain/core/updateTimeline');
-var createEventPublisher = require('./infrastructure/eventPublisher').create;
+//var updateTimeline = require('./domain/core/updateTimeline');
+//var createEventPublisher = require('./infrastructure/eventPublisher').create;
 
 const eventsStore = EventsStore.create();
 const userIdentitiesRepository = UserIdentityRepository.create(eventsStore);
@@ -13,21 +13,23 @@ const sessionsRepository = SessionsRepository.create(eventsStore);
 //   eventsStore
 // );
 
-const createPublishEvent = function createPublishEvent(eventsStore: EventsStore) {
-  var eventPublisher = createEventPublisher();
+const createEventPublisher = function createEventPublisher(
+  eventsStore: EventsStore
+) {
+  const eventPublisher = EventPublisher.create();
   eventPublisher.onAny(eventsStore.store);
   SessionHandler.create(sessionsRepository).register(eventPublisher);
   //updateTimeline.create(timelineMessagesRepository).register(eventPublisher);
 
-  return eventPublisher.publish;
+  return eventPublisher;
 };
 
-const publishEvent = createPublishEvent(eventsStore);
+const eventPublisher = createEventPublisher(eventsStore);
 
 const registerUser = function registerUser(req: Request, res: Response) {
-  var email = req.body.email;
+  const email = req.body.email;
 
-  UserIdentity.register(publishEvent, email);
+  UserIdentity.register(eventPublisher, email);
 
   res.status(201).send({
     id: new UserId(email),
@@ -38,11 +40,11 @@ const registerUser = function registerUser(req: Request, res: Response) {
 };
 
 const logInUser = function logInUser(req: Request, res: Response) {
-  var userId = new UserId(req.params.id);
+  const userId = new UserId(req.params.id);
 
-  var userIdentity = userIdentitiesRepository.getUserIdentity(userId);
+  const userIdentity = userIdentitiesRepository.getUserIdentity(userId);
 
-  var sessionId = userIdentity.logIn(publishEvent);
+  const sessionId = userIdentity.logIn(eventPublisher);
 
   res.status(201).send({
     id: sessionId,
@@ -51,11 +53,11 @@ const logInUser = function logInUser(req: Request, res: Response) {
 };
 
 const logOutUser = function logOutUser(req: Request, res: Response) {
-  var sessionId = new SessionId(req.params.id);
+  const sessionId = new SessionId(req.params.id);
 
-  var session = sessionsRepository.getSession(sessionId);
+  const session = sessionsRepository.getSession(sessionId);
 
-  session.logOut(publishEvent);
+  session.logOut(eventPublisher);
 
   res.status(200).send('User disconnected');
 };
@@ -64,7 +66,7 @@ const logOutUser = function logOutUser(req: Request, res: Response) {
 //   var author = new UserId(req.body.author);
 //   var content = req.body.content;
 
-//   var messageId = message.quack(publishEvent, author, content);
+//   var messageId = message.quack(eventPublisher, author, content);
 
 //   res.status(201).send({
 //     id: messageId,
@@ -84,7 +86,7 @@ const logOutUser = function logOutUser(req: Request, res: Response) {
 //   var messageId = new message.MessageId(req.params.id);
 //   var messageToDeleted = messagesRepository.getMessage(messageId);
 
-//   messageToDeleted.delete(publishEvent, deleter);
+//   messageToDeleted.delete(eventPublisher, deleter);
 
 //   res.status(200).send('Message deleted');
 // };
@@ -106,7 +108,7 @@ let manageError = function manageError(action: (req: Request, res: Response) => 
       action(req, res);
     } catch (e) {
       if (e.constructor) {
-        var errorName = e.constructor.name;
+        const errorName = e.constructor.name;
 
         console.log('error: ' + errorName);
         console.log(e);
@@ -124,7 +126,7 @@ let manageError = function manageError(action: (req: Request, res: Response) => 
   };
 };
 
-export function registerRoutes(app: Application) {
+export function registerRoutes(app: Application): void {
   app.post('/api/identity/userIdentities/register', manageError(registerUser));
   app.post('/api/identity/userIdentities/:id/logIn', manageError(logInUser));
   app.delete('/api/identity/sessions/:id', manageError(logOutUser));

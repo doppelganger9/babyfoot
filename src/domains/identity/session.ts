@@ -1,5 +1,7 @@
 import { ValueType, UserId, DecisionApplierFunction, EventPublisher, DecisionProjection, generateUUID, Event } from "../..";
 
+/************** VALUE TYPES **************/
+
 export class SessionId extends ValueType {
 
   id: string;
@@ -13,6 +15,8 @@ export class SessionId extends ValueType {
     return 'Session:' + this.id;
   }
 }
+
+/************** EVENTS **************/
 
 export class UserConnected implements Event<SessionId> {
   sessionId: SessionId;
@@ -50,6 +54,8 @@ export class UserDisconnected implements Event {
   }
 }
 
+/************** AGGREGATE **************/
+
 export class Session {
   projection: DecisionProjection;
 
@@ -66,7 +72,7 @@ export class Session {
       .apply(events);
   }
 
-  logOut(publishEvent: EventPublisher) {
+  logOut(publishEvent: EventPublisher): void {
     if (this.projection.data.get('isDisconnected')) {
       return;
     }
@@ -74,14 +80,14 @@ export class Session {
     publishEvent.publish(new UserDisconnected(this.projection.data.get('sessionId'), this.projection.data.get('userId')));
   }
 
-  static logIn(publishEvent: EventPublisher, userId: UserId) {
+  static logIn(publishEvent: EventPublisher, userId: UserId): SessionId {
     const sessionId: SessionId = new SessionId(generateUUID());
     publishEvent.publish(new UserConnected(sessionId, userId, new Date()));
 
     return sessionId;
   }
 
-  static create(events: Array<Event> | Event) {
+  static create(events: Array<Event> | Event): Session {
     return new Session(events);
   }
 }

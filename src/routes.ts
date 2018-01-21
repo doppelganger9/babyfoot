@@ -1,38 +1,33 @@
-var userIdentity = require('./domain/identity/userIdentity');
-var SessionId = require('./domain/identity/session').SessionId;
-var message = require('./domain/core/message');
-var UserId = require('./domain/userId').UserId;
-var sessionHandler = require('./domain/identity/sessionHandler');
+import { Response, Application, Request } from 'express';
+import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository } from '.';
+
 var updateTimeline = require('./domain/core/updateTimeline');
 var createEventPublisher = require('./infrastructure/eventPublisher').create;
 
-var eventsStore = require('./infrastructure/eventsStore').create();
-var userIdentitiesRepository = require('./infrastructure/userIdentitiesRepository').create(
-  eventsStore
-);
-var sessionsRepository = require('./infrastructure/sessionsRepository').create(
-  eventsStore
-);
-var timelineMessagesRepository = require('./infrastructure/timelineMessageRepository').create();
-var messagesRepository = require('./infrastructure/messagesRepository').create(
-  eventsStore
-);
+const eventsStore = EventsStore.create();
+const userIdentitiesRepository = UserIdentityRepository.create(eventsStore);
+const sessionsRepository = SessionsRepository.create(eventsStore);
 
-var createPublishEvent = function createPublishEvent(eventsStore) {
+//var timelineMessagesRepository = require('./infrastructure/timelineMessageRepository').create();
+// var messagesRepository = require('./infrastructure/messagesRepository').create(
+//   eventsStore
+// );
+
+const createPublishEvent = function createPublishEvent(eventsStore: EventsStore) {
   var eventPublisher = createEventPublisher();
   eventPublisher.onAny(eventsStore.store);
-  sessionHandler.create(sessionsRepository).register(eventPublisher);
-  updateTimeline.create(timelineMessagesRepository).register(eventPublisher);
+  SessionHandler.create(sessionsRepository).register(eventPublisher);
+  //updateTimeline.create(timelineMessagesRepository).register(eventPublisher);
 
   return eventPublisher.publish;
 };
 
-var publishEvent = createPublishEvent(eventsStore);
+const publishEvent = createPublishEvent(eventsStore);
 
-var registerUser = function registerUser(req, res) {
+const registerUser = function registerUser(req: Request, res: Response) {
   var email = req.body.email;
 
-  userIdentity.register(publishEvent, email);
+  UserIdentity.register(publishEvent, email);
 
   res.status(201).send({
     id: new UserId(email),
@@ -42,7 +37,7 @@ var registerUser = function registerUser(req, res) {
   });
 };
 
-var logInUser = function logInUser(req, res) {
+const logInUser = function logInUser(req: Request, res: Response) {
   var userId = new UserId(req.params.id);
 
   var userIdentity = userIdentitiesRepository.getUserIdentity(userId);
@@ -55,7 +50,7 @@ var logInUser = function logInUser(req, res) {
   });
 };
 
-var logOutUser = function logOutUser(req, res) {
+const logOutUser = function logOutUser(req: Request, res: Response) {
   var sessionId = new SessionId(req.params.id);
 
   var session = sessionsRepository.getSession(sessionId);
@@ -65,45 +60,48 @@ var logOutUser = function logOutUser(req, res) {
   res.status(200).send('User disconnected');
 };
 
-var quackMessage = function quackMessage(req, res) {
-  var author = new UserId(req.body.author);
-  var content = req.body.content;
+// let quackMessage = function quackMessage(req: Request, res: Response) {
+//   var author = new UserId(req.body.author);
+//   var content = req.body.content;
 
-  var messageId = message.quack(publishEvent, author, content);
+//   var messageId = message.quack(publishEvent, author, content);
 
-  res.status(201).send({
-    id: messageId,
-    url: '/api/core/messages/' + encodeURIComponent(messageId.id)
-  });
-};
+//   res.status(201).send({
+//     id: messageId,
+//     url: '/api/core/messages/' + encodeURIComponent(messageId.id)
+//   });
+// };
 
-var deleteMessage = function deleteMessage(req, res) {
-  var sessionId = new SessionId(req.body.sessionId);
+// let deleteMessage = function deleteMessage(req: Request, res: Response) {
+//   var sessionId = new SessionId(req.body.sessionId);
 
-  var deleter = sessionsRepository.getUserIdOfSession(sessionId);
-  if (!deleter) {
-    res.status(403).send('Invalid session');
-    return;
-  }
+//   var deleter = sessionsRepository.getUserIdOfSession(sessionId);
+//   if (!deleter) {
+//     res.status(403).send('Invalid session');
+//     return;
+//   }
 
-  var messageId = new message.MessageId(req.params.id);
-  var messageToDeleted = messagesRepository.getMessage(messageId);
+//   var messageId = new message.MessageId(req.params.id);
+//   var messageToDeleted = messagesRepository.getMessage(messageId);
 
-  messageToDeleted.delete(publishEvent, deleter);
+//   messageToDeleted.delete(publishEvent, deleter);
 
-  res.status(200).send('Message deleted');
-};
+//   res.status(200).send('Message deleted');
+// };
 
-var getTimelineMessages = function getTimelineMessages(req, res) {
-  var owner = new UserId(req.params.owner);
+// let getTimelineMessages = function getTimelineMessages(
+//   req: Request,
+//   res: Response
+// ) {
+//   var owner = new UserId(req.params.owner);
 
-  var messages = timelineMessagesRepository.getMessageOfUser(owner);
+//   var messages = timelineMessagesRepository.getMessageOfUser(owner);
 
-  res.status(200).send(messages);
-};
+//   res.status(200).send(messages);
+// };
 
-var manageError = function manageError(action) {
-  return function(req, res) {
+let manageError = function manageError(action: (req: Request, res: Response) => void) {
+  return function(req: Request, res: Response) {
     try {
       action(req, res);
     } catch (e) {
@@ -126,15 +124,15 @@ var manageError = function manageError(action) {
   };
 };
 
-exports.registerRoutes = function registerRoutes(app) {
+export function registerRoutes(app: Application) {
   app.post('/api/identity/userIdentities/register', manageError(registerUser));
   app.post('/api/identity/userIdentities/:id/logIn', manageError(logInUser));
   app.delete('/api/identity/sessions/:id', manageError(logOutUser));
 
-  app.post('/api/core/messages/quack', manageError(quackMessage));
-  app.delete('/api/core/messages/:id', manageError(deleteMessage));
-  app.get(
-    '/api/core/timelineMessages/:owner',
-    manageError(getTimelineMessages)
-  );
+  // app.post('/api/core/messages/quack', manageError(quackMessage));
+  // app.delete('/api/core/messages/:id', manageError(deleteMessage));
+  // app.get(
+  //   '/api/core/timelineMessages/:owner',
+  //   manageError(getTimelineMessages)
+  // );
 };

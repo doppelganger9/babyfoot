@@ -1,12 +1,9 @@
-import { EventsStore } from "./event-store";
-
-import { Session } from '../domains/identity/session';
-import { UserId, Event } from "../index";
+import { UserId, Event, SessionId, EventsStore, Session } from '..';
 
 export class UnknownSession extends Error {
-  sessionId: string;
+  sessionId: SessionId;
 
-  constructor(sessionId: string) {
+  constructor(sessionId: SessionId) {
     super();
     this.sessionId = sessionId;
 
@@ -23,7 +20,7 @@ export class SessionsRepository {
     this.eventsStore = eventsStore;
   }
 
-  getUserIdOfSession(sessionId: string): UserId | null {
+  getUserIdOfSession(sessionId: SessionId): UserId | null {
     var projection = this.projections.get(sessionId);
     if (!projection || !projection.isEnabled) {
       return null;
@@ -34,23 +31,23 @@ export class SessionsRepository {
 
   save(projection: any): void {
     this.projections.set(projection.sessionId, projection);
-  };
+  }
 
-  getAllEvents(sessionId: string): Array<Event> {
+  getAllEvents(sessionId: SessionId): Array<Event> {
     var events: Array<Event> = this.eventsStore.getEventsOfAggregate(sessionId);
     if (!events.length) {
       throw new UnknownSession(sessionId);
     }
 
     return events;
-  };
+  }
 
-  getSession(sessionId: string): Session {
+  getSession(sessionId: SessionId): Session {
     var events: Event[] = this.getAllEvents(sessionId);
     return Session.create(events);
-  };
+  }
 
-  static create(eventsStore: EventsStore) : SessionsRepository {
+  static create(eventsStore: EventsStore): SessionsRepository {
     return new SessionsRepository(eventsStore);
   }
 }

@@ -1,9 +1,10 @@
-var express = require('express');
-var http = require('http');
-var bodyParser = require('body-parser');
-var routes = require('./routes');
+import * as express from 'express';
+import * as http from 'http';
+import * as bodyParser from 'body-parser';
+import { registerRoutes } from './routes';
+import { Application } from 'express';
 
-var createExpressMiddleware = function createExpressMiddleware(port) {
+var createExpressMiddleware = function createExpressMiddleware(port: number): Application {
   var app = express();
   app.set('port', port);
 
@@ -17,17 +18,17 @@ var createExpressMiddleware = function createExpressMiddleware(port) {
   return app;
 };
 
-var startServer = function startServer(app) {
+var startServer = function startServer(app: Application) {
   var server = http.createServer(app);
   server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
   });
 };
 
-exports.run = function run(port) {
+exports.run = function run(port: number) {
   var app = createExpressMiddleware(port);
 
-  routes.registerRoutes(app);
+  registerRoutes(app);
 
   startServer(app);
 };

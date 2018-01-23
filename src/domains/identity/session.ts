@@ -60,9 +60,9 @@ export class Session {
   projection: DecisionProjection;
 
   constructor(events: Array<Event> | Event) {
-    this.projection = DecisionProjection
-      .create()
+    this.projection = new DecisionProjection()
       .register('UserConnected', function (this: DecisionProjection, event: UserConnected): void {
+        // warning, "this" is bound to the DecisionProjection.
         this.data.set('userId', event.userId);
         this.data.set('sessionId', event.sessionId);
       } as DecisionApplierFunction)
@@ -71,6 +71,8 @@ export class Session {
       } as DecisionApplierFunction)
       .apply(events);
   }
+
+  ////// COMMANDS //////
 
   logOut(publishEvent: EventPublisher): void {
     if (this.projection.data.get('isDisconnected')) {
@@ -85,9 +87,5 @@ export class Session {
     publishEvent.publish(new UserConnected(sessionId, userId, new Date()));
 
     return sessionId;
-  }
-
-  static create(events: Array<Event> | Event): Session {
-    return new Session(events);
   }
 }

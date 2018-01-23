@@ -20,8 +20,7 @@ describe('DecisionProjection', () => {
   }
 
   it('When register Event Then call action on apply of this event', () => {
-    let projection = DecisionProjection
-      .create()
+    let projection = new DecisionProjection()
       .register('EventA', function(event) {
         this.data.set('isCalled', true);
       })
@@ -31,8 +30,7 @@ describe('DecisionProjection', () => {
   });
 
   it('Given several event registered When apply Then call good handler for each event', () => {
-    let projection = DecisionProjection
-      .create()
+    let projection = new DecisionProjection()
       .register('EventA', function(event: EventA) {
         this.data.set('userId', event.userId);
       })
@@ -46,7 +44,7 @@ describe('DecisionProjection', () => {
   });
 
   it('When apply an event not registered Then nothing', () => {
-    let projection = DecisionProjection.create().apply(new EventA());
+    let projection = new DecisionProjection().apply(new EventA());
 
     expect(projection.data.get('userId')).to.be.undefined;
   });

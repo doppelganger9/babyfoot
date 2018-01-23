@@ -13,8 +13,8 @@ describe('Sessions Repository', function() {
   let eventsStore;
   let repository;
   beforeEach(function() {
-    eventsStore = EventsStore.create();
-    repository = SessionsRepository.create(eventsStore);
+    eventsStore = new EventsStore();
+    repository = new SessionsRepository(eventsStore);
   });
 
   it('Given no projections When getUserIdOfSession Then return empty', function() {
@@ -25,14 +25,14 @@ describe('Sessions Repository', function() {
 
   it('Given several user connected When getUserIdOfSession Then userId of this session', function() {
     repository.save(
-      SessionProjection.create(
+      new SessionProjection(
         sessionId,
         userId,
         SessionProjection.SessionEnabled
       )
     );
     repository.save(
-      SessionProjection.create(
+      new SessionProjection(
         new SessionId('SessionB'),
         new UserId('user2@mix-it.fr'),
         SessionProjection.SessionEnabled
@@ -44,7 +44,7 @@ describe('Sessions Repository', function() {
 
   it('Given user disconnected When getUserIdOfSession Then return empty', function() {
     repository.save(
-      SessionProjection.create(
+      new SessionProjection(
         sessionId,
         userId,
         SessionProjection.SessionDisabled
@@ -56,7 +56,7 @@ describe('Sessions Repository', function() {
 
   it('Given already projection When save same projection Then update projection', function() {
     repository.save(
-      SessionProjection.create(
+      new SessionProjection(
         sessionId,
         userId,
         SessionProjection.SessionEnabled
@@ -64,7 +64,7 @@ describe('Sessions Repository', function() {
     );
 
     repository.save(
-      SessionProjection.create(
+      new SessionProjection(
         sessionId,
         userId,
         SessionProjection.SessionDisabled

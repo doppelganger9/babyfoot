@@ -23,8 +23,4 @@ export class EventPublisher {
     const eventName = event.constructor.name;
     this.eventEmitter.emit(eventName, event);
   }
-
-  static create() {
-    return new EventPublisher();
-  }
 }

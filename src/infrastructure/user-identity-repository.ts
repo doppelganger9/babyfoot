@@ -30,10 +30,6 @@ export class UserIdentityRepository {
 
   getUserIdentity(userId: UserId): UserIdentity {
     var events: Array<Event> = this.getAllEvents(userId);
-    return UserIdentity.create(events);
-  }
-
-  static create(eventsStore: EventsStore): UserIdentityRepository {
-    return new UserIdentityRepository(eventsStore);
+    return new UserIdentity(events);
   }
 }

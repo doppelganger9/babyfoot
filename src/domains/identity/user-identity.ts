@@ -26,7 +26,7 @@ export class UserIdentity {
   projection: DecisionProjection;
 
   constructor(events: Array<Event>) {
-    this.projection = DecisionProjection.create()
+    this.projection = new DecisionProjection()
       .register('UserRegistered', function(
         this: DecisionProjection,
         event: UserRegistered
@@ -43,9 +43,5 @@ export class UserIdentity {
   static register(eventPublisher: EventPublisher, email: string): void {
     var id = new UserId(email);
     eventPublisher.publish(new UserRegistered(id));
-  }
-
-  static create(events: Array<Event>): UserIdentity {
-    return new UserIdentity(events);
   }
 }

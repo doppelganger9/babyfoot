@@ -5,7 +5,7 @@ import { expect } from 'chai';
 describe('EventsStore', () => {
   let eventsStore : EventsStore;
   beforeEach(() => {
-    eventsStore = EventsStore.create();
+    eventsStore = new EventsStore();
   });
 
   class AggregateId extends ValueType {

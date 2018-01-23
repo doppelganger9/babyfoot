@@ -4,7 +4,7 @@ chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 import { Game, GameId } from '.';
 import { GameCreated, GameDeleted, GameEnded, GameStarted, GameUpdated, PlayerAddedToGameWithTeam, PlayerRemovedFromGame, AddedGoalFromPlayerToGame } from './events';
-import { Event, EventPublisher } from '../..';
+import { Event, EventPublisher, generateUUID } from '../..';
 
 describe('Game', () => {
   let t: Game;
@@ -33,7 +33,7 @@ describe('Game', () => {
 
   describe('.create should', () => {
     it('create an instance from history', () => {
-      t = Game.create([]);
+      t = new Game([]);
       expect(t).not.to.be.null;
       expect(t).not.to.be.undefined;
     });
@@ -41,8 +41,7 @@ describe('Game', () => {
 
   describe('.createGame should', () => {
     it('emit GameCreated', () => {
-      t = Game.create([]);
-      t.createGame(simpleEventPublisher);
+      Game.createGame(simpleEventPublisher, generateUUID());
       expect(eventsRaised.length).to.equal(1);
       expect(eventsRaised[0]).to.be.instanceOf(GameCreated);
     });

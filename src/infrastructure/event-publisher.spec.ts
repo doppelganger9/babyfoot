@@ -4,7 +4,7 @@ import { expect } from 'chai';
 describe('EventPublisher', () => {
   var publisher;
   beforeEach(() => {
-    publisher = EventPublisher.create();
+    publisher = new EventPublisher();
   });
 
   class EventA {

@@ -29,7 +29,7 @@ describe('Session Aggregate', () => {
   });
 
   it('When user logout Then raise UserDisconnected event', () => {
-    var userSession = Session.create(
+    var userSession = new Session(
       new UserConnected(sessionId, userId, new Date())
     );
 
@@ -40,7 +40,7 @@ describe('Session Aggregate', () => {
   });
 
   it('Given user disconnected When user log out Then nothing', () => {
-    var userSession = Session.create([
+    var userSession = new Session([
       new UserConnected(sessionId, userId, new Date()),
       new UserDisconnected(sessionId, userId)
     ]);

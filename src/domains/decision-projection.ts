@@ -40,8 +40,4 @@ export class DecisionProjection {
 
     return this;
   }
-
-  static create(): DecisionProjection {
-    return new DecisionProjection();
-  }
 }

@@ -33,7 +33,7 @@ describe('User Identity Aggregate', function() {
 
   it('Given UserRegistered When log in Then raise UserConnected event', function() {
     var id = new UserId(email);
-    var user = UserIdentity.create([new UserRegistered(id)]);
+    var user = new UserIdentity([new UserRegistered(id)]);
 
     user.logIn(publishEvent);
 
@@ -47,7 +47,7 @@ describe('User Identity Aggregate', function() {
 
   it('When log in Then return sessionId', function() {
     var id = new UserId(email);
-    var user = UserIdentity.create([new UserRegistered(id)]);
+    var user = new UserIdentity([new UserRegistered(id)]);
 
     var result = user.logIn(publishEvent);
 

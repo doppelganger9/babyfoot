@@ -1,25 +1,37 @@
 import { Response, Application, Request } from 'express';
-import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository, EventPublisher } from '.';
+import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository, EventPublisher, Game, generateUUID, GameId } from '.';
+import { GamesRepository } from './infrastructure/game-repository';
 
 //var updateTimeline = require('./domain/core/updateTimeline');
 //var createEventPublisher = require('./infrastructure/eventPublisher').create;
 
-const eventsStore = EventsStore.create();
-const userIdentitiesRepository = UserIdentityRepository.create(eventsStore);
-const sessionsRepository = SessionsRepository.create(eventsStore);
+const eventsStore = new EventsStore();
+const userIdentitiesRepository = new UserIdentityRepository(eventsStore);
+const sessionsRepository = new SessionsRepository(eventsStore);
+const gamesRepository = new GamesRepository(eventsStore);
 
-//var timelineMessagesRepository = require('./infrastructure/timelineMessageRepository').create();
-// var messagesRepository = require('./infrastructure/messagesRepository').create(
+//var timelineMessagesRepository = new (require('./infrastructure/timelineMessageRepository'))();
+// var messagesRepository = new (require('./infrastructure/messagesRepository'))(
 //   eventsStore
 // );
 
 const createEventPublisher = function createEventPublisher(
   eventsStore: EventsStore
 ) {
-  const eventPublisher = EventPublisher.create();
+
+  const eventPublisher = new EventPublisher();
+
+  // this will Store all events in the events' Store
   eventPublisher.onAny(eventsStore.store);
-  SessionHandler.create(sessionsRepository).register(eventPublisher);
-  //updateTimeline.create(timelineMessagesRepository).register(eventPublisher);
+  // all repositories are injected with the eventsStore, and thus will benefit from the above line.
+
+  // this will also publish events for side-effects, that is, other projections listening on diverse events.
+  // Here, Session and Timeline Update projections:
+  new SessionHandler(sessionsRepository).register(eventPublisher);
+  //new updateTimeline(timelineMessagesRepository).register(eventPublisher);
+
+  // Later on, for the QUERY part of CQRS, you just need to query the appropriate repository which
+  // contains ready - to - use and up - to - date projections
 
   return eventPublisher;
 };
@@ -27,10 +39,13 @@ const createEventPublisher = function createEventPublisher(
 const eventPublisher = createEventPublisher(eventsStore);
 
 const registerUser = function registerUser(req: Request, res: Response) {
+  // parse request body attributes
   const email = req.body.email;
 
+  // call COMMAND on Aggregate (this time it is a static method)
   UserIdentity.register(eventPublisher, email);
 
+  // send response
   res.status(201).send({
     id: new UserId(email),
     url: '/api/identity/userIdentities/' + encodeURIComponent(email),
@@ -40,10 +55,11 @@ const registerUser = function registerUser(req: Request, res: Response) {
 };
 
 const logInUser = function logInUser(req: Request, res: Response) {
+  // create ID value type based on request parameters
   const userId = new UserId(req.params.id);
-
+  // find Aggregate for this ID in repository
   const userIdentity = userIdentitiesRepository.getUserIdentity(userId);
-
+  // call COMMAND on Aggregate
   const sessionId = userIdentity.logIn(eventPublisher);
 
   res.status(201).send({
@@ -55,12 +71,100 @@ const logInUser = function logInUser(req: Request, res: Response) {
 const logOutUser = function logOutUser(req: Request, res: Response) {
   const sessionId = new SessionId(req.params.id);
 
+  // QUERY to retrieve Aggregate
   const session = sessionsRepository.getSession(sessionId);
 
+  // COMMAND
   session.logOut(eventPublisher);
 
   res.status(200).send('User disconnected');
 };
+
+//// GAME /////
+
+
+const createGame = function createGame(req: Request, res: Response) {
+  const id = generateUUID();
+  // call COMMAND on Aggregate (this time it is a static method, because the Entity does not yet exist)
+  Game.createGame(eventPublisher, id);
+
+  // send response
+  res.status(201).send({
+    gameId: new GameId(id),
+    url: '/api/game/' + encodeURIComponent(id),
+    start:
+      '/api/game/' + encodeURIComponent(id) + '/start',
+    end:
+      '/api/game/' + encodeURIComponent(id) + '/end'
+  });
+};
+
+const getGame = function getGame(req: Request, res: Response) {
+  // create ID value type based on request parameters
+  const gameId = new GameId(req.params.id);
+
+  // call COMMAND on Aggregate (this time it is a static method, because the Entity does not yet exist)
+  const found: Game = gamesRepository.getGame(gameId);
+
+  // send response
+  res
+    .status(200)
+    .send({
+      gameId: gameId,
+
+      currentEndDatetime: found.currentEndDatetime,
+      currentStartDatetime: found.currentStartDatetime,
+      duration: found.duration,
+      initialDatetime: found.initialDatetime,
+      isDeleted: found.isDeleted,
+      players: found.players,
+      pointsTeamBlue: found.pointsTeamBlue,
+      pointsTeamRed: found.pointsTeamRed,
+      teamBlueMembers: found.teamBlueMembers,
+      teamRedMembers: found.teamRedMembers,
+      winner: found.winner,
+
+      url: '/api/game/' + encodeURIComponent(gameId.id),
+      start: '/api/game/' + encodeURIComponent(gameId.id) + '/start',
+      end: '/api/game/' + encodeURIComponent(gameId.id) + '/end'
+    });
+};
+
+const startGame = function startGame(req: Request, res: Response) {
+  const now = new Date();
+  // create ID value type based on request parameters
+  const gameId = new GameId(req.params.id);
+  // find Aggregate for this ID in repository
+  const game = gamesRepository.getGame(gameId);
+  // call COMMAND on Aggregate
+  game.startGame(eventPublisher);
+
+  res
+    .status(201)
+    .send({
+      gameId: gameId,
+      time: now,
+      url: '/api/game/' + encodeURIComponent(gameId.id),
+      end: '/api/game/' + encodeURIComponent(gameId.id) + '/end'
+    });
+};
+
+const endGame = function endGame(req: Request, res: Response) {
+  const now = new Date();
+  // create ID value type based on request parameters
+  const gameId = new GameId(req.params.id);
+  // find Aggregate for this ID in repository
+  const game = gamesRepository.getGame(gameId);
+  // call COMMAND on Aggregate
+  game.endGame(eventPublisher);
+
+  res.status(201).send({
+    gameId: gameId,
+    time: now,
+    url: '/api/game/' + encodeURIComponent(gameId.id)
+  });
+};
+
 
 // let quackMessage = function quackMessage(req: Request, res: Response) {
 //   var author = new UserId(req.body.author);
@@ -102,8 +206,12 @@ const logOutUser = function logOutUser(req: Request, res: Response) {
 //   res.status(200).send(messages);
 // };
 
+/**
+ * higher order function to handle all errors thrown to create an appropriate HTTP 400 Response.
+ * @param action
+ */
 let manageError = function manageError(action: (req: Request, res: Response) => void) {
-  return function(req: Request, res: Response) {
+  return function managedErrorForAction (req: Request, res: Response) {
     try {
       action(req, res);
     } catch (e) {
@@ -130,6 +238,11 @@ export function registerRoutes(app: Application): void {
   app.post('/api/identity/userIdentities/register', manageError(registerUser));
   app.post('/api/identity/userIdentities/:id/logIn', manageError(logInUser));
   app.delete('/api/identity/sessions/:id', manageError(logOutUser));
+
+  app.post('/api/game', manageError(createGame));
+  app.get('/api/game/:id', manageError(getGame));
+  app.post('/api/game/:id/start', manageError(startGame));
+  app.post('/api/game/:id/end', manageError(endGame));
 
   // app.post('/api/core/messages/quack', manageError(quackMessage));
   // app.delete('/api/core/messages/:id', manageError(deleteMessage));

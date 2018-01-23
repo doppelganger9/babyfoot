@@ -34,8 +34,4 @@ export class EventsStore {
         JSON.stringify(it.getAggregateId()) === JSON.stringify(aggregateId)
     );
   }
-
-  static create(): EventsStore {
-    return new EventsStore();
-  }
 }

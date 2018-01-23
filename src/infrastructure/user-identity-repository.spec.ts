@@ -7,8 +7,8 @@ describe('UserIdentities Repository', () => {
   let repository;
   let eventsStore;
   beforeEach(() => {
-    eventsStore = EventsStore.create();
-    repository = UserIdentityRepository.create(eventsStore);
+    eventsStore = new EventsStore();
+    repository = new UserIdentityRepository(eventsStore);
   });
 
   it('Given UserRegistered When getUserIdentity Then return UserIdentity aggregate', () => {

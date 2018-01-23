@@ -7,6 +7,14 @@ import {
   UserDisconnected
 } from '../..';
 
+/**
+ * This class is used to map events to a projections repository.
+ *
+ * It listens for Session events and creates/updates projections.
+ *
+ * The persistence responsibility is on a dedicated Repository class
+ * which is injected in this class' constructor.
+ */
 export class SessionHandler {
   sessionsRepository: SessionsRepository;
 
@@ -15,7 +23,7 @@ export class SessionHandler {
   }
 
   saveProjection(event: UserConnected | UserDisconnected, isEnabled: boolean) {
-    var projection = SessionProjection.create(
+    var projection = new SessionProjection(
       event.sessionId,
       event.userId,
       isEnabled
@@ -31,9 +39,5 @@ export class SessionHandler {
       .on(UserDisconnected, (event: UserDisconnected) => {
         this.saveProjection(event, SessionProjection.SessionDisabled);
       });
-  }
-
-  static create(sessionsRepository: SessionsRepository): SessionHandler {
-    return new SessionHandler(sessionsRepository);
   }
 }

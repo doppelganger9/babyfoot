@@ -10,9 +10,9 @@ describe('Session Handler', () => {
   let handler;
   let eventPublisher;
   beforeEach(() => {
-    repository = SessionsRepository.create(null);// null ???
-    handler = SessionHandler.create(repository);
-    eventPublisher = EventPublisher.create();
+    repository = new SessionsRepository(null);// null ???
+    handler = new SessionHandler(repository);
+    eventPublisher = new EventPublisher();
     handler.register(eventPublisher);
   });
 

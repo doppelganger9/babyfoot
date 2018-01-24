@@ -2,18 +2,10 @@ import { Response, Application, Request } from 'express';
 import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository, EventPublisher, Game, generateUUID, GameId } from '.';
 import { GamesRepository } from './infrastructure/game-repository';
 
-//var updateTimeline = require('./domain/core/updateTimeline');
-//var createEventPublisher = require('./infrastructure/eventPublisher').create;
-
 const eventsStore = new EventsStore();
 const userIdentitiesRepository = new UserIdentityRepository(eventsStore);
 const sessionsRepository = new SessionsRepository(eventsStore);
 const gamesRepository = new GamesRepository(eventsStore);
-
-//var timelineMessagesRepository = new (require('./infrastructure/timelineMessageRepository'))();
-// var messagesRepository = new (require('./infrastructure/messagesRepository'))(
-//   eventsStore
-// );
 
 const createEventPublisher = function createEventPublisher(
   eventsStore: EventsStore
@@ -166,17 +158,25 @@ const endGame = function endGame(req: Request, res: Response) {
 };
 
 
-// let quackMessage = function quackMessage(req: Request, res: Response) {
-//   var author = new UserId(req.body.author);
-//   var content = req.body.content;
+const addGoalFromPlayerToGame = function addGoalFromPlayerToGame(
+  req: Request,
+  res: Response
+) {
+  const gameId = new GameId(req.params.id);
+  const player = req.params.player;
 
-//   var messageId = message.quack(eventPublisher, author, content);
+  // find Aggregate for this ID in repository
+  const game = gamesRepository.getGame(gameId);
 
-//   res.status(201).send({
-//     id: messageId,
-//     url: '/api/core/messages/' + encodeURIComponent(messageId.id)
-//   });
-// };
+  // call COMMAND on Aggregate
+  game.addGoalFromPlayer(eventPublisher, player);
+
+  res.status(200).send({
+    gameId: gameId,
+    player: player,
+    url: '/api/game/' + encodeURIComponent(gameId.id)
+  });
+};
 
 // let deleteMessage = function deleteMessage(req: Request, res: Response) {
 //   var sessionId = new SessionId(req.body.sessionId);
@@ -195,17 +195,6 @@ const endGame = function endGame(req: Request, res: Response) {
 //   res.status(200).send('Message deleted');
 // };
 
-// let getTimelineMessages = function getTimelineMessages(
-//   req: Request,
-//   res: Response
-// ) {
-//   var owner = new UserId(req.params.owner);
-
-//   var messages = timelineMessagesRepository.getMessageOfUser(owner);
-
-//   res.status(200).send(messages);
-// };
-
 /**
  * higher order function to handle all errors thrown to create an appropriate HTTP 400 Response.
  * @param action
@@ -221,10 +210,15 @@ let manageError = function manageError(action: (req: Request, res: Response) => 
         console.log('error: ' + errorName);
         console.log(e);
 
-        res.status(400).send({
-          errorName: errorName,
-          error: e
-        });
+        const stack = req.connection.remoteAddress && ['localhost', '::1', '127.0.0.1'].includes(req.connection.remoteAddress) ? e.stack.split('\n') : undefined;
+
+        res
+          .status(400)
+          .send({
+            errorName: errorName,
+            error: e,
+            stack
+          });
 
         return;
       }
@@ -243,11 +237,6 @@ export function registerRoutes(app: Application): void {
   app.get('/api/game/:id', manageError(getGame));
   app.post('/api/game/:id/start', manageError(startGame));
   app.post('/api/game/:id/end', manageError(endGame));
+  app.post('/api/game/:id/goal/:player', manageError(addGoalFromPlayerToGame));
 
-  // app.post('/api/core/messages/quack', manageError(quackMessage));
-  // app.delete('/api/core/messages/:id', manageError(deleteMessage));
-  // app.get(
-  //   '/api/core/timelineMessages/:owner',
-  //   manageError(getTimelineMessages)
-  // );
 };

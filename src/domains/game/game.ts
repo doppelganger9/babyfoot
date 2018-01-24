@@ -22,13 +22,54 @@ export type TeamColors = 'red' | 'blue';
 export type Player = string;
 
 /************** VALUE TYPES **************/
+/**
+ * NOTE, to extend Errors and preserve prototype chain,
+ * see: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
+ */
+
+export class GameNotStartedError extends Error {
+  constructor(public gameId: GameId) {
+    super(`"${gameId}" has not started`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+
+export class PlayerAlreadyAddedError extends Error {
+  constructor(
+    public gameId: GameId,
+    public player: string,
+    public team: TeamColors
+  ) {
+    super(
+      `player "${player}" has already been added to team "${team}" in ${gameId}"`
+    );
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+
+export class GameAlreadyEndedError extends Error {
+  constructor(public gameId: GameId) {
+    super(`"${gameId}" has already ended`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+
+export class UnknownPlayerError extends Error {
+  constructor(public player: string) {
+    super(`unknown player "${player}"`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+export class GameIsDeletedError extends Error {
+  constructor(public gameId: GameId) {
+    super(`game is deleted "${gameId}"`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
 
 export class GameId extends ValueType {
-  id: string;
-
-  constructor(id: string) {
+  constructor(public id: string) {
     super();
-    this.id = id;
   }
 
   toString(): string {
@@ -240,46 +281,54 @@ export class Game {
     player: Player,
     team: TeamColors
   ): void {
-    if (this.isDeleted) throw new Error('game is deleted');
-    if (this.currentEndDatetime) throw new Error('game has ended');
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
     if (
       this.players!.includes(player) &&
       team === 'red' &&
       this.teamRedMembers!.includes(player)
     )
-      throw new Error('this player was already added to team red');
+      throw new PlayerAlreadyAddedError(this.id, player, 'red');
     if (
       this.players!.includes(player) &&
       team === 'blue' &&
       this.teamBlueMembers!.includes(player)
     )
-      throw new Error('this player was already added to team blue');
+      throw new PlayerAlreadyAddedError(this.id, player, 'blue');
 
     const event = new PlayerAddedToGameWithTeam(player, team, this.id);
     eventPublisher.publish(event);
   }
 
   removePlayerFromGame(eventPublisher: EventPublisher, player: Player): void {
-    if (this.isDeleted) throw new Error('game is deleted');
-    if (this.currentEndDatetime) throw new Error('game has ended');
-    if (!this.players!.includes(player)) throw new Error('unknown player');
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
+    if (!this.players!.includes(player)) throw new UnknownPlayerError(player);
 
     const event = new PlayerRemovedFromGame(player, this.id);
     eventPublisher.publish(event);
   }
 
   addGoalFromPlayer(eventPublisher: EventPublisher, player: Player): void {
-    if (this.isDeleted) throw new Error('game is deleted');
-    if (!this.currentStartDatetime) throw new Error('game has not started');
-    if (this.currentEndDatetime) throw new Error('game has ended');
-    if (!this.players!.includes(player)) throw new Error('unknown player');
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (!this.currentStartDatetime) throw new GameNotStartedError(this.id);
+    if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
+    if (!this.players!.includes(player)) throw new UnknownPlayerError(player);
     const event = new AddedGoalFromPlayerToGame(player, this.id);
     eventPublisher.publish(event);
   }
 
-  updateGame(eventPublisher: EventPublisher): void {}
+  updateGame(eventPublisher: EventPublisher): void {
+    throw new Error('not implemented');
+  }
 
-  changeUserPositionOnGame(eventPublisher: EventPublisher) {}
-  //commentGame(eventPublisher: EventPublisher) {}
-  //reviewGame(eventPublisher: EventPublisher) {}
+  changeUserPositionOnGame(eventPublisher: EventPublisher) {
+    throw new Error('not implemented');
+  }
+  commentGame(eventPublisher: EventPublisher) {
+    throw new Error('not implemented');
+  }
+  reviewGame(eventPublisher: EventPublisher) {
+    throw new Error('not implemented');
+  }
 }

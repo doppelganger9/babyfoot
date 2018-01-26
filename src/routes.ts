@@ -1,5 +1,5 @@
 import { Response, Application, Request } from 'express';
-import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository, EventPublisher, Game, generateUUID, GameId } from '.';
+import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository, EventPublisher, Game, generateUUID, GameId, PositionValue } from '.';
 import { GamesRepository } from './infrastructure/game-repository';
 
 const eventsStore = new EventsStore();
@@ -83,11 +83,11 @@ const createGame = function createGame(req: Request, res: Response) {
   // send response
   res.status(201).send({
     gameId: new GameId(id),
-    url: '/api/game/' + encodeURIComponent(id),
+    url: '/api/games/' + encodeURIComponent(id),
     start:
-      '/api/game/' + encodeURIComponent(id) + '/start',
+      '/api/games/' + encodeURIComponent(id) + '/start',
     end:
-      '/api/game/' + encodeURIComponent(id) + '/end'
+      '/api/games/' + encodeURIComponent(id) + '/end'
   });
 };
 
@@ -116,9 +116,9 @@ const getGame = function getGame(req: Request, res: Response) {
       teamRedMembers: found.teamRedMembers,
       winner: found.winner,
 
-      url: '/api/game/' + encodeURIComponent(gameId.id),
-      start: '/api/game/' + encodeURIComponent(gameId.id) + '/start',
-      end: '/api/game/' + encodeURIComponent(gameId.id) + '/end'
+      url: '/api/games/' + encodeURIComponent(gameId.id),
+      start: '/api/games/' + encodeURIComponent(gameId.id) + '/start',
+      end: '/api/games/' + encodeURIComponent(gameId.id) + '/end'
     });
 };
 
@@ -136,8 +136,8 @@ const startGame = function startGame(req: Request, res: Response) {
     .send({
       gameId: gameId,
       time: now,
-      url: '/api/game/' + encodeURIComponent(gameId.id),
-      end: '/api/game/' + encodeURIComponent(gameId.id) + '/end'
+      url: '/api/games/' + encodeURIComponent(gameId.id),
+      end: '/api/games/' + encodeURIComponent(gameId.id) + '/end'
     });
 };
 
@@ -153,7 +153,7 @@ const endGame = function endGame(req: Request, res: Response) {
   res.status(201).send({
     gameId: gameId,
     time: now,
-    url: '/api/game/' + encodeURIComponent(gameId.id)
+    url: '/api/games/' + encodeURIComponent(gameId.id)
   });
 };
 
@@ -174,9 +174,92 @@ const addGoalFromPlayerToGame = function addGoalFromPlayerToGame(
   res.status(200).send({
     gameId: gameId,
     player: player,
-    url: '/api/game/' + encodeURIComponent(gameId.id)
+    url: '/api/games/' + encodeURIComponent(gameId.id)
   });
 };
+
+const getPlayersInGame = function getPlayersInGame(req: Request, res: Response) {
+  const gameId = new GameId(req.params.id);
+
+  // find Aggregate for this ID in repository
+  const found = gamesRepository.getGame(gameId);
+
+  // call COMMAND on Aggregate
+  res
+    .status(200)
+    .send({
+      gameId: gameId,
+
+      players: found.players,
+      pointsTeamBlue: found.pointsTeamBlue,
+      pointsTeamRed: found.pointsTeamRed,
+      teamBlueMembers: found.teamBlueMembers,
+      teamRedMembers: found.teamRedMembers,
+      winner: found.winner,
+
+      url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
+    });
+}
+
+const addPlayerToGame = function getPlayerInGame(
+  req: Request,
+  res: Response
+) {
+  const gameId = new GameId(req.params.id);
+  const player = req.params.player;
+  const team = req.params.team;
+
+  // find Aggregate for this ID in repository
+  const found = gamesRepository.getGame(gameId);
+
+  found.addPlayerToGame(eventPublisher, player, team);
+
+  // call COMMAND on Aggregate
+  res.status(200).send({
+    gameId: gameId,
+    player: player,
+    team: team,
+    url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
+  });
+};
+
+
+const removePlayerFromGame = function removePlayerFromGame(req: Request, res: Response) {
+  const gameId = new GameId(req.params.id);
+  const player = req.params.player;
+
+  // find Aggregate for this ID in repository
+  const found = gamesRepository.getGame(gameId);
+
+  found.removePlayerFromGame(eventPublisher, player);
+
+  // call COMMAND on Aggregate
+  res.status(200).send({
+    gameId: gameId,
+    player: player,
+    url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
+  });
+};
+
+const changeUserPositionToGame = function changeUserPositionToGame(req: Request, res: Response) {
+  const gameId = new GameId(req.params.id);
+  const player: string = req.params.player;
+  const position: PositionValue = req.params.position;
+
+  // find Aggregate for this ID in repository
+  const found = gamesRepository.getGame(gameId);
+
+  found.changeUserPositionOnGame(eventPublisher, player, position);
+
+  // call COMMAND on Aggregate
+  res.status(200).send({
+    gameId: gameId,
+    player: player,
+    position: position,
+    url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
+  });
+
+}
 
 // let deleteMessage = function deleteMessage(req: Request, res: Response) {
 //   var sessionId = new SessionId(req.body.sessionId);
@@ -233,10 +316,25 @@ export function registerRoutes(app: Application): void {
   app.post('/api/identity/userIdentities/:id/logIn', manageError(logInUser));
   app.delete('/api/identity/sessions/:id', manageError(logOutUser));
 
-  app.post('/api/game', manageError(createGame));
-  app.get('/api/game/:id', manageError(getGame));
-  app.post('/api/game/:id/start', manageError(startGame));
-  app.post('/api/game/:id/end', manageError(endGame));
-  app.post('/api/game/:id/goal/:player', manageError(addGoalFromPlayerToGame));
+  app.post('/api/games', manageError(createGame));
+  app.get('/api/games/:id', manageError(getGame));
+  app.post('/api/games/:id/start', manageError(startGame));
+  app.post('/api/games/:id/end', manageError(endGame));
+
+  app.get('/api/games/:id/players', manageError(getPlayersInGame));
+  app.post('/api/games/:id/players/:player/:team', manageError(addPlayerToGame));
+  app.delete('/api/games/:id/players/:player', manageError(removePlayerFromGame));
+  app.post('/api/games/:id/goals/:player', manageError(addGoalFromPlayerToGame));
+  app.post('/api/games/:id/players/:player/position/:position', manageError(changeUserPositionToGame));
+
+  // app.get('/api/games/:id/comments', manageError(getCommentsOnGame));
+  // app.post('/api/games/:id/comments', manageError(addCommentToGame));
+  // app.post('/api/games/:id/comments/:commentId', manageError(changeCommentOnGame));
+  // app.delete('/api/games/:id/comments/:commentId', manageError(removeCommentOnGame));
+
+  // app.get('/api/games/:id/reviews', manageError(getReviewsOnGame));
+  // app.post('/api/games/:id/reviews', manageError(addReviewOnGame));
+  // app.post('/api/games/:id/reviews/:reviewId', manageError(updateReviewOnGame));
+  // app.delete('/api/games/:id/reviews/:reviewId', manageError(removeReviewOnGame));
 
 };

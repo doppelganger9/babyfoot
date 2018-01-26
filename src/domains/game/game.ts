@@ -4,7 +4,10 @@ import {
   generateUUID,
   DecisionProjection,
   DecisionApplierFunction,
-  EventPublisher
+  EventPublisher,
+  PlayerChangedPositionOnGame,
+  SomeoneReviewedTheGame,
+  SomeoneAddedACommentOnGame
 } from '../..';
 import {
   GameCreated,
@@ -30,6 +33,19 @@ export type Player = string;
 export class GameNotStartedError extends Error {
   constructor(public gameId: GameId) {
     super(`"${gameId}" has not started`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+
+export class GameAlreadyStartedError extends Error {
+  constructor(public gameId: GameId) {
+    super(`"${gameId}" has already started`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+export class GameNotEndedError extends Error {
+  constructor(public gameId: GameId) {
+    super(`"${gameId}" has not ended`);
     Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
   }
 }
@@ -204,9 +220,15 @@ export class Game {
         this: DecisionProjection,
         event: PlayerAddedToGameWithTeam
       ): void {
-        this.data.get('players').push(event.player);
+        if (!this.data.get('players').includes(event.player)) {
+          this.data.get('players').push(event.player);
+        }
         if (event.team === 'red') {
-          this.data.get('teamRedMembers').push(event.player);
+          if (!this.data
+              .get('teamRedMembers')
+              .includes(event.player)) {
+            this.data.get('teamRedMembers').push(event.player);
+          }
           if (this.data.get('teamBlueMembers').includes(event.player)) {
             this.data.set(
               'teamBlueMembers',
@@ -216,7 +238,13 @@ export class Game {
             );
           }
         } else {
-          this.data.get('teamBlueMembers').push(event.player);
+          if (!this.data
+            .get('teamBlueMembers')
+            .includes(
+            event.player
+            )) {
+            this.data.get('teamBlueMembers').push(event.player);
+          }
           if (this.data.get('teamRedMembers').includes(event.player)) {
             this.data.set(
               'teamRedMembers',
@@ -245,6 +273,24 @@ export class Game {
               : 'blue'
         );
       } as DecisionApplierFunction)
+      .register('PlayerChangedPositionOnGame', function(
+        this: DecisionProjection,
+        event: PlayerChangedPositionOnGame
+      ): void {
+        console.error('not implemented yet');
+      } as DecisionApplierFunction)
+      .register('SomeoneAddedACommentOnGame', function(
+        this: DecisionProjection,
+        event: SomeoneAddedACommentOnGame
+      ): void {
+        console.error('not implemented yet');
+      } as DecisionApplierFunction)
+      .register('SomeoneReviewedTheGame', function(
+        this: DecisionProjection,
+        event: SomeoneReviewedTheGame
+      ): void {
+        console.error('not implemented yet');
+      } as DecisionApplierFunction)
       .apply(events);
   }
 
@@ -264,14 +310,17 @@ export class Game {
   }
 
   startGame(eventPublisher: EventPublisher) {
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (this.currentStartDatetime) throw new GameAlreadyStartedError(this.id);
+    if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
     const event = new GameStarted(undefined, this.id);
     eventPublisher.publish(event);
   }
 
   endGame(eventPublisher: EventPublisher) {
-    if (!this.currentStartDatetime) {
-      throw new Error('you cannot end a game which has not even started');
-    }
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (!this.currentStartDatetime) throw new GameNotStartedError(this.id);
+    if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
     const event = new GameEnded(undefined, this.id);
     eventPublisher.publish(event);
   }
@@ -322,13 +371,28 @@ export class Game {
     throw new Error('not implemented');
   }
 
-  changeUserPositionOnGame(eventPublisher: EventPublisher) {
-    throw new Error('not implemented');
+  changeUserPositionOnGame(eventPublisher: EventPublisher, player: string, position: PositionValue) {
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (!this.currentStartDatetime) throw new GameNotStartedError(this.id);
+    if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
+    if (!this.players!.includes(player)) throw new UnknownPlayerError(player);
+
+    const event = new PlayerChangedPositionOnGame(position, player, this.id);
+    eventPublisher.publish(event);
   }
-  commentGame(eventPublisher: EventPublisher) {
-    throw new Error('not implemented');
+  commentGame(eventPublisher: EventPublisher, comment: string, author: string) {
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (!this.currentStartDatetime) throw new GameNotStartedError(this.id);
+    if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
+
+    const event = new SomeoneAddedACommentOnGame(author, comment, this.id);
+    eventPublisher.publish(event);
   }
-  reviewGame(eventPublisher: EventPublisher) {
-    throw new Error('not implemented');
+  reviewGame(eventPublisher: EventPublisher, review: string, stars: number, author: string) {
+    if (this.isDeleted) throw new GameIsDeletedError(this.id);
+    if (this.currentEndDatetime.getTime() >= new Date().getTime()) throw new GameNotEndedError(this.id);
+
+    const event = new SomeoneReviewedTheGame(author, review, stars, this.id);
+    eventPublisher.publish(event);
   }
 }

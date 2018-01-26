@@ -1,12 +1,8 @@
 import { Player, TeamColors, GameId } from '.';
-import { Event } from '../..';
+import { Event, PositionValue } from '../..';
 
 export abstract class GameEvent implements Event {
-  timestamp: Date;
-  gameId: GameId;
-  constructor(timestamp: Date = new Date(), id: GameId) {
-    this.gameId = id;
-    this.timestamp = timestamp;
+  constructor(public timestamp: Date = new Date(), public gameId: GameId) {
   }
 
   getAggregateId(): GameId {
@@ -33,44 +29,53 @@ export class GameUpdated extends GameEvent {
   }
 }
 export class GameStarted extends GameEvent {
-  date: Date;
-  constructor(date: Date = new Date(), id: GameId) {
+  constructor(public date: Date = new Date(), id: GameId) {
     super(undefined, id);
-    this.date = date;
     Object.freeze(this);
   }
 }
 export class GameEnded extends GameEvent {
-  date: Date;
-  constructor(date: Date = new Date(), id: GameId) {
+  constructor(public date: Date = new Date(), id: GameId) {
     super(undefined, id);
-    this.date = date;
     Object.freeze(this);
   }
 }
 export class PlayerAddedToGameWithTeam extends GameEvent {
-  player: Player;
-  team: TeamColors;
-  constructor(player: Player, team: TeamColors, id: GameId) {
+  constructor(public player: Player, public team: TeamColors, id: GameId) {
     super(undefined, id);
-    this.player = player;
-    this.team = team;
     Object.freeze(this);
   }
 }
 export class PlayerRemovedFromGame extends GameEvent {
-  player: Player;
-  constructor(player: Player, id: GameId) {
+  constructor(public player: Player, id: GameId) {
     super(undefined, id);
-    this.player = player;
     Object.freeze(this);
   }
 }
 export class AddedGoalFromPlayerToGame extends GameEvent {
-  player: Player;
-  constructor(player: Player, id: GameId) {
+  constructor(public player: Player, id: GameId) {
     super(undefined, id);
-    this.player = player;
+    Object.freeze(this);
+  }
+}
+
+export class PlayerChangedPositionOnGame extends GameEvent {
+  constructor(public position: PositionValue, public player: Player, id: GameId) {
+    super(undefined, id);
+    Object.freeze(this);
+  }
+}
+
+export class SomeoneAddedACommentOnGame extends GameEvent {
+  constructor(public author: string, public comment: string, id: GameId) {
+    super(undefined, id);
+    Object.freeze(this);
+  }
+}
+
+export class SomeoneReviewedTheGame extends GameEvent {
+  constructor(public author: string, public review: string, public stars: number, public id: GameId) {
+    super(undefined, id);
     Object.freeze(this);
   }
 }

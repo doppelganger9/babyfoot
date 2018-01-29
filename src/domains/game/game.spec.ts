@@ -3,8 +3,33 @@ import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
 import { Game, GameId } from '.';
-import { GameCreated, GameDeleted, GameEnded, GameStarted, GameUpdated, PlayerAddedToGameWithTeam, PlayerRemovedFromGame, AddedGoalFromPlayerToGame } from './events';
-import { Event, EventPublisher, generateUUID, GameAlreadyEndedError, GameAlreadyStartedError, GameIsDeletedError, GameNotStartedError, UnknownPlayerError, PlayerChangedPositionOnGame } from '../..';
+import {
+  GameCreated,
+  GameDeleted,
+  GameEnded,
+  GameStarted,
+  GameUpdated,
+  PlayerAddedToGameWithTeam,
+  PlayerRemovedFromGame,
+  AddedGoalFromPlayerToGame
+} from './events';
+import {
+  Event,
+  EventPublisher,
+  generateUUID,
+  GameAlreadyEndedError,
+  GameAlreadyStartedError,
+  GameIsDeletedError,
+  GameNotStartedError,
+  UnknownPlayerError,
+  PlayerChangedPositionOnGame,
+  SomeoneAddedACommentOnGame,
+  SomeoneReviewedTheGame,
+  IncorrectReviewStarsError,
+  MissingAuthorForReviewError,
+  ReviewTooLongError,
+  GameNotEndedError
+} from '../..';
 
 describe('Game', () => {
   let t: Game;
@@ -65,11 +90,9 @@ describe('Game', () => {
       t.deleteGame(simpleEventPublisher);
       expect(eventsRaised.length).to.equal(0);
     });
-
   });
 
   describe('.startGame should', () => {
-
     it('emit GameStarted', () => {
       let history: Array<Event> = [];
       history.push(new GameCreated(gameId));
@@ -83,7 +106,9 @@ describe('Game', () => {
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       t = new Game(history);
-      expect(() => t.startGame(simpleEventPublisher)).to.throw(GameAlreadyStartedError);
+      expect(() => t.startGame(simpleEventPublisher)).to.throw(
+        GameAlreadyStartedError
+      );
       expect(eventsRaised.length).to.equal(0);
     });
     it('not allow to start an already ended Game', () => {
@@ -92,9 +117,9 @@ describe('Game', () => {
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
       t = new Game(history);
-      expect(() =>
-        t.startGame(simpleEventPublisher)
-      ).to.throw(GameAlreadyEndedError);
+      expect(() => t.startGame(simpleEventPublisher)).to.throw(
+        GameAlreadyEndedError
+      );
       expect(eventsRaised.length).to.equal(0);
     });
     it('not allow to start a deleted Game', () => {
@@ -102,26 +127,29 @@ describe('Game', () => {
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
-      expect(() =>
-        t.startGame(simpleEventPublisher)
-      ).to.throw(GameIsDeletedError);
+      expect(() => t.startGame(simpleEventPublisher)).to.throw(
+        GameIsDeletedError
+      );
       expect(eventsRaised.length).to.equal(0);
     });
-
   });
   describe('.removePlayerFromGame should', () => {
     it('not remove an unknown player from a game', () => {
       let history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
-      expect(() => t.removePlayerFromGame(simpleEventPublisher, 'toto')).to.throw(Error, /unknown/);
+      expect(() =>
+        t.removePlayerFromGame(simpleEventPublisher, 'toto')
+      ).to.throw(Error, /unknown/);
     });
     it('not remove a player from a deleted game', () => {
       let history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
-      expect(() => t.removePlayerFromGame(simpleEventPublisher, 'toto')).to.throw(GameIsDeletedError);
+      expect(() =>
+        t.removePlayerFromGame(simpleEventPublisher, 'toto')
+      ).to.throw(GameIsDeletedError);
     });
     it('not remove a player from an already ended game', () => {
       let history: Array<Event> = [];
@@ -129,7 +157,9 @@ describe('Game', () => {
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
       t = new Game(history);
-      expect(() => t.removePlayerFromGame(simpleEventPublisher, 'toto')).to.throw(GameAlreadyEndedError);
+      expect(() =>
+        t.removePlayerFromGame(simpleEventPublisher, 'toto')
+      ).to.throw(GameAlreadyEndedError);
     });
     it('remove an existing red team player from a game', () => {
       let history: Array<Event> = [];
@@ -246,7 +276,9 @@ describe('Game', () => {
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
-      expect(() => t.addPlayerToGame(simpleEventPublisher, 'toto', 'blue')).to.throw(Error, /deleted/);
+      expect(() =>
+        t.addPlayerToGame(simpleEventPublisher, 'toto', 'blue')
+      ).to.throw(Error, /deleted/);
     });
     it('not add a player to a game that is ended', () => {
       let history: Array<Event> = [];
@@ -275,7 +307,6 @@ describe('Game', () => {
       expect(() =>
         t.addPlayerToGame(simpleEventPublisher, 'toto', 'blue')
       ).to.throw(Error, /already/);
-
     });
     it('switch team for a player previously added to other team (blue to red)', () => {
       let history: Array<Event> = [];
@@ -368,7 +399,9 @@ describe('Game', () => {
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
-      expect(() => t.endGame(simpleEventPublisher)).to.throw(GameIsDeletedError);
+      expect(() => t.endGame(simpleEventPublisher)).to.throw(
+        GameIsDeletedError
+      );
       expect(eventsRaised.length).to.equal(0);
     });
     it('not allow to end an already ended Game', () => {
@@ -377,7 +410,9 @@ describe('Game', () => {
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
       t = new Game(history);
-      expect(() => t.endGame(simpleEventPublisher)).to.throw(GameAlreadyEndedError);
+      expect(() => t.endGame(simpleEventPublisher)).to.throw(
+        GameAlreadyEndedError
+      );
       expect(eventsRaised.length).to.equal(0);
     });
   });
@@ -398,16 +433,19 @@ describe('Game', () => {
       history.push(new PlayerAddedToGameWithTeam('player', 'red', gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
-      expect(() => t.addGoalFromPlayer(simpleEventPublisher, 'player')).to.throw(GameAlreadyEndedError);
+      expect(() =>
+        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+      ).to.throw(GameAlreadyEndedError);
       expect(eventsRaised.length).to.equal(0);
     });
     it('should not add a goal to a player if game is not started', () => {
       let history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
-      expect(() => t.addGoalFromPlayer(simpleEventPublisher, 'player')).to.throw(GameNotStartedError);
+      expect(() =>
+        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+      ).to.throw(GameNotStartedError);
       expect(eventsRaised.length).to.equal(0);
-
     });
     it('should not add a goal to a player if game has already ended', () => {
       let history: Array<Event> = [];
@@ -416,7 +454,9 @@ describe('Game', () => {
       history.push(new PlayerAddedToGameWithTeam('player', 'red', gameId));
       history.push(new GameEnded(undefined, gameId));
       t = new Game(history);
-      expect(() => t.addGoalFromPlayer(simpleEventPublisher, 'player')).to.throw(GameAlreadyEndedError);
+      expect(() =>
+        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+      ).to.throw(GameAlreadyEndedError);
       expect(eventsRaised.length).to.equal(0);
     });
     it('should not add a goal to an unknown player', () => {
@@ -424,10 +464,11 @@ describe('Game', () => {
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       t = new Game(history);
-      expect(() => t.addGoalFromPlayer(simpleEventPublisher, 'player')).to.throw(UnknownPlayerError);
+      expect(() =>
+        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+      ).to.throw(UnknownPlayerError);
       expect(eventsRaised.length).to.equal(0);
     });
-
   });
   describe('changePlayerPositionOnGame', () => {
     it('should emit event', () => {
@@ -436,7 +477,7 @@ describe('Game', () => {
       history.push(new GameStarted(undefined, gameId));
       history.push(new PlayerAddedToGameWithTeam('player', 'red', gameId));
       t = new Game(history);
-      t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')
+      t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal');
       expect(eventsRaised.length).to.equal(1);
       expect(eventsRaised[0] instanceof PlayerChangedPositionOnGame).to.be.true;
     });
@@ -446,28 +487,171 @@ describe('Game', () => {
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
-      expect(() => t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')).to.throw(GameIsDeletedError);
+      expect(() =>
+        t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')
+      ).to.throw(GameIsDeletedError);
     });
     it("should not allow to change a player's on a game not yet started", () => {
       let history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
-      expect(() => t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')).to.throw(GameNotStartedError);
+      expect(() =>
+        t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')
+      ).to.throw(GameNotStartedError);
     });
-    it('should not allow to change a player\'s position on a game already ended', () => {
+    it("should not allow to change a player's position on a game already ended", () => {
       let history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
       t = new Game(history);
-      expect(() => t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')).to.throw(GameAlreadyEndedError);
+      expect(() =>
+        t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')
+      ).to.throw(GameAlreadyEndedError);
     });
-    it('should not allow to change an unknown player\'s position', () => {
+    it("should not allow to change an unknown player's position", () => {
       let history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       t = new Game(history);
-      expect(() => t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')).to.throw(UnknownPlayerError);
+      expect(() =>
+        t.changeUserPositionOnGame(simpleEventPublisher, 'player', 'goal')
+      ).to.throw(UnknownPlayerError);
+    });
+  });
+  describe('commentGame', () => {
+    it('should emit SomeoneAddedACommentOnGame', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      t = new Game(history);
+      t.commentGame(simpleEventPublisher, 'comment', 'author');
+      expect(eventsRaised.length).to.equal(1);
+      expect(eventsRaised[0] instanceof SomeoneAddedACommentOnGame).to.be.true;
+    });
+    it('should not emit SomeoneAddedACommentOnGame if Game is deleted', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameDeleted(gameId));
+      t = new Game(history);
+      expect(() =>
+        t.commentGame(simpleEventPublisher, 'comment', 'author')
+      ).to.throw(GameIsDeletedError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+    it('should not emit SomeoneAddedACommentOnGame if Game is not yet started', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      t = new Game(history);
+      expect(() =>
+        t.commentGame(simpleEventPublisher, 'comment', 'author')
+      ).to.throw(GameNotStartedError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+    it('should not emit SomeoneAddedACommentOnGame if Game has already ended', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(new GameEnded(undefined, gameId));
+      t = new Game(history);
+      expect(() =>
+        t.commentGame(simpleEventPublisher, 'comment', 'author')
+      ).to.throw(GameAlreadyEndedError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+  });
+  describe('reviewGame', () => {
+    it('should emit SomeoneReviewedTheGame', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(new GameEnded(undefined, gameId));
+      t = new Game(history);
+      t.reviewGame(simpleEventPublisher, 'comment', 5, 'author');
+      expect(eventsRaised.length).to.equal(1);
+      expect(eventsRaised[0] instanceof SomeoneReviewedTheGame).to.be.true;
+    });
+    it('should emit SomeoneReviewedTheGame with no comment', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(new GameEnded(undefined, gameId));
+      t = new Game(history);
+      t.reviewGame(simpleEventPublisher, undefined, 5, 'author');
+      expect(eventsRaised.length).to.equal(1);
+      expect(eventsRaised[0] instanceof SomeoneReviewedTheGame).to.be.true;
+    });
+    it('should not emit SomeoneReviewedTheGame if stars <= 0', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(new GameEnded(undefined, gameId));
+      t = new Game(history);
+      expect(() =>
+        t.reviewGame(simpleEventPublisher, 'comment', 0, 'author')
+      ).to.throw(IncorrectReviewStarsError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+    it('should not emit SomeoneReviewedTheGame if stars > 5', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(new GameEnded(undefined, gameId));
+      t = new Game(history);
+      expect(() =>
+        t.reviewGame(simpleEventPublisher, 'comment', 6, 'author')
+      ).to.throw(IncorrectReviewStarsError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+
+    it('should not emit SomeoneReviewedTheGame if author is missing', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(new GameEnded(undefined, gameId));
+      t = new Game(history);
+      expect(() =>
+        t.reviewGame(simpleEventPublisher, 'comment', 5, undefined)
+      ).to.throw(MissingAuthorForReviewError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+
+    it('should not emit SomeoneReviewedTheGame if comment is too long', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(new GameEnded(undefined, gameId));
+      t = new Game(history);
+      const stringOfLength1000 = new Array(1001).join('a');
+      expect(() =>
+        t.reviewGame(simpleEventPublisher, stringOfLength1000, 1, 'author')
+      ).to.throw(ReviewTooLongError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+
+    it('should not emit SomeoneReviewedTheGame if Game is deleted', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameDeleted(gameId));
+      t = new Game(history);
+      expect(() =>
+        t.reviewGame(simpleEventPublisher, 'comment', 5, 'author')
+      ).to.throw(GameIsDeletedError);
+      expect(eventsRaised.length).to.equal(0);
+    });
+
+    it('should not emit SomeoneReviewedTheGame if Game is not ended', () => {
+      let history: Array<Event> = [];
+      history.push(new GameCreated(gameId));
+      history.push(new GameStarted(undefined, gameId));
+      history.push(
+        new GameEnded(new Date(new Date().getTime() + 1000), gameId)
+      );
+      t = new Game(history);
+      expect(() =>
+        t.reviewGame(simpleEventPublisher, 'comment', 5, 'author')
+      ).to.throw(GameNotEndedError);
+      expect(eventsRaised.length).to.equal(0);
     });
   });
   describe('happy path', () => {

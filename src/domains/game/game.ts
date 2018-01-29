@@ -83,6 +83,27 @@ export class GameIsDeletedError extends Error {
   }
 }
 
+export class IncorrectReviewStarsError extends Error {
+  constructor(public gameId: GameId, public stars: number) {
+    super(`incorrect number of stars ${stars} for review on "${gameId}"`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+
+export class ReviewTooLongError extends Error {
+  constructor(public gameId: GameId, public length: number) {
+    super(`submitted review is too long (${length}) for "${gameId}"`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+
+export class MissingAuthorForReviewError extends Error {
+  constructor(public gameId: GameId) {
+    super(`author is required to review "${gameId}"`);
+    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
+  }
+}
+
 export class GameId extends ValueType {
   constructor(public id: string) {
     super();
@@ -390,7 +411,11 @@ export class Game {
   }
   reviewGame(eventPublisher: EventPublisher, review: string, stars: number, author: string) {
     if (this.isDeleted) throw new GameIsDeletedError(this.id);
-    if (this.currentEndDatetime.getTime() >= new Date().getTime()) throw new GameNotEndedError(this.id);
+    if (stars <= 0) throw new IncorrectReviewStarsError(this.id, stars);
+    if (stars > 5) throw new IncorrectReviewStarsError(this.id, stars);
+    if (!author) throw new MissingAuthorForReviewError(this.id);
+    if (review && review.length>500) throw new ReviewTooLongError(this.id, review.length)
+    if (!this.currentEndDatetime || this.currentEndDatetime.getTime() > new Date().getTime()) throw new GameNotEndedError(this.id);
 
     const event = new SomeoneReviewedTheGame(author, review, stars, this.id);
     eventPublisher.publish(event);

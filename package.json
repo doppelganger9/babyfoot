@@ -8,7 +8,8 @@
     "build": "tsc",
     "test": "nyc mocha",
     "prettier": "prettier src/**/*.ts --write",
-    "start": "ts-node main.ts"
+    "start": "ts-node main.ts",
+    "newman": "newman run postman/Babyfoot.postman_collection.json -e postman/Babyfoot-localhost-3000.postman_environment.json"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "mocha": "4.1.0",
+    "newman": "3.9.3",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "source-map-support": "0.5.0",

@@ -1,0 +1,836 @@
+{
+	"info": {
+		"name": "Babyfoot/Mixter",
+		"_postman_id": "4a5aca8f-0e6f-7661-2933-2e4666cf4c18",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Identity Domain",
+			"description": "",
+			"item": [
+				{
+					"name": "/api/identity/userIdentities/register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f4a56942-b040-4998-8531-217b1097bbbd",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"let email = pm.variables.get(\"user_email\");",
+									"",
+									"pm.test(\"Payload contains an id.email, url and logIn\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id.email).to.eql(email);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.logIn !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									"",
+									"pm.environment.set(\"user_email_urlencoded\", encodeURIComponent(email));",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n  \"email\": \"{{user_email}}\"\n}"
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/identity/userIdentities/register",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"identity",
+								"userIdentities",
+								"register"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/identity/userIdentities/{user_email}/logIn",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "491e8415-efe2-4398-a1de-922c06c2013b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "89972334-76ab-436a-a392-01c265d2c0cf",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Payload contains a session id and an URL\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    ",
+									"    pm.environment.set(\"session_id\", jsonData.id.id);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/identity/userIdentities/{{user_email_urlencoded}}/logIn",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"identity",
+								"userIdentities",
+								"{{user_email_urlencoded}}",
+								"logIn"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "/api/identity/sessions/{session_id}",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "491e8415-efe2-4398-a1de-922c06c2013b",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "f8970759-2496-4674-a63a-4e041984fe88",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains a session id and an URL\", function () {",
+									"    var text = pm.response.text();",
+									"    pm.expect(text).to.eql(\"User disconnected\");",
+									"",
+									"    pm.environment.set(\"session_id\", undefined);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/identity/sessions/{{session_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"identity",
+								"sessions",
+								"{{session_id}}"
+							]
+						},
+						"description": "Log Out"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Game Domain",
+			"description": "",
+			"item": [
+				{
+					"name": "/api/games",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "84301de5-5acf-4c79-8edc-d856fcf913d1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id.email, url and logIn\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.environment.set(\"game_id\", pm.response.json().gameId.id);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.start !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.end !== undefined).to.eql(true);",
+									"});",
+									"",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4df034d0-bb8f-4bd3-a013-312453f3eb9e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b194358-724e-44b8-bd74-b513766af1a0",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an url and a list of games\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.list !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/start",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8b344105-67ab-4ec9-b260-e71700a436b3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, time, url and end url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.time !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.end !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/start",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"start"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/players/{player}/red",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b029c217-93c9-4fbc-a25a-781aa8fa3fc6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, time, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.team !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_name}}/red",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"players",
+								"{{player1_name}}",
+								"red"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/players/{player}/blue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bd01d3c3-09b5-48be-9206-bf9166e66490",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, time, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.team !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player2_name}}/blue",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"players",
+								"{{player2_name}}",
+								"blue"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/players",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4e713fc2-956a-4e7e-abf8-87faac7512b6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"players"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/players/{player}/position/{position}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fe1a08fe-eb9c-42ef-bc8e-88a2fac08e0d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, time, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.position !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_name}}/position/{{position}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"players",
+								"{{player1_name}}",
+								"position",
+								"{{position}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/goals/{player}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a25cd01e-56d9-4549-991d-35505ba7afad",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, time, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/goals/{{player1_name}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"goals",
+								"{{player1_name}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/end",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "da0fac36-65c4-4dcd-858e-0b334bc91c93",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, time, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.time !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/end",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"end"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/games/{id}/players/{player}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d4c8d2ed-8be0-4615-9ff2-890d772d4ede",
+								"type": "text/javascript",
+								"exec": [
+									"/*",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, time, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"});",
+									"*/",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an error and errorName\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.errorName !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.errorName === \"GameAlreadyEndedError\").to.eql(true);",
+									"    pm.expect(jsonData.error.gameId.id === pm.environment.get('game_id')).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_name}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}",
+								"players",
+								"{{player1_name}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

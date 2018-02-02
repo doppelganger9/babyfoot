@@ -1,4 +1,5 @@
 # BabyFoot
+[![Build Status](https://travis-ci.org/doppelganger9/babyfoot.svg?branch=master)](https://travis-ci.org/doppelganger9/babyfoot) [![Dependency Status](https://beta.gemnasium.com/badges/github.com/doppelganger9/babyfoot.svg)](https://beta.gemnasium.com/projects/github.com/doppelganger9/babyfoot) [![Coverage Status](https://coveralls.io/repos/github/doppelganger9/babyfoot/badge.svg?branch=master)](https://coveralls.io/github/doppelganger9/babyfoot?branch=master) [![Known Vulnerabilities](https://snyk.io/test/github/doppelganger9/babyfoot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doppelganger9/babyfoot?targetFile=package.json)
 
 ## Goals
 
@@ -7,7 +8,7 @@
 - Unit Testing with coverage > 80%
 - REST API documentation, samples & testing with PostMan + NewMan (CLI automation)
 
-## Install, build, run
+## Usage
 
 - ❏ clone this repository
 - `npm install`
@@ -51,7 +52,7 @@ Also my goal is to automate this with **Newman**.
 ## Future possibilities
 
 - Use Jest for Unit Testing?
-- have CI, CD, coverage automation, badges, etc.
+- have Continuous Deployment, etc.
 - have Gemnasium check security flaws.
 - add more API endpoints/features.
 - add a PWA client for the API.
@@ -60,3 +61,7 @@ Also my goal is to automate this with **Newman**.
 
 - the [Devoxx 2017 session "CQRS/ES from Scratch" by Emilien Pecoul and Florian Pellet](https://www.youtube.com/watch?v=S1V4t7SXXCU)
 - the associated project : https://github.com/DevLyon/mixter
+
+## License
+
+MIT License

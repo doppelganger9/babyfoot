@@ -1,6 +1,8 @@
 import { Response, Application, Request } from 'express';
 import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, SessionHandler, UserIdentityRepository, EventPublisher, Game, generateUUID, GameId, PositionValue } from '.';
 import { GamesRepository } from './infrastructure/game-repository';
+import { GameListItemProjection } from './domains/game/game-list-item-projection';
+import { GameHandler } from './domains/game/game-handler';
 
 const eventsStore = new EventsStore();
 const userIdentitiesRepository = new UserIdentityRepository(eventsStore);
@@ -21,6 +23,7 @@ const createEventPublisher = function createEventPublisher(
   // Here, Session and Timeline Update projections:
   new SessionHandler(sessionsRepository).register(eventPublisher);
   //new updateTimeline(timelineMessagesRepository).register(eventPublisher);
+  new GameHandler(gamesRepository).register(eventPublisher);
 
   // Later on, for the QUERY part of CQRS, you just need to query the appropriate repository which
   // contains ready - to - use and up - to - date projections
@@ -120,6 +123,28 @@ const getGame = function getGame(req: Request, res: Response) {
       start: '/api/games/' + encodeURIComponent(gameId.id) + '/start',
       end: '/api/games/' + encodeURIComponent(gameId.id) + '/end'
     });
+};
+
+const getGameList = function getGameList(req: Request, res: Response) {
+  // TODO : add _embedded option? (will be 1000 times slower)
+
+  const all: Array<GameListItemProjection> = gamesRepository.getGames();
+
+  // send response
+  res
+    .status(200)
+    .send({
+      url: '/api/games',
+      list: all.map(game => {
+        return {
+          gameId: game.gameId,
+          created: game.timestamp,
+
+          url: '/api/games/' + encodeURIComponent(game.gameId.id)
+        };
+      })
+    });
+
 };
 
 const startGame = function startGame(req: Request, res: Response) {
@@ -317,6 +342,7 @@ export function registerRoutes(app: Application): void {
   app.delete('/api/identity/sessions/:id', manageError(logOutUser));
 
   app.post('/api/games', manageError(createGame));
+  app.get('/api/games', manageError(getGameList));
   app.get('/api/games/:id', manageError(getGame));
   app.post('/api/games/:id/start', manageError(startGame));
   app.post('/api/games/:id/end', manageError(endGame));

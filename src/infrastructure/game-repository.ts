@@ -1,9 +1,6 @@
-import {
-  UserId,
-  Event,
-  EventsStore,
-} from '..';
+import { UserId, Event, EventsStore } from '..';
 import { Game, GameId } from '../domains/game';
+import { GameListItemProjection } from '../domains/game/game-list-item-projection';
 
 /**
  * This class is a custom Error.
@@ -26,10 +23,11 @@ export class UnknownGame extends Error {
  * It can also store other projections in a Map, with methods to access these simple projections.
  */
 export class GamesRepository {
-  eventsStore: EventsStore;
-
-  constructor(eventsStore: EventsStore) {
-    this.eventsStore = eventsStore;
+  constructor(
+    private eventsStore: EventsStore,
+    private projections: Map<string, any> = new Map<string, any>()
+  ) {
+    this.projections.set('list', new Array<GameListItemProjection>());
   }
 
   /**
@@ -45,6 +43,10 @@ export class GamesRepository {
     return events;
   }
 
+  save(projection: GameListItemProjection): void {
+    this.projections.get('list').push(projection);
+  }
+
   /**
    * returns the Game Aggregate for the given id.
    * The Game Aggregate is created from events (event sourcing).
@@ -53,5 +55,13 @@ export class GamesRepository {
   getGame(gameId: GameId): Game {
     var events: Event[] = this.getAllEvents(gameId);
     return new Game(events);
+  }
+
+  /**
+   * returns all the Game Aggregates.
+   * The Game Aggregate list is created from all events (event sourcing).
+   */
+  getGames(): Array<GameListItemProjection> {
+    return this.projections.get('list');
   }
 }

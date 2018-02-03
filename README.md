@@ -7,6 +7,7 @@
 - Creating a REST API based on Node + Express + TypeScript.
 - Unit Testing with coverage > 80%
 - REST API documentation, samples & testing with PostMan + NewMan (CLI automation)
+- Exploring GitHub platform possibilites & integrations
 
 ## Usage
 
@@ -49,11 +50,10 @@ I find it great for APIs because:
 
 Also my goal is to automate this with **Newman**.
 
-## Future possibilities
+## Future plans
 
 - Use Jest for Unit Testing?
 - have Continuous Deployment, etc.
-- have Gemnasium check security flaws.
 - add more API endpoints/features.
 - add a PWA client for the API.
 
@@ -61,6 +61,25 @@ Also my goal is to automate this with **Newman**.
 
 - the [Devoxx 2017 session "CQRS/ES from Scratch" by Emilien Pecoul and Florian Pellet](https://www.youtube.com/watch?v=S1V4t7SXXCU)
 - the associated project : https://github.com/DevLyon/mixter
+
+## Code of Conduct
+
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+## Contributing
+
+Well, I'm honored you are even thinking about contributing to this project 🤗
+
+I do not have set up a proper CONTRIBUTING.md guide 🤭 so let's just say all contributions are welcomed 😉.
+You should follow our Code of Conduct 🤝.
+Use the GitHub platform 😎: 
+- open an issue for discussion
+- create a Pull Request
+- do your best for the automated checks to pass before merging is possible
+
+Anyway, I will review any PRs and do my best to provide answers and make merging happen, and clarify the CONTRIBUTING rules using a test & learn approach as the need arise.
+
+You can of course message me on Twitter [@doppelganger9](https://twitter.com/doppelganger9).
 
 ## License
 

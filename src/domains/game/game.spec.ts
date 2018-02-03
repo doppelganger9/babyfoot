@@ -435,7 +435,7 @@ describe('Game', () => {
       t = new Game(history);
       expect(() =>
         t.addGoalFromPlayer(simpleEventPublisher, 'player')
-      ).to.throw(GameAlreadyEndedError);
+      ).to.throw(GameIsDeletedError);
       expect(eventsRaised.length).to.equal(0);
     });
     it('should not add a goal to a player if game is not started', () => {

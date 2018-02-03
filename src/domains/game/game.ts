@@ -7,7 +7,16 @@ import {
   EventPublisher,
   PlayerChangedPositionOnGame,
   SomeoneReviewedTheGame,
-  SomeoneAddedACommentOnGame
+  SomeoneAddedACommentOnGame,
+  GameIsDeletedError,
+  GameAlreadyStartedError,
+  GameAlreadyEndedError,
+  GameNotStartedError,
+  PlayerAlreadyAddedError,
+  UnknownPlayerError,
+  MissingAuthorForReviewError,
+  ReviewTooLongError,
+  GameNotEndedError
 } from '../..';
 import {
   GameCreated,
@@ -19,90 +28,14 @@ import {
   PlayerRemovedFromGame,
   AddedGoalFromPlayerToGame
 } from './events';
+import { IncorrectReviewStarsError } from './errors/incorrect-review-stars-error';
 
 export type PositionValue = 'goal' | 'defenseurs' | 'demis' | 'attaquants';
 export type TeamColors = 'red' | 'blue';
 export type Player = string;
 
 /************** VALUE TYPES **************/
-/**
- * NOTE, to extend Errors and preserve prototype chain,
- * see: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
- */
-
-export class GameNotStartedError extends Error {
-  constructor(public gameId: GameId) {
-    super(`"${gameId}" has not started`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-
-export class GameAlreadyStartedError extends Error {
-  constructor(public gameId: GameId) {
-    super(`"${gameId}" has already started`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-export class GameNotEndedError extends Error {
-  constructor(public gameId: GameId) {
-    super(`"${gameId}" has not ended`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-
-export class PlayerAlreadyAddedError extends Error {
-  constructor(
-    public gameId: GameId,
-    public player: string,
-    public team: TeamColors
-  ) {
-    super(
-      `player "${player}" has already been added to team "${team}" in ${gameId}"`
-    );
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-
-export class GameAlreadyEndedError extends Error {
-  constructor(public gameId: GameId) {
-    super(`"${gameId}" has already ended`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-
-export class UnknownPlayerError extends Error {
-  constructor(public player: string) {
-    super(`unknown player "${player}"`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-export class GameIsDeletedError extends Error {
-  constructor(public gameId: GameId) {
-    super(`game is deleted "${gameId}"`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-
-export class IncorrectReviewStarsError extends Error {
-  constructor(public gameId: GameId, public stars: number) {
-    super(`incorrect number of stars ${stars} for review on "${gameId}"`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-
-export class ReviewTooLongError extends Error {
-  constructor(public gameId: GameId, public length: number) {
-    super(`submitted review is too long (${length}) for "${gameId}"`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
-
-export class MissingAuthorForReviewError extends Error {
-  constructor(public gameId: GameId) {
-    super(`author is required to review "${gameId}"`);
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
+// see errors/*.ts
 
 export class GameId extends ValueType {
   constructor(public id: string) {
@@ -332,8 +265,8 @@ export class Game {
 
   startGame(eventPublisher: EventPublisher) {
     if (this.isDeleted) throw new GameIsDeletedError(this.id);
-    if (this.currentStartDatetime) throw new GameAlreadyStartedError(this.id);
     if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
+    if (this.currentStartDatetime) throw new GameAlreadyStartedError(this.id);
     const event = new GameStarted(undefined, this.id);
     eventPublisher.publish(event);
   }

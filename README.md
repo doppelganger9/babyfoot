@@ -64,4 +64,6 @@ Also my goal is to automate this with **Newman**.
 
 ## License
 
+MIT License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot?ref=badge_large)

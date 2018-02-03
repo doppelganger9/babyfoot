@@ -1,6 +1,5 @@
 # BabyFoot
-[![Build Status](https://travis-ci.org/doppelganger9/babyfoot.svg?branch=master)](https://travis-ci.org/doppelganger9/babyfoot) [![Dependency Status](https://beta.gemnasium.com/badges/github.com/doppelganger9/babyfoot.svg)](https://beta.gemnasium.com/projects/github.com/doppelganger9/babyfoot) [![Coverage Status](https://coveralls.io/repos/github/doppelganger9/babyfoot/badge.svg?branch=master)](https://coveralls.io/github/doppelganger9/babyfoot?branch=master) [![Known Vulnerabilities](https://snyk.io/test/github/doppelganger9/babyfoot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doppelganger9/babyfoot?targetFile=package.json) [![BCH compliance](https://bettercodehub.com/edge/badge/doppelganger9/babyfoot?branch=master)](https://bettercodehub.com/)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot?ref=badge_shield)
+[![Build Status](https://travis-ci.org/doppelganger9/babyfoot.svg?branch=master)](https://travis-ci.org/doppelganger9/babyfoot) [![Dependency Status](https://beta.gemnasium.com/badges/github.com/doppelganger9/babyfoot.svg)](https://beta.gemnasium.com/projects/github.com/doppelganger9/babyfoot) [![Coverage Status](https://coveralls.io/repos/github/doppelganger9/babyfoot/badge.svg?branch=master)](https://coveralls.io/github/doppelganger9/babyfoot?branch=master) [![Known Vulnerabilities](https://snyk.io/test/github/doppelganger9/babyfoot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doppelganger9/babyfoot?targetFile=package.json) [![BCH compliance](https://bettercodehub.com/edge/badge/doppelganger9/babyfoot?branch=master)](https://bettercodehub.com/) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot?ref=badge_shield)
 
 ## Goals
 
@@ -66,6 +65,5 @@ Also my goal is to automate this with **Newman**.
 ## License
 
 MIT License
-
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot?ref=badge_large)

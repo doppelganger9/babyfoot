@@ -6,60 +6,60 @@ import { UserId } from '../domains/user-id';
 import { expect } from 'chai';
 import { UnknownSession } from '..';
 
-describe('Sessions Repository', function() {
+describe('Sessions Repository', () => {
   const sessionId = new SessionId('SessionA');
   const userId = new UserId('user1@mix-it.fr');
 
   let eventsStore;
   let repository;
-  beforeEach(function() {
+  beforeEach(() => {
     eventsStore = new EventsStore();
     repository = new SessionsRepository(eventsStore);
   });
 
-  it('Given no projections When getUserIdOfSession Then return empty', function() {
-    const userId = repository.getUserIdOfSession(sessionId);
+  it('Given no projections When getUserIdOfSession Then return empty', () => {
+    const userIdForSession = repository.getUserIdOfSession(sessionId);
 
-    expect(userId).to.be.null;
+    expect(userIdForSession).to.be.null;
   });
 
-  it('Given several user connected When getUserIdOfSession Then userId of this session', function() {
+  it('Given several user connected When getUserIdOfSession Then userId of this session', () => {
     repository.save(
       new SessionProjection(
         sessionId,
         userId,
-        SessionProjection.SessionEnabled
+        SessionProjection.SESSION_ENABLED
       )
     );
     repository.save(
       new SessionProjection(
         new SessionId('SessionB'),
         new UserId('user2@mix-it.fr'),
-        SessionProjection.SessionEnabled
+        SessionProjection.SESSION_ENABLED
       )
     );
 
     expect(repository.getUserIdOfSession(sessionId)).to.eql(userId);
   });
 
-  it('Given user disconnected When getUserIdOfSession Then return empty', function() {
+  it('Given user disconnected When getUserIdOfSession Then return empty', () => {
     repository.save(
       new SessionProjection(
         sessionId,
         userId,
-        SessionProjection.SessionDisabled
+        SessionProjection.SESSION_DISABLED
       )
     );
 
     expect(repository.getUserIdOfSession(sessionId)).to.be.null;
   });
 
-  it('Given already projection When save same projection Then update projection', function() {
+  it('Given already projection When save same projection Then update projection', () => {
     repository.save(
       new SessionProjection(
         sessionId,
         userId,
-        SessionProjection.SessionEnabled
+        SessionProjection.SESSION_ENABLED
       )
     );
 
@@ -67,14 +67,14 @@ describe('Sessions Repository', function() {
       new SessionProjection(
         sessionId,
         userId,
-        SessionProjection.SessionDisabled
+        SessionProjection.SESSION_DISABLED
       )
     );
 
     expect(repository.getUserIdOfSession(sessionId)).to.be.null;
   });
 
-  it('Given UserConnected When getSession Then return Session aggregate', function() {
+  it('Given UserConnected When getSession Then return Session aggregate', () => {
     const userConnected = new UserConnected(
       sessionId,
       userId,
@@ -82,13 +82,13 @@ describe('Sessions Repository', function() {
     );
     eventsStore.store(userConnected);
 
-    var userSession = repository.getSession(userConnected.sessionId);
+    const userSession = repository.getSession(userConnected.sessionId);
 
     expect(userSession).not.to.empty;
   });
 
-  it('Given no events When getSession Then throw UnknownSession', function() {
-    expect(function() {
+  it('Given no events When getSession Then throw UnknownSession', () => {
+    expect(() => {
       repository.getSession(sessionId);
     }).to.throw(UnknownSession);
   });

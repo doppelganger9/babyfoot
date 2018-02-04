@@ -1,4 +1,4 @@
-import { Event } from "..";
+import { Event } from '..';
 
 export type DecisionApplierFunction = (
   this: DecisionProjection,
@@ -6,23 +6,21 @@ export type DecisionApplierFunction = (
 ) => void;
 
 export class DecisionProjection {
-  data: Map<string, any>;
-  handlers: Map<string, (event: Event) => void>;
-  constructor() {
-    this.handlers = new Map<string, DecisionApplierFunction>();
-    this.data = new Map<string, any>();
-  }
+  constructor(
+    public data: Map<string, any> = new Map<string, DecisionApplierFunction>(),
+    public handlers: Map<string, (event: Event) => void> = new Map<string,any>(),
+  ) {}
 
-  register(
+  public register(
     eventType: string,
-    action: DecisionApplierFunction
+    action: DecisionApplierFunction,
   ): DecisionProjection {
     this.handlers.set(eventType, action);
 
     return this;
   }
 
-  apply(events: Array<Event> | Event): DecisionProjection {
+  public apply(events: Array<Event> | Event): DecisionProjection {
     if (events instanceof Array) {
       events.forEach(it => this.apply(it));
       return this;

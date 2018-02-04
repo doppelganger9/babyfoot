@@ -1,0 +1,8 @@
+plugins:
+  tslint:
+    enabled: true
+    config: tslint.json
+  markdownlint:
+    enabled: false
+  fixme:
+    enabled: true

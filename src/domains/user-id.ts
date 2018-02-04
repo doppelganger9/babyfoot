@@ -9,17 +9,14 @@ export class UserEmailCannotBeEmpty extends Error {
 }
 
 export class UserId extends ValueType {
-  email: string;
-  constructor(email: string) {
+  constructor(public email: string) {
     super();
     if (!email) {
       throw new UserEmailCannotBeEmpty();
     }
-
-    this.email = email;
   }
 
-  toString() {
+  public toString() {
     return 'UserId:' + this.email;
   }
 }

@@ -21,8 +21,8 @@ export class GamesRepository {
    * returns all events for a given GameId.
    * @param gameId filter
    */
-  getAllEvents(gameId: GameId): Array<Event> {
-    var events: Array<Event> = this.eventsStore.getEventsOfAggregate(gameId);
+  public getAllEvents(gameId: GameId): Array<Event> {
+    const events: Array<Event> = this.eventsStore.getEventsOfAggregate(gameId);
     if (!events.length) {
       throw new UnknownGameError(gameId);
     }
@@ -30,7 +30,7 @@ export class GamesRepository {
     return events;
   }
 
-  save(projection: GameListItemProjection): void {
+  public save(projection: GameListItemProjection): void {
     this.projections.get('list').push(projection);
   }
 
@@ -39,8 +39,8 @@ export class GamesRepository {
    * The Game Aggregate is created from events (event sourcing).
    * @param gameId filter
    */
-  getGame(gameId: GameId): Game {
-    var events: Event[] = this.getAllEvents(gameId);
+  public getGame(gameId: GameId): Game {
+    const events: Array<Event> = this.getAllEvents(gameId);
     return new Game(events);
   }
 
@@ -48,7 +48,7 @@ export class GamesRepository {
    * returns all the Game Aggregates.
    * The Game Aggregate list is created from all events (event sourcing).
    */
-  getGames(): Array<GameListItemProjection> {
+  public getGames(): Array<GameListItemProjection> {
     return this.projections.get('list');
   }
 }

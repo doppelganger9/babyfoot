@@ -1,5 +1,5 @@
 import { Session, UserConnected, UserDisconnected, SessionId } from './session';
-//import { UserIdentity } from '../user-identity';
+// import { UserIdentity } from '../user-identity';
 import { UserId } from '../user-id';
 import { expect } from 'chai';
 import { EventPublisher, Event } from '../..';
@@ -14,7 +14,7 @@ describe('Session Aggregate', () => {
       super();
 
     }
-    publish(evt: Event): void {
+    public publish(evt: Event): void {
       eventsRaised.push(evt);
     }
   }
@@ -29,18 +29,18 @@ describe('Session Aggregate', () => {
   });
 
   it('When user logout Then raise UserDisconnected event', () => {
-    var userSession = new Session(
+    const userSession = new Session(
       new UserConnected(sessionId, userId, new Date())
     );
 
     userSession.logOut(publishEvent);
 
-    var expectedEvent = new UserDisconnected(sessionId, userId);
+    const expectedEvent = new UserDisconnected(sessionId, userId);
     expect(JSON.stringify(eventsRaised[0])).to.equal(JSON.stringify(expectedEvent));
   });
 
   it('Given user disconnected When user log out Then nothing', () => {
-    var userSession = new Session([
+    const userSession = new Session([
       new UserConnected(sessionId, userId, new Date()),
       new UserDisconnected(sessionId, userId)
     ]);
@@ -51,13 +51,13 @@ describe('Session Aggregate', () => {
   });
 
   it('When create UserConnected Then aggregateId is sessionId', () => {
-    var event = new UserConnected(sessionId, userId, new Date());
+    const event = new UserConnected(sessionId, userId, new Date());
 
     expect(event.getAggregateId()).to.equal(sessionId);
   });
 
   it('When create UserDisconnected Then aggregateId is sessionId', () => {
-    var event = new UserDisconnected(sessionId, userId);
+    const event = new UserDisconnected(sessionId, userId);
 
     expect(event.getAggregateId()).to.equal(sessionId);
   });

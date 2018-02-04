@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { GameId } from './game-id';
+import { GameId } from '../game-id';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;

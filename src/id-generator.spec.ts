@@ -1,8 +1,8 @@
 import { generateUUID } from './id-generator';
 import { expect } from 'chai';
 
-describe('idGenerator', function() {
-  it('When generate several id Then return always different id', function() {
+describe('idGenerator', () => {
+  it('When generate several id Then return always different id', () => {
     const id1 = generateUUID();
     const id2 = generateUUID();
 

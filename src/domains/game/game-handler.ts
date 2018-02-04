@@ -19,18 +19,18 @@ export class GameHandler {
 
   constructor(private gamesRepository: GamesRepository) {}
 
-  saveProjection(event: GameCreated) {
-    var projection = new GameListItemProjection(
+  public saveProjection(event: GameCreated) {
+    const projection = new GameListItemProjection(
       event.gameId,
       event.timestamp,
     );
     this.gamesRepository.save(projection);
   }
 
-  register(eventPublisher: EventPublisher) {
+  public register(eventPublisher: EventPublisher) {
     eventPublisher
       .on(GameCreated, (event: GameCreated) => {
         this.saveProjection(event);
-      })
+      });
   }
 }

@@ -4,23 +4,23 @@ import { Event } from '..';
 
 describe('DecisionProjection', () => {
   class EventA implements Event {
-    userId: string;
+    public userId: string;
     constructor() {
       this.userId = 'UserA';
     }
-    getAggregateId() {}
+    public getAggregateId() { return this.userId; }
   }
 
   class EventB implements Event {
-    valueB: string;
+    public valueB: string;
     constructor() {
       this.valueB = 'ValueB';
     }
-    getAggregateId() {}
+    public getAggregateId() { return this.valueB; }
   }
 
   it('When register Event Then call action on apply of this event', () => {
-    let projection = new DecisionProjection()
+    const projection = new DecisionProjection()
       .register('EventA', function(event) {
         this.data.set('isCalled', true);
       })
@@ -30,7 +30,7 @@ describe('DecisionProjection', () => {
   });
 
   it('Given several event registered When apply Then call good handler for each event', () => {
-    let projection = new DecisionProjection()
+    const projection = new DecisionProjection()
       .register('EventA', function(event: EventA) {
         this.data.set('userId', event.userId);
       })
@@ -44,7 +44,7 @@ describe('DecisionProjection', () => {
   });
 
   it('When apply an event not registered Then nothing', () => {
-    let projection = new DecisionProjection().apply(new EventA());
+    const projection = new DecisionProjection().apply(new EventA());
 
     expect(projection.data.get('userId')).to.be.undefined;
   });

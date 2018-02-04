@@ -1,8 +1,8 @@
 export abstract class ValueType {
 
-  abstract toString(): string;
+  public abstract toString(): string;
 
-  equals(other: ValueType): boolean {
+  public equals(other: ValueType): boolean {
     if (!other) {
       return false;
     }

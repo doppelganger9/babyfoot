@@ -9,21 +9,22 @@ import {
 } from '../..';
 
 export class UserRegistered implements Event {
-  userId: UserId;
-
-  constructor(userId: UserId) {
-    this.userId = userId;
-
+  constructor(public userId: UserId) {
     Object.freeze(this);
   }
-
-  getAggregateId() {
+  public getAggregateId() {
     return this.userId;
   }
 }
 
 export class UserIdentity {
-  projection: DecisionProjection;
+
+  public static register(eventPublisher: EventPublisher, email: string): void {
+    const id = new UserId(email);
+    eventPublisher.publish(new UserRegistered(id));
+  }
+
+  public projection: DecisionProjection;
 
   constructor(events: Array<Event>) {
     this.projection = new DecisionProjection()
@@ -36,12 +37,7 @@ export class UserIdentity {
       .apply(events);
   }
 
-  logIn(publishEvent: EventPublisher): SessionId {
+  public logIn(publishEvent: EventPublisher): SessionId {
     return Session.logIn(publishEvent, this.projection.data.get('id'));
-  }
-
-  static register(eventPublisher: EventPublisher, email: string): void {
-    var id = new UserId(email);
-    eventPublisher.publish(new UserRegistered(id));
   }
 }

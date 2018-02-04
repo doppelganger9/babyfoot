@@ -1,4 +1,4 @@
-import { GameId } from "../..";
+import { GameId } from '../..';
 
 /**
  * This class is a custom Error.

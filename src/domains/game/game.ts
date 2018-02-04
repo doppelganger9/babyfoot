@@ -1,13 +1,18 @@
 import {
+  TeamColors,
+  Player,
+  PositionValue,
+  GameId
+} from './game-id';
+import {
   Event,
   ValueType,
   generateUUID,
   DecisionProjection,
   DecisionApplierFunction,
   EventPublisher,
-  PlayerChangedPositionOnGame,
-  SomeoneReviewedTheGame,
-  SomeoneAddedACommentOnGame,
+} from '../..';
+import {
   GameIsDeletedError,
   GameAlreadyStartedError,
   GameAlreadyEndedError,
@@ -16,8 +21,9 @@ import {
   UnknownPlayerError,
   MissingAuthorForReviewError,
   ReviewTooLongError,
-  GameNotEndedError
-} from '../..';
+  GameNotEndedError,
+  IncorrectReviewStarsError,
+} from './errors';
 import {
   GameCreated,
   GameDeleted,
@@ -26,33 +32,147 @@ import {
   GameUpdated,
   PlayerAddedToGameWithTeam,
   PlayerRemovedFromGame,
+  PlayerChangedPositionOnGame,
+  SomeoneReviewedTheGame,
+  SomeoneAddedACommentOnGame,
   AddedGoalFromPlayerToGame
 } from './events';
-import { IncorrectReviewStarsError } from './errors/incorrect-review-stars-error';
 
-export type PositionValue = 'goal' | 'defenseurs' | 'demis' | 'attaquants';
-export type TeamColors = 'red' | 'blue';
-export type Player = string;
+/*** AGGREGATE CONSTRUCTOR EVENT APPLIERS ***/
+function applyGameCreated(this: DecisionProjection, event: GameCreated): void {
+  // BEWARE: this is bound to the DecisionProjection object, not the Game instance.
+  this.data.set('id', event.gameId);
+  this.data.set('isDeleted', false);
+  this.data.set('players', []);
+  this.data.set('teamBlueMembers', []);
+  this.data.set('teamRedMembers', []);
+}
 
-/************** VALUE TYPES **************/
-// see errors/*.ts
+function applyGameDeleted(this: DecisionProjection, event: GameDeleted): void {
+  this.data.set('isDeleted', true);
+}
 
-export class GameId extends ValueType {
-  constructor(public id: string) {
-    super();
+function applyGameStarted(this: DecisionProjection, event: GameStarted): void {
+  this.data.set('currentStartDatetime', event.date);
+  this.data.set('pointsTeamRed', 0);
+  this.data.set('pointsTeamBlue', 0);
+}
+
+function applyGameEnded(this: DecisionProjection, event: GameEnded): void {
+  this.data.set('currentEndDatetime', event.date);
+  this.data.set(
+    'duration',
+    this.data.get('currentEndDatetime').getTime() -
+      this.data.get('currentStartDatetime').getTime()
+  );
+}
+
+function applyPlayerRemovedFromGame(
+  this: DecisionProjection,
+  event: PlayerRemovedFromGame
+): void {
+  this.data.set(
+    'players',
+    this.data.get('players').filter((it: string) => it !== event.player)
+  );
+  if (this.data.get('teamBlueMembers').includes(event.player)) {
+    this.data.set(
+      'teamBlueMembers',
+      this.data
+        .get('teamBlueMembers')
+        .filter((it: string) => it !== event.player)
+    );
   }
-
-  toString(): string {
-    return 'Game:' + this.id;
+  if (this.data.get('teamRedMembers').includes(event.player)) {
+    this.data.set(
+      'teamRedMembers',
+      this.data
+        .get('teamRedMembers')
+        .filter((it: string) => it !== event.player)
+    );
   }
 }
 
+function applyPlayerAddedToGameWithTeam(
+  this: DecisionProjection,
+  event: PlayerAddedToGameWithTeam
+): void {
+  if (!this.data.get('players').includes(event.player)) {
+    this.data.get('players').push(event.player);
+  }
+  if (event.team === 'red') {
+    if (!this.data.get('teamRedMembers').includes(event.player)) {
+      this.data.get('teamRedMembers').push(event.player);
+    }
+    if (this.data.get('teamBlueMembers').includes(event.player)) {
+      this.data.set(
+        'teamBlueMembers',
+        this.data
+          .get('teamBlueMembers')
+          .filter((it: string) => it !== event.player)
+      );
+    }
+  } else {
+    if (!this.data.get('teamBlueMembers').includes(event.player)) {
+      this.data.get('teamBlueMembers').push(event.player);
+    }
+    if (this.data.get('teamRedMembers').includes(event.player)) {
+      this.data.set(
+        'teamRedMembers',
+        this.data
+          .get('teamRedMembers')
+          .filter((it: string) => it !== event.player)
+      );
+    }
+  }
+}
+
+function applyAddedGoalFromPlayerToGame(
+  this: DecisionProjection,
+  event: AddedGoalFromPlayerToGame
+): void {
+  if (this.data.get('teamRedMembers').includes(event.player)) {
+    this.data.set('pointsTeamRed', this.data.get('pointsTeamRed') + 1);
+  } else {
+    this.data.set('pointsTeamBlue', this.data.get('pointsTeamBlue') + 1);
+  }
+  this.data.set(
+    'winner',
+    this.data.get('pointsTeamRed') > this.data.get('pointsTeamBlue')
+      ? 'red'
+      : this.data.get('pointsTeamRed') === this.data.get('pointsTeamBlue')
+        ? undefined
+        : 'blue'
+  );
+}
+
+function applyPlayerChangedPositionOnGame(
+  this: DecisionProjection,
+  event: PlayerChangedPositionOnGame
+): void {
+  console.error('not implemented yet');
+}
+
+function applySomeoneAddedACommentOnGame(
+  this: DecisionProjection,
+  event: SomeoneAddedACommentOnGame
+): void {
+  console.error('not implemented yet');
+}
+
+function applySomeoneReviewedTheGame(
+  this: DecisionProjection,
+  event: SomeoneReviewedTheGame
+): void {
+  console.error('not implemented yet');
+}
+
+/************** VALUE TYPES **************/
+// see errors/*.ts
+// se game-id.ts
 /************** EVENTS **************/
-
 // see events.ts
-
 /************** AGGREGATES **************/
-
 export class Game {
   projection: DecisionProjection;
 
@@ -89,7 +209,7 @@ export class Game {
     return this.projection.data.get('pointsTeamBlue');
   }
 
-  get winner(): 'red' | 'blue' {
+  get winner(): TeamColors {
     return this.projection.data.get('winner');
   }
 
@@ -107,144 +227,16 @@ export class Game {
 
   constructor(events: Array<Event> | Event) {
     this.projection = new DecisionProjection()
-      .register('GameCreated', function(
-        this: DecisionProjection,
-        event: GameCreated
-      ): void {
-        // BEWARE: this is bound to the DecisionProjection object, not the Game instance.
-        this.data.set('id', event.gameId);
-        this.data.set('isDeleted', false);
-        this.data.set('players', []);
-        this.data.set('teamBlueMembers', []);
-        this.data.set('teamRedMembers', []);
-      } as DecisionApplierFunction)
-      .register('GameDeleted', function(
-        this: DecisionProjection,
-        event: GameDeleted
-      ): void {
-        this.data.set('isDeleted', true);
-      } as DecisionApplierFunction)
-      .register('GameStarted', function(
-        this: DecisionProjection,
-        event: GameStarted
-      ): void {
-        // this.data.set('');
-        this.data.set('currentStartDatetime', event.date);
-        this.data.set('pointsTeamRed', 0);
-        this.data.set('pointsTeamBlue', 0);
-      } as DecisionApplierFunction)
-      .register('GameEnded', function(
-        this: DecisionProjection,
-        event: GameEnded
-      ): void {
-        // this.data.set('');
-        this.data.set('currentEndDatetime', event.date);
-        this.data.set(
-          'duration',
-          this.data.get('currentEndDatetime').getTime() -
-            this.data.get('currentStartDatetime').getTime()
-        );
-      } as DecisionApplierFunction)
-      .register('PlayerRemovedFromGame', function(
-        this: DecisionProjection,
-        event: PlayerRemovedFromGame
-      ): void {
-        this.data.set(
-          'players',
-          this.data.get('players').filter((it: string) => it !== event.player)
-        );
-        if (this.data.get('teamBlueMembers').includes(event.player)) {
-          this.data.set(
-            'teamBlueMembers',
-            this.data
-              .get('teamBlueMembers')
-              .filter((it: string) => it !== event.player)
-          );
-        }
-        if (this.data.get('teamRedMembers').includes(event.player)) {
-          this.data.set(
-            'teamRedMembers',
-            this.data
-              .get('teamRedMembers')
-              .filter((it: string) => it !== event.player)
-          );
-        }
-      } as DecisionApplierFunction)
-      .register('PlayerAddedToGameWithTeam', function(
-        this: DecisionProjection,
-        event: PlayerAddedToGameWithTeam
-      ): void {
-        if (!this.data.get('players').includes(event.player)) {
-          this.data.get('players').push(event.player);
-        }
-        if (event.team === 'red') {
-          if (!this.data
-              .get('teamRedMembers')
-              .includes(event.player)) {
-            this.data.get('teamRedMembers').push(event.player);
-          }
-          if (this.data.get('teamBlueMembers').includes(event.player)) {
-            this.data.set(
-              'teamBlueMembers',
-              this.data
-                .get('teamBlueMembers')
-                .filter((it: string) => it !== event.player)
-            );
-          }
-        } else {
-          if (!this.data
-            .get('teamBlueMembers')
-            .includes(
-            event.player
-            )) {
-            this.data.get('teamBlueMembers').push(event.player);
-          }
-          if (this.data.get('teamRedMembers').includes(event.player)) {
-            this.data.set(
-              'teamRedMembers',
-              this.data
-                .get('teamRedMembers')
-                .filter((it: string) => it !== event.player)
-            );
-          }
-        }
-      } as DecisionApplierFunction)
-      .register('AddedGoalFromPlayerToGame', function(
-        this: DecisionProjection,
-        event: AddedGoalFromPlayerToGame
-      ): void {
-        if (this.data.get('teamRedMembers').includes(event.player)) {
-          this.data.set('pointsTeamRed', this.data.get('pointsTeamRed') + 1);
-        } else {
-          this.data.set('pointsTeamBlue', this.data.get('pointsTeamBlue') + 1);
-        }
-        this.data.set(
-          'winner',
-          this.data.get('pointsTeamRed') > this.data.get('pointsTeamBlue')
-            ? 'red'
-            : this.data.get('pointsTeamRed') === this.data.get('pointsTeamBlue')
-              ? undefined
-              : 'blue'
-        );
-      } as DecisionApplierFunction)
-      .register('PlayerChangedPositionOnGame', function(
-        this: DecisionProjection,
-        event: PlayerChangedPositionOnGame
-      ): void {
-        console.error('not implemented yet');
-      } as DecisionApplierFunction)
-      .register('SomeoneAddedACommentOnGame', function(
-        this: DecisionProjection,
-        event: SomeoneAddedACommentOnGame
-      ): void {
-        console.error('not implemented yet');
-      } as DecisionApplierFunction)
-      .register('SomeoneReviewedTheGame', function(
-        this: DecisionProjection,
-        event: SomeoneReviewedTheGame
-      ): void {
-        console.error('not implemented yet');
-      } as DecisionApplierFunction)
+      .register('GameCreated', applyGameCreated as DecisionApplierFunction)
+      .register('GameDeleted', applyGameDeleted as DecisionApplierFunction)
+      .register('GameStarted', applyGameStarted as DecisionApplierFunction)
+      .register('GameEnded', applyGameEnded as DecisionApplierFunction)
+      .register('PlayerRemovedFromGame', applyPlayerRemovedFromGame as DecisionApplierFunction)
+      .register('PlayerAddedToGameWithTeam', applyPlayerAddedToGameWithTeam as DecisionApplierFunction)
+      .register('AddedGoalFromPlayerToGame', applyAddedGoalFromPlayerToGame as DecisionApplierFunction)
+      .register('PlayerChangedPositionOnGame', applyPlayerChangedPositionOnGame as DecisionApplierFunction)
+      .register('SomeoneAddedACommentOnGame', applySomeoneAddedACommentOnGame as DecisionApplierFunction)
+      .register('SomeoneReviewedTheGame', applySomeoneReviewedTheGame as DecisionApplierFunction)
       .apply(events);
   }
 
@@ -325,7 +317,11 @@ export class Game {
     throw new Error('not implemented');
   }
 
-  changeUserPositionOnGame(eventPublisher: EventPublisher, player: string, position: PositionValue) {
+  changeUserPositionOnGame(
+    eventPublisher: EventPublisher,
+    player: string,
+    position: PositionValue
+  ) {
     if (this.isDeleted) throw new GameIsDeletedError(this.id);
     if (!this.currentStartDatetime) throw new GameNotStartedError(this.id);
     if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
@@ -342,13 +338,23 @@ export class Game {
     const event = new SomeoneAddedACommentOnGame(author, comment, this.id);
     eventPublisher.publish(event);
   }
-  reviewGame(eventPublisher: EventPublisher, review: string, stars: number, author: string) {
+  reviewGame(
+    eventPublisher: EventPublisher,
+    review: string,
+    stars: number,
+    author: string
+  ) {
     if (this.isDeleted) throw new GameIsDeletedError(this.id);
     if (stars <= 0) throw new IncorrectReviewStarsError(this.id, stars);
     if (stars > 5) throw new IncorrectReviewStarsError(this.id, stars);
     if (!author) throw new MissingAuthorForReviewError(this.id);
-    if (review && review.length>500) throw new ReviewTooLongError(this.id, review.length)
-    if (!this.currentEndDatetime || this.currentEndDatetime.getTime() > new Date().getTime()) throw new GameNotEndedError(this.id);
+    if (review && review.length > 500)
+      throw new ReviewTooLongError(this.id, review.length);
+    if (
+      !this.currentEndDatetime ||
+      this.currentEndDatetime.getTime() > new Date().getTime()
+    )
+      throw new GameNotEndedError(this.id);
 
     const event = new SomeoneReviewedTheGame(author, review, stars, this.id);
     eventPublisher.publish(event);

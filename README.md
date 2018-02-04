@@ -72,7 +72,8 @@ Well, I'm honored you are even thinking about contributing to this project 🤗
 
 I do not have set up a proper CONTRIBUTING.md guide 🤭 so let's just say all contributions are welcomed 😉.
 You should follow our Code of Conduct 🤝.
-Use the GitHub platform 😎: 
+Use the GitHub platform 😎:
+
 - open an issue for discussion
 - create a Pull Request
 - do your best for the automated checks to pass before merging is possible

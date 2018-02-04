@@ -1,5 +1,5 @@
+import { GameId } from '../game-id';
 import { GameEvent } from './game-event';
-import { GameId } from '../../..';
 
 export class GameDeleted extends GameEvent {
   constructor(id: GameId) {

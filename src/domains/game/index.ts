@@ -1,3 +1,4 @@
 export * from './events';
 export * from './errors';
-export * from './game';
+export { GameId, PositionValue, TeamColors, Player} from './game-id';
+export { Game } from './game';

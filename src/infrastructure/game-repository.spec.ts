@@ -1,10 +1,12 @@
 import { expect } from 'chai';
-import { GamesRepository, EventsStore, GameCreated, UnknownGame, GameStarted, GameEnded } from '../index';
-import { Game, GameId } from '../domains/game/game';
+import { GameCreated, GameStarted, GameEnded } from '../domains/game/events';
+import { UnknownGameError } from './errors';
+import { GamesRepository, EventsStore } from '.';
+import { Game } from '../domains/game/game';
+import { GameId } from '../domains/game/game-id';
 import { GameListItemProjection } from '../domains/game/game-list-item-projection';
 
 describe('Games Repository', () => {
-
   let eventsStore: EventsStore;
   let repository: GamesRepository;
   let projections: Map<string, any>;
@@ -26,16 +28,18 @@ describe('Games Repository', () => {
     expect(userGame).not.to.empty;
   });
 
-  it('Given no events When getGame Then throw UnknownGame', () => {
+  it('Given no events When getGame Then throw UnknownGameError', () => {
     expect(() => {
       repository.getGame(gameId);
-    }).to.throw(UnknownGame);
+    }).to.throw(UnknownGameError);
   });
 
   it('Given huge list of events When getGames Then return list of games (.001ms per Game)', () => {
     const max = 50000;
     for (let i = 0; i < max; i++) {
-      repository.save(new GameListItemProjection(new GameId('Game'+i), new Date()));
+      repository.save(
+        new GameListItemProjection(new GameId('Game' + i), new Date())
+      );
     }
     const t0 = new Date().getTime();
     const list = repository.getGames();
@@ -50,5 +54,4 @@ describe('Games Repository', () => {
     expect(list[3].gameId.id).to.equal('Game3');
     expect(list[4].gameId.id).to.equal('Game4');
   });
-
 });

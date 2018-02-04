@@ -1,4 +1,4 @@
-import { GameId } from '..';
+import { GameId } from '../game-id';
 import { Event } from '../../..';
 
 export abstract class GameEvent implements Event {

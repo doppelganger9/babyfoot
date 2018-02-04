@@ -1,21 +1,8 @@
-import { UserId, Event, EventsStore } from '..';
-import { Game, GameId } from '../domains/game';
+import { Event, EventsStore } from '..';
+import { Game } from '../domains/game/game';
+import { GameId } from '../domains/game/game-id';
 import { GameListItemProjection } from '../domains/game/game-list-item-projection';
-
-/**
- * This class is a custom Error.
- * NOTE: In typescript there is a problem with the prototype chain, so we need a little hack to keep it.
- * see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
- */
-export class UnknownGame extends Error {
-  gameId: GameId;
-
-  constructor(gameId: GameId) {
-    super();
-    this.gameId = gameId;
-    Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
-  }
-}
+import { UnknownGameError } from './errors';
 
 /**
  * This class stores all Game projections.
@@ -37,7 +24,7 @@ export class GamesRepository {
   getAllEvents(gameId: GameId): Array<Event> {
     var events: Array<Event> = this.eventsStore.getEventsOfAggregate(gameId);
     if (!events.length) {
-      throw new UnknownGame(gameId);
+      throw new UnknownGameError(gameId);
     }
 
     return events;

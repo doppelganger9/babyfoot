@@ -2,7 +2,8 @@ import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
-import { Game, GameId } from '.';
+import { Game } from './game';
+import { GameId, Player, TeamColors, PositionValue } from './game-id';
 import {
   GameCreated,
   GameDeleted,
@@ -11,25 +12,27 @@ import {
   GameUpdated,
   PlayerAddedToGameWithTeam,
   PlayerRemovedFromGame,
-  AddedGoalFromPlayerToGame
+  AddedGoalFromPlayerToGame,
+  PlayerChangedPositionOnGame,
+  SomeoneAddedACommentOnGame,
+  SomeoneReviewedTheGame,
 } from './events';
 import {
   Event,
   EventPublisher,
   generateUUID,
+} from '../..';
+import {
   GameAlreadyEndedError,
   GameAlreadyStartedError,
   GameIsDeletedError,
   GameNotStartedError,
   UnknownPlayerError,
-  PlayerChangedPositionOnGame,
-  SomeoneAddedACommentOnGame,
-  SomeoneReviewedTheGame,
   IncorrectReviewStarsError,
   MissingAuthorForReviewError,
   ReviewTooLongError,
   GameNotEndedError
-} from '../..';
+} from './errors';
 
 describe('Game', () => {
   let t: Game;
@@ -48,12 +51,6 @@ describe('Game', () => {
 
   beforeEach(() => {
     eventsRaised = [];
-  });
-
-  describe('GameId', () => {
-    it('When create GameId Then toString returns id', () => {
-      expect(gameId.toString()).to.eql('Game:game1');
-    });
   });
 
   describe('.create should', () => {
@@ -198,10 +195,6 @@ describe('Game', () => {
       t.removePlayerFromGame(simpleEventPublisher, 'toto');
       expect(eventsRaised.length).to.equal(1);
       expect(eventsRaised.pop()).to.be.an.instanceOf(PlayerRemovedFromGame);
-      // projections assertions (move this in other tests dedicated to apply/projections?)
-      // expect(t.players.includes('toto')).to.be.false;
-      // expect(t.teamRedMembers.includes('toto')).to.be.false;
-      // expect(t.teamBlueMembers.includes('toto')).to.be.false;
     });
   });
   describe('.addPlayerToGameWithTeam should', () => {
@@ -346,7 +339,6 @@ describe('Game', () => {
 
       expect(eventsRaised.length).to.equal(1);
       expect(eventsRaised.pop()).to.be.an.instanceOf(PlayerAddedToGameWithTeam);
-      // projections assertions (move this in other tests dedicated to apply/projections?)
     });
 
     it('switch team for a player previously added to other team (red to blue)', () => {
@@ -355,7 +347,6 @@ describe('Game', () => {
       history.push(new PlayerAddedToGameWithTeam('toto', 'blue', gameId));
       history.push(new PlayerAddedToGameWithTeam('toto', 'red', gameId));
       t = new Game(history);
-      // projections assertions (move this in other tests dedicated to apply/projections?)
       expect(t.players.includes('toto')).to.be.true;
       expect(t.teamBlueMembers.includes('toto')).to.be.false;
       expect(t.teamRedMembers.includes('toto')).to.be.true;
@@ -390,9 +381,6 @@ describe('Game', () => {
       t = new Game(history);
       expect(() => t.endGame(simpleEventPublisher)).to.throw(Error);
       expect(eventsRaised.length).to.equal(0);
-      //const e = history.pop();
-      //expect(e).to.be.an.instanceOf(GameStarted);
-      // NOTE the above test fails? why?
     });
     it('not emit GameEnded on a deleted Game', () => {
       let history: Array<Event> = [];

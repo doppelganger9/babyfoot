@@ -1,4 +1,4 @@
-import { GameId, TeamColors } from '../..';
+import { GameId, TeamColors } from '../game-id';
 
 /**
  * NOTE, to extend Errors and preserve prototype chain,

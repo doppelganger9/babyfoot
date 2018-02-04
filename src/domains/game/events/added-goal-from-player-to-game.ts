@@ -1,5 +1,5 @@
+import { GameId, Player } from '../game-id';
 import { GameEvent } from './game-event';
-import { GameId, Player } from '../../..';
 
 export class AddedGoalFromPlayerToGame extends GameEvent {
   constructor(public player: Player, id: GameId) {

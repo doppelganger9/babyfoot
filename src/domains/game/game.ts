@@ -75,20 +75,24 @@ function applyPlayerRemovedFromGame(
     'players',
     this.data.get('players').filter((it: string) => it !== event.player)
   );
-  if (this.data.get('teamBlueMembers').includes(event.player)) {
-    this.data.set(
-      'teamBlueMembers',
-      this.data
-        .get('teamBlueMembers')
-        .filter((it: string) => it !== event.player)
-    );
-  }
-  if (this.data.get('teamRedMembers').includes(event.player)) {
-    this.data.set(
-      'teamRedMembers',
-      this.data
-        .get('teamRedMembers')
-        .filter((it: string) => it !== event.player)
+  removePlayerIfPresentFromTeamInProjection(this, 'blue', event);
+  removePlayerIfPresentFromTeamInProjection(this, 'red', event);
+}
+
+function removePlayerIfPresentFromTeamInProjection(
+  dp: DecisionProjection,
+  color: TeamColors,
+  event: PlayerRemovedFromGame
+) {
+  const team =
+    'team' +
+    color.substring(0, 1).toUpperCase() +
+    color.substring(1).toLowerCase() +
+    'Members';
+  if (dp.data.get(team).includes(event.player)) {
+    dp.data.set(
+      team,
+      dp.data.get(team).filter((it: string) => it !== event.player)
     );
   }
 }
@@ -104,26 +108,12 @@ function applyPlayerAddedToGameWithTeam(
     if (!this.data.get('teamRedMembers').includes(event.player)) {
       this.data.get('teamRedMembers').push(event.player);
     }
-    if (this.data.get('teamBlueMembers').includes(event.player)) {
-      this.data.set(
-        'teamBlueMembers',
-        this.data
-          .get('teamBlueMembers')
-          .filter((it: string) => it !== event.player)
-      );
-    }
+    removePlayerIfPresentFromTeamInProjection(this, 'blue', event);
   } else {
     if (!this.data.get('teamBlueMembers').includes(event.player)) {
       this.data.get('teamBlueMembers').push(event.player);
     }
-    if (this.data.get('teamRedMembers').includes(event.player)) {
-      this.data.set(
-        'teamRedMembers',
-        this.data
-          .get('teamRedMembers')
-          .filter((it: string) => it !== event.player)
-      );
-    }
+    removePlayerIfPresentFromTeamInProjection(this, 'red', event);
   }
 }
 

@@ -3,61 +3,59 @@ import { ValueType } from '../value-type';
 import { expect } from 'chai';
 
 describe('EventsStore', () => {
-  let eventsStore : EventsStore;
+  let eventsStore: EventsStore;
   beforeEach(() => {
     eventsStore = new EventsStore();
   });
 
-  class AggregateId extends ValueType {
-    id: string;
-    constructor(id: string) {
+  class TestAggregateId extends ValueType {
+    constructor(public id: string) {
       super();
-      this.id = id;
     }
-    toString(): string {
+    public toString(): string {
       return 'Id:' + this.id;
     }
   }
 
-  class TestEvent implements Event<AggregateId> {
-    aggregateId: AggregateId;
-    num: number;
-    constructor(aggregateId: AggregateId, num: number = 0) {
+  class TestEvent implements Event<TestAggregateId> {
+    constructor(public aggregateId: TestAggregateId, public num: number = 0) {
       this.aggregateId = aggregateId;
       this.num = num;
     }
-    getAggregateId(): AggregateId {
+    public getAggregateId(): TestAggregateId {
       return this.aggregateId;
     }
   }
   class BadEvent implements Event {
-    getAggregateId(): void {
+    public getAggregateId(): void {
+      return;
     }
   }
 
   it('When store event of aggregate Then can get this event of aggregate', () => {
-    const aggregateId = new AggregateId('AggregateA');
+    const aggregateId = new TestAggregateId('AggregateA');
     eventsStore.store(new TestEvent(aggregateId));
 
     const result = eventsStore.getEventsOfAggregate(aggregateId);
 
     expect(result).to.be.of.length(1);
     expect(result[0].getAggregateId()).to.equal(aggregateId);
+    expect(result[0].getAggregateId().toString()).to.equal('Id:AggregateA');
   });
 
   it('When get this event of aggregate Then use equals and not operator', () => {
-    var id = 'AggregateA';
-    eventsStore.store(new TestEvent(new AggregateId(id)));
+    const id = 'AggregateA';
+    eventsStore.store(new TestEvent(new TestAggregateId(id)));
 
-    const result = eventsStore.getEventsOfAggregate(new AggregateId(id));
+    const result = eventsStore.getEventsOfAggregate(new TestAggregateId(id));
 
     expect(result).to.be.of.length(1);
     expect(result[0].getAggregateId().id).to.equal(id);
   });
 
   it('Given events of several aggregates When getEventsOfAggregate Then return events of only this aggregate', () => {
-    const aggregateId1 = new AggregateId('AggregateA');
-    const aggregateId2 = new AggregateId('AggregateB');
+    const aggregateId1 = new TestAggregateId('AggregateA');
+    const aggregateId2 = new TestAggregateId('AggregateB');
     eventsStore.store(new TestEvent(aggregateId1));
     eventsStore.store(new TestEvent(aggregateId2));
     eventsStore.store(new TestEvent(aggregateId1));
@@ -77,8 +75,8 @@ describe('EventsStore', () => {
   });
 
   it('Given several events When GetEventsOfAggregate Then return events and preserve order', () => {
-    const aggregateId1 = new AggregateId('AggregateA');
-    const aggregateId2 = new AggregateId('AggregateB');
+    const aggregateId1 = new TestAggregateId('AggregateA');
+    const aggregateId2 = new TestAggregateId('AggregateB');
     eventsStore.store(new TestEvent(aggregateId1, 1));
     eventsStore.store(new TestEvent(aggregateId1, 2));
     eventsStore.store(new TestEvent(aggregateId1, 3));
@@ -86,6 +84,6 @@ describe('EventsStore', () => {
     const result = eventsStore.getEventsOfAggregate(aggregateId1);
 
     expect(result).to.have.length(3);
-    expect(result.sort((a:TestEvent,b:TestEvent) => a.num - b.num)).to.deep.equals(result);
+    expect(result.sort((a: TestEvent, b: TestEvent) => a.num - b.num)).to.deep.equals(result);
   });
 });

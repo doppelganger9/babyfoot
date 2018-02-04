@@ -1,44 +1,53 @@
 import { EventPublisher } from './event-publisher';
+import { Event } from '..';
 import { expect } from 'chai';
 
 describe('EventPublisher', () => {
-  var publisher;
+  let publisher: EventPublisher;
   beforeEach(() => {
     publisher = new EventPublisher();
   });
 
-  class EventA {
-    value: number;
+  class EventA implements Event {
+    private value: number;
     constructor() {
       this.value = 5;
     }
-  };
-  class EventB {
-    constructor() { }
-  };
+    public getAggregateId() {
+      return this.value;
+    }
+  }
+  class EventB implements Event {
+    public getAggregateId() {
+      return null;
+    }
+  }
 
   it('Given handler When publish Then call handler', () => {
     let called = false;
     publisher.on(EventA, () => called = true);
-
-    publisher.publish(new EventA());
+    const eventA = new EventA();
+    publisher.publish(eventA);
 
     expect(called).to.be.true;
+    expect(eventA.getAggregateId()).to.equal(5);
   });
 
   it('Given different handlers When publish Then call right handler', () => {
-    publisher.on(EventA, () => { throw new Error('Publish EventB, not EventA') });
+    publisher.on(EventA, () => { throw new Error('Publish EventB, not EventA'); });
     let eventBReceived = false;
     publisher.on(EventB, () => eventBReceived = true);
 
-    publisher.publish(new EventB());
+    const eventB = new EventB();
+    publisher.publish(eventB);
 
     expect(eventBReceived).to.be.true;
+    expect(eventB.getAggregateId()).to.be.null;
   });
 
   it('Given handler When publish Then pass event to action', () => {
     let eventReceived;
-    publisher.on(EventA, (event) => eventReceived = event);
+    publisher.on(EventA, event => eventReceived = event);
 
     publisher.publish(new EventA());
 
@@ -47,7 +56,7 @@ describe('EventPublisher', () => {
 
   it('Given handler on all events When publish Then handler is called for all events', () => {
     let calledNb = 0;
-    publisher.onAny(() =>calledNb++);
+    publisher.onAny(() => calledNb++);
 
     publisher.publish(new EventA());
     publisher.publish(new EventB());

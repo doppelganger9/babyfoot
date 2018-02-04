@@ -12,12 +12,12 @@ describe('UserIdentities Repository', () => {
   });
 
   it('Given UserRegistered When getUserIdentity Then return UserIdentity aggregate', () => {
-    var userRegistered = new UserRegistered(
+    const userRegistered = new UserRegistered(
       new UserId('user@mix-it.fr')
     );
     eventsStore.store(userRegistered);
 
-    var user = repository.getUserIdentity(userRegistered.userId);
+    const user = repository.getUserIdentity(userRegistered.userId);
 
     expect(user).not.to.empty;
   });

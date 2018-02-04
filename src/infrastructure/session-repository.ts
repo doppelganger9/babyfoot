@@ -6,11 +6,8 @@ import { UserId, Event, SessionId, EventsStore, Session, SessionProjection } fro
  * see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
  */
 export class UnknownSession extends Error {
-  sessionId: SessionId;
-
-  constructor(sessionId: SessionId) {
+  constructor(public sessionId: SessionId) {
     super();
-    this.sessionId = sessionId;
     Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
   }
 }
@@ -19,10 +16,9 @@ export class UnknownSession extends Error {
  * This class stores all Session projections.
  */
 export class SessionsRepository {
-  projections = new Map();
-  eventsStore: EventsStore;
+  public projections = new Map();
 
-  constructor(eventsStore: EventsStore) {
+  constructor(public eventsStore: EventsStore) {
     this.eventsStore = eventsStore;
   }
 
@@ -30,8 +26,8 @@ export class SessionsRepository {
    * return the UserId linked to a SessionId in the repository
    * @param sessionId the id to search for
    */
-  getUserIdOfSession(sessionId: SessionId): UserId | null {
-    var projection = this.projections.get(sessionId);
+  public getUserIdOfSession(sessionId: SessionId): UserId | null {
+    const projection = this.projections.get(sessionId);
     if (!projection || !projection.isEnabled) {
       return null;
     }
@@ -42,7 +38,7 @@ export class SessionsRepository {
   /**
    * @param projection projection to save in repository
    */
-  save(projection: SessionProjection): void {
+  public save(projection: SessionProjection): void {
     this.projections.set(projection.sessionId, projection);
   }
 
@@ -50,8 +46,8 @@ export class SessionsRepository {
    * returns all events for a given SessionId.
    * @param sessionId filter
    */
-  getAllEvents(sessionId: SessionId): Array<Event> {
-    var events: Array<Event> = this.eventsStore.getEventsOfAggregate(sessionId);
+  public getAllEvents(sessionId: SessionId): Array<Event> {
+    const events: Array<Event> = this.eventsStore.getEventsOfAggregate(sessionId);
     if (!events.length) {
       throw new UnknownSession(sessionId);
     }
@@ -64,8 +60,8 @@ export class SessionsRepository {
    * The Session Aggregate is created from events (event sourcing).
    * @param sessionId filter
    */
-  getSession(sessionId: SessionId): Session {
-    var events: Event[] = this.getAllEvents(sessionId);
+  public getSession(sessionId: SessionId): Session {
+    const events: Array<Event> = this.getAllEvents(sessionId);
     return new Session(events);
   }
 }

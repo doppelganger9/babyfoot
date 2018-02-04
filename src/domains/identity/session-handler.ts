@@ -16,14 +16,11 @@ import {
  * which is injected in this class' constructor.
  */
 export class SessionHandler {
-  sessionsRepository: SessionsRepository;
-
-  constructor(sessionsRepository: SessionsRepository) {
-    this.sessionsRepository = sessionsRepository;
+  constructor(public sessionsRepository: SessionsRepository) {
   }
 
-  saveProjection(event: UserConnected | UserDisconnected, isEnabled: boolean) {
-    var projection = new SessionProjection(
+  public saveProjection(event: UserConnected | UserDisconnected, isEnabled: boolean) {
+    const projection = new SessionProjection(
       event.sessionId,
       event.userId,
       isEnabled
@@ -31,13 +28,13 @@ export class SessionHandler {
     this.sessionsRepository.save(projection);
   }
 
-  register(eventPublisher: EventPublisher) {
+  public register(eventPublisher: EventPublisher) {
     eventPublisher
       .on(UserConnected, (event: UserConnected) => {
-        this.saveProjection(event, SessionProjection.SessionEnabled);
+        this.saveProjection(event, SessionProjection.SESSION_ENABLED);
       })
       .on(UserDisconnected, (event: UserDisconnected) => {
-        this.saveProjection(event, SessionProjection.SessionDisabled);
+        this.saveProjection(event, SessionProjection.SESSION_DISABLED);
       });
   }
 }

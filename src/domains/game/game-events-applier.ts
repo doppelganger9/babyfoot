@@ -9,41 +9,46 @@ import {
   PlayerChangedPositionOnGame,
   PlayerRemovedFromGame,
   SomeoneAddedACommentOnGame,
-  SomeoneReviewedTheGame,
+  SomeoneReviewedTheGame
 } from './events';
 import { TeamColors } from './game-id';
 
 export class GameEventsApplier {
-  static teamKey(color: TeamColors): string {
-    return (
-      'team' +
-      color.substring(0, 1).toUpperCase() +
-      color.substring(1).toLowerCase() +
-      'Members'
-    );
-  }
 
   /*** AGGREGATE CONSTRUCTOR EVENT APPLIERS ***/
-  static applyGameCreated(this: DecisionProjection, event: GameCreated): void {
+  public static applyGameCreated(
+    this: DecisionProjection,
+    event: GameCreated
+  ): void {
     // BEWARE: this is bound to the DecisionProjection object, not the Game instance.
     this.data.set('id', event.gameId);
     this.data.set('isDeleted', false);
     this.data.set('players', []);
     this.data.set('teamBlueMembers', []);
     this.data.set('teamRedMembers', []);
+    this.data.set('initialDatetime', new Date());
   }
 
-  static applyGameDeleted(this: DecisionProjection, event: GameDeleted): void {
+  public static applyGameDeleted(
+    this: DecisionProjection,
+    event: GameDeleted
+  ): void {
     this.data.set('isDeleted', true);
   }
 
-  static applyGameStarted(this: DecisionProjection, event: GameStarted): void {
+  public static applyGameStarted(
+    this: DecisionProjection,
+    event: GameStarted
+  ): void {
     this.data.set('currentStartDatetime', event.date);
     this.data.set('pointsTeamRed', 0);
     this.data.set('pointsTeamBlue', 0);
   }
 
-  static applyGameEnded(this: DecisionProjection, event: GameEnded): void {
+  public static applyGameEnded(
+    this: DecisionProjection,
+    event: GameEnded
+  ): void {
     this.data.set('currentEndDatetime', event.date);
     this.data.set(
       'duration',
@@ -52,7 +57,7 @@ export class GameEventsApplier {
     );
   }
 
-  static applyPlayerRemovedFromGame(
+  public static applyPlayerRemovedFromGame(
     this: DecisionProjection,
     event: PlayerRemovedFromGame
   ): void {
@@ -72,7 +77,7 @@ export class GameEventsApplier {
     );
   }
 
-  static removePlayerIfPresentFromTeamInProjection(
+  public static removePlayerIfPresentFromTeamInProjection(
     dp: DecisionProjection,
     color: TeamColors,
     event: PlayerRemovedFromGame
@@ -86,7 +91,7 @@ export class GameEventsApplier {
     }
   }
 
-  static applyPlayerAddedToGameWithTeam(
+  public static applyPlayerAddedToGameWithTeam(
     this: DecisionProjection,
     event: PlayerAddedToGameWithTeam
   ): void {
@@ -97,17 +102,7 @@ export class GameEventsApplier {
     GameEventsApplier.applyListedPlayerAddedToGameForTeam(this, event, 'blue');
   }
 
-  private static applyListedPlayerAddedToGameForTeam(dp: DecisionProjection, event: any, team: TeamColors) {
-    const otherTeam: TeamColors = team === 'red' ? 'blue' : 'red';
-    if (event.team === team) {
-      if (!dp.data.get(GameEventsApplier.teamKey(team)).includes(event.player)) {
-        dp.data.get(GameEventsApplier.teamKey(team)).push(event.player);
-      }
-      GameEventsApplier.removePlayerIfPresentFromTeamInProjection(dp, otherTeam, event);
-    }
-  }
-
-  static applyAddedGoalFromPlayerToGame(
+  public static applyAddedGoalFromPlayerToGame(
     this: DecisionProjection,
     event: AddedGoalFromPlayerToGame
   ): void {
@@ -126,24 +121,50 @@ export class GameEventsApplier {
     );
   }
 
-  static applyPlayerChangedPositionOnGame(
+  public static applyPlayerChangedPositionOnGame(
     this: DecisionProjection,
     event: PlayerChangedPositionOnGame
   ): void {
     console.error('not implemented yet');
   }
 
-  static applySomeoneAddedACommentOnGame(
+  public static applySomeoneAddedACommentOnGame(
     this: DecisionProjection,
     event: SomeoneAddedACommentOnGame
   ): void {
     console.error('not implemented yet');
   }
 
-  static applySomeoneReviewedTheGame(
+  public static applySomeoneReviewedTheGame(
     this: DecisionProjection,
     event: SomeoneReviewedTheGame
   ): void {
     console.error('not implemented yet');
+  }
+
+private static teamKey(color: TeamColors): string {
+    return `team${color.substring(0, 1).toUpperCase()}${color
+      .substring(1)
+      .toLowerCase()}Members`;
+  }
+
+  private static applyListedPlayerAddedToGameForTeam(
+    dp: DecisionProjection,
+    event: any,
+    team: TeamColors
+  ) {
+    const otherTeam: TeamColors = team === 'red' ? 'blue' : 'red';
+    if (event.team === team) {
+      if (
+        !dp.data.get(GameEventsApplier.teamKey(team)).includes(event.player)
+      ) {
+        dp.data.get(GameEventsApplier.teamKey(team)).push(event.player);
+      }
+      GameEventsApplier.removePlayerIfPresentFromTeamInProjection(
+        dp,
+        otherTeam,
+        event
+      );
+    }
   }
 }

@@ -10,7 +10,8 @@
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "prettier": "prettier src/**/*.ts --write",
     "start": "ts-node main.ts",
-    "newman": "newman run postman/Babyfoot.postman_collection.json -e postman/Babyfoot-localhost-3000.postman_environment.json"
+    "newman": "newman run postman/Babyfoot.postman_collection.json -e postman/Babyfoot-localhost-3000.postman_environment.json",
+    "tslint": "tslint -c tslint.json 'src/**/*.ts'"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "prettier": "1.10.2",
     "source-map-support": "0.5.3",
     "ts-node": "4.1.0",
+    "tslint": "5.8.0",
     "typescript": "2.7.1"
   },
   "nyc": {

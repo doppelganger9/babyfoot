@@ -1,4 +1,4 @@
---print-width 100
+--print-width 120
 --tab-width 2
 --use-tabs false
 --no-semi false

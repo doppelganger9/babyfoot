@@ -23,7 +23,7 @@ describe('Games Repository', () => {
     const gameCreated = new GameCreated(gameId);
     eventsStore.store(gameCreated);
 
-    var userGame = repository.getGame(gameId);
+    const userGame = repository.getGame(gameId);
 
     expect(userGame).not.to.empty;
   });

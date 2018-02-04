@@ -93,24 +93,17 @@ export class GameEventsApplier {
     if (!this.data.get('players').includes(event.player)) {
       this.data.get('players').push(event.player);
     }
-    if (event.team === 'red') {
-      if (!this.data.get('teamRedMembers').includes(event.player)) {
-        this.data.get('teamRedMembers').push(event.player);
+    GameEventsApplier.applyListedPlayerAddedToGameForTeam(this, event, 'red');
+    GameEventsApplier.applyListedPlayerAddedToGameForTeam(this, event, 'blue');
+  }
+
+  private static applyListedPlayerAddedToGameForTeam(dp: DecisionProjection, event: any, team: TeamColors) {
+    const otherTeam: TeamColors = team === 'red' ? 'blue' : 'red';
+    if (event.team === team) {
+      if (!dp.data.get(GameEventsApplier.teamKey(team)).includes(event.player)) {
+        dp.data.get(GameEventsApplier.teamKey(team)).push(event.player);
       }
-      GameEventsApplier.removePlayerIfPresentFromTeamInProjection(
-        this,
-        'blue',
-        event
-      );
-    } else {
-      if (!this.data.get('teamBlueMembers').includes(event.player)) {
-        this.data.get('teamBlueMembers').push(event.player);
-      }
-      GameEventsApplier.removePlayerIfPresentFromTeamInProjection(
-        this,
-        'red',
-        event
-      );
+      GameEventsApplier.removePlayerIfPresentFromTeamInProjection(dp, otherTeam, event);
     }
   }
 

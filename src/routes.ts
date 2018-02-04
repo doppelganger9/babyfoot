@@ -3,6 +3,7 @@ import { EventsStore, UserId, SessionsRepository, SessionId, UserIdentity, Sessi
 import { GamesRepository } from './infrastructure/game-repository';
 import { GameListItemProjection } from './domains/game/game-list-item-projection';
 import { GameHandler } from './domains/game/game-handler';
+import { Player, TeamColors } from './domains/game/game-id';
 
 const eventsStore = new EventsStore();
 const userIdentitiesRepository = new UserIdentityRepository(eventsStore);
@@ -22,7 +23,6 @@ const createEventPublisher = function createEventPublisher(
   // this will also publish events for side-effects, that is, other projections listening on diverse events.
   // Here, Session and Timeline Update projections:
   new SessionHandler(sessionsRepository).register(eventPublisher);
-  //new updateTimeline(timelineMessagesRepository).register(eventPublisher);
   new GameHandler(gamesRepository).register(eventPublisher);
 
   // Later on, for the QUERY part of CQRS, you just need to query the appropriate repository which
@@ -35,7 +35,7 @@ const eventPublisher = createEventPublisher(eventsStore);
 
 const registerUser = function registerUser(req: Request, res: Response) {
   // parse request body attributes
-  const email = req.body.email;
+  const email: string = req.body.email;
 
   // call COMMAND on Aggregate (this time it is a static method)
   UserIdentity.register(eventPublisher, email);
@@ -86,11 +86,10 @@ const createGame = function createGame(req: Request, res: Response) {
   // send response
   res.status(201).send({
     gameId: new GameId(id),
+    // TODO: the HATEOAS links should be generated in some way given the state of the Game. Maybe it is a new ActionsOnGameProjection ?
     url: '/api/games/' + encodeURIComponent(id),
-    start:
-      '/api/games/' + encodeURIComponent(id) + '/start',
-    end:
-      '/api/games/' + encodeURIComponent(id) + '/end'
+    start: '/api/games/' + encodeURIComponent(id) + '/start',
+    end: '/api/games/' + encodeURIComponent(id) + '/end'
   });
 };
 
@@ -102,11 +101,7 @@ const getGame = function getGame(req: Request, res: Response) {
   const found: Game = gamesRepository.getGame(gameId);
 
   // send response
-  res
-    .status(200)
-    .send({
-      gameId: gameId,
-
+  standardGameOKResponseWithAddedAttributes(res, gameId, {
       currentEndDatetime: found.currentEndDatetime,
       currentStartDatetime: found.currentStartDatetime,
       duration: found.duration,
@@ -119,10 +114,9 @@ const getGame = function getGame(req: Request, res: Response) {
       teamRedMembers: found.teamRedMembers,
       winner: found.winner,
 
-      url: '/api/games/' + encodeURIComponent(gameId.id),
       start: '/api/games/' + encodeURIComponent(gameId.id) + '/start',
       end: '/api/games/' + encodeURIComponent(gameId.id) + '/end'
-    });
+  });
 };
 
 const getGameList = function getGameList(req: Request, res: Response) {
@@ -156,14 +150,10 @@ const startGame = function startGame(req: Request, res: Response) {
   // call COMMAND on Aggregate
   game.startGame(eventPublisher);
 
-  res
-    .status(201)
-    .send({
-      gameId: gameId,
-      time: now,
-      url: '/api/games/' + encodeURIComponent(gameId.id),
-      end: '/api/games/' + encodeURIComponent(gameId.id) + '/end'
-    });
+  standardGameOKResponseWithAddedAttributes(res, gameId, {
+    time: now,
+    end: '/api/games/' + encodeURIComponent(gameId.id) + '/end'
+  });
 };
 
 const endGame = function endGame(req: Request, res: Response) {
@@ -175,11 +165,7 @@ const endGame = function endGame(req: Request, res: Response) {
   // call COMMAND on Aggregate
   game.endGame(eventPublisher);
 
-  res.status(201).send({
-    gameId: gameId,
-    time: now,
-    url: '/api/games/' + encodeURIComponent(gameId.id)
-  });
+  standardGameOKResponseWithAddedAttributes(res, gameId, { time: now } )
 };
 
 
@@ -188,7 +174,7 @@ const addGoalFromPlayerToGame = function addGoalFromPlayerToGame(
   res: Response
 ) {
   const gameId = new GameId(req.params.id);
-  const player = req.params.player;
+  const player: Player = req.params.player;
 
   // find Aggregate for this ID in repository
   const game = gamesRepository.getGame(gameId);
@@ -196,11 +182,7 @@ const addGoalFromPlayerToGame = function addGoalFromPlayerToGame(
   // call COMMAND on Aggregate
   game.addGoalFromPlayer(eventPublisher, player);
 
-  res.status(200).send({
-    gameId: gameId,
-    player: player,
-    url: '/api/games/' + encodeURIComponent(gameId.id)
-  });
+  standardGameOKResponseWithAddedAttributes(res, gameId, { player });
 };
 
 const getPlayersInGame = function getPlayersInGame(req: Request, res: Response) {
@@ -209,21 +191,15 @@ const getPlayersInGame = function getPlayersInGame(req: Request, res: Response) 
   // find Aggregate for this ID in repository
   const found = gamesRepository.getGame(gameId);
 
-  // call COMMAND on Aggregate
-  res
-    .status(200)
-    .send({
-      gameId: gameId,
+  standardGameOKResponseWithAddedAttributes(res, gameId, {
+    players: found.players,
+    pointsTeamBlue: found.pointsTeamBlue,
+    pointsTeamRed: found.pointsTeamRed,
+    teamBlueMembers: found.teamBlueMembers,
+    teamRedMembers: found.teamRedMembers,
+    winner: found.winner
+  }, '/players');
 
-      players: found.players,
-      pointsTeamBlue: found.pointsTeamBlue,
-      pointsTeamRed: found.pointsTeamRed,
-      teamBlueMembers: found.teamBlueMembers,
-      teamRedMembers: found.teamRedMembers,
-      winner: found.winner,
-
-      url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
-    });
 }
 
 const addPlayerToGame = function getPlayerInGame(
@@ -231,77 +207,56 @@ const addPlayerToGame = function getPlayerInGame(
   res: Response
 ) {
   const gameId = new GameId(req.params.id);
-  const player = req.params.player;
-  const team = req.params.team;
+  const player: Player = req.params.player;
+  const team: TeamColors = req.params.team;
 
   // find Aggregate for this ID in repository
   const found = gamesRepository.getGame(gameId);
 
+  // call COMMAND on Aggregate
   found.addPlayerToGame(eventPublisher, player, team);
 
-  // call COMMAND on Aggregate
-  res.status(200).send({
-    gameId: gameId,
-    player: player,
-    team: team,
-    url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
-  });
+  standardGameOKResponseWithAddedAttributes(res, gameId, { player, team }, '/players');
+
 };
 
 
 const removePlayerFromGame = function removePlayerFromGame(req: Request, res: Response) {
   const gameId = new GameId(req.params.id);
-  const player = req.params.player;
+  const player: Player = req.params.player;
 
   // find Aggregate for this ID in repository
   const found = gamesRepository.getGame(gameId);
 
+  // call COMMAND on Aggregate
   found.removePlayerFromGame(eventPublisher, player);
 
-  // call COMMAND on Aggregate
-  res.status(200).send({
-    gameId: gameId,
-    player: player,
-    url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
-  });
+  standardGameOKResponseWithAddedAttributes(res, gameId, { player }, '/players');
 };
 
 const changeUserPositionToGame = function changeUserPositionToGame(req: Request, res: Response) {
   const gameId = new GameId(req.params.id);
-  const player: string = req.params.player;
+  const player: Player = req.params.player;
   const position: PositionValue = req.params.position;
 
   // find Aggregate for this ID in repository
   const found = gamesRepository.getGame(gameId);
 
+  // call COMMAND on Aggregate
   found.changeUserPositionOnGame(eventPublisher, player, position);
 
-  // call COMMAND on Aggregate
-  res.status(200).send({
-    gameId: gameId,
-    player: player,
-    position: position,
-    url: '/api/games/' + encodeURIComponent(gameId.id) + '/players'
-  });
-
+  standardGameOKResponseWithAddedAttributes(res, gameId, { player, position });
 }
 
-// let deleteMessage = function deleteMessage(req: Request, res: Response) {
-//   var sessionId = new SessionId(req.body.sessionId);
-
-//   var deleter = sessionsRepository.getUserIdOfSession(sessionId);
-//   if (!deleter) {
-//     res.status(403).send('Invalid session');
-//     return;
-//   }
-
-//   var messageId = new message.MessageId(req.params.id);
-//   var messageToDeleted = messagesRepository.getMessage(messageId);
-
-//   messageToDeleted.delete(eventPublisher, deleter);
-
-//   res.status(200).send('Message deleted');
-// };
+function standardGameOKResponseWithAddedAttributes(res: Response, gameId: GameId, addThisToTheBody: any = {}, context: string = ''): void {
+    res
+      .status(200)
+      .send({
+        gameId: gameId,
+        ...addThisToTheBody,// destructuring FTW! \o/
+        url: '/api/games/' + encodeURIComponent(gameId.id) + context
+      });
+}
 
 /**
  * higher order function to handle all errors thrown to create an appropriate HTTP 400 Response.
@@ -318,7 +273,8 @@ let manageError = function manageError(action: (req: Request, res: Response) => 
         console.log('error: ' + errorName);
         console.log(e);
 
-        const stack = req.connection.remoteAddress && ['localhost', '::1', '127.0.0.1'].includes(req.connection.remoteAddress) ? e.stack.split('\n') : undefined;
+        const isLocal = req.connection.remoteAddress && ['localhost', '::1', '127.0.0.1'].includes(req.connection.remoteAddress);
+        const stack = isLocal ? e.stack.split('\n') : undefined;
 
         res
           .status(400)

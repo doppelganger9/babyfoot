@@ -131,21 +131,13 @@ export class Game {
     eventPublisher.publish(event);
   }
 
-  private throwErrorIfPlayerAlreadyInRedTeam(player: Player, targetTeam: TeamColors): void {
+  private throwErrorIfPlayerAlreadyInTeam(player: Player, targetTeam: TeamColors, team: TeamColors, teamMembers: Array<Player>): void {
     if (
       this.players!.includes(player) &&
-      targetTeam === 'red' &&
-      this.teamRedMembers!.includes(player)
+      targetTeam === team &&
+      teamMembers!.includes(player)
     )
-    throw new PlayerAlreadyAddedError(this.id, player, 'red');
-  }
-  private throwErrorIfPlayerAlreadyInBlueTeam(player: Player, targetTeam: TeamColors): void {
-    if (
-      this.players!.includes(player) &&
-      targetTeam === 'blue' &&
-      this.teamBlueMembers!.includes(player)
-    )
-    throw new PlayerAlreadyAddedError(this.id, player, 'blue');
+    throw new PlayerAlreadyAddedError(this.id, player, team);
   }
 
   addPlayerToGame(
@@ -155,8 +147,8 @@ export class Game {
   ): void {
     if (this.isDeleted) throw new GameIsDeletedError(this.id);
     if (this.currentEndDatetime) throw new GameAlreadyEndedError(this.id);
-    this.throwErrorIfPlayerAlreadyInRedTeam(player, team);
-    this.throwErrorIfPlayerAlreadyInBlueTeam(player, team);
+    this.throwErrorIfPlayerAlreadyInTeam(player, team, 'red', this.teamRedMembers);
+    this.throwErrorIfPlayerAlreadyInTeam(player, team, 'blue', this.teamBlueMembers);
     const event = new PlayerAddedToGameWithTeam(player, team, this.id);
     eventPublisher.publish(event);
   }

@@ -13,8 +13,10 @@ install:
 
 script:
  - npm test
- - npm start &
+ - npm start 2>&1 | tee server.log &
+ - ./wait-until-server-ready.sh
  - npm run newman
+ - kill %1
  - npm run coveralls
 
 after_script:

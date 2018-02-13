@@ -3,6 +3,7 @@ import * as http from 'http';
 import * as bodyParser from 'body-parser';
 import { Routes } from './routes';
 import { Application, Request, Response, Router } from 'express';
+import * as cors from 'cors';
 
 function logErrors(err: any, req: Request, res: Response, next: any) {
   console.error(err.stack);
@@ -41,6 +42,8 @@ function manageError(err: any, req: Request, res: Response, next: any) {
 function createExpressMiddleware(port: string | number, router: Router): Application {
   const app = express();
   app.set('port', port);
+
+  app.use(cors());
 
   app.use(bodyParser.json());
   app.use(

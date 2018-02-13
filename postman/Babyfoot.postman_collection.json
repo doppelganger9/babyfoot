@@ -218,7 +218,7 @@
 									"    pm.response.to.have.status(201);",
 									"});",
 									"",
-									"pm.test(\"Payload contains gameId, url, start, end\", function () {",
+									"pm.test(\"Payload contains an id.email, url and logIn\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
@@ -371,7 +371,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8b344105-67ab-4ec9-b260-e71700a436b3",
+								"id": "9845b270-73c0-4496-92a2-9058be31505d",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -428,7 +428,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b029c217-93c9-4fbc-a25a-781aa8fa3fc6",
+								"id": "05956386-90e7-493c-8dfd-269e785c7973",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -440,7 +440,8 @@
 									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
-									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.playerId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.playerId.id !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.team !== undefined).to.eql(true);",
 									"});",
 									"",
@@ -461,7 +462,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_name}}/red",
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_id}}/red",
 							"protocol": "{{scheme}}",
 							"host": [
 								"{{host}}"
@@ -472,7 +473,7 @@
 								"games",
 								"{{game_id}}",
 								"players",
-								"{{player1_name}}",
+								"{{player1_id}}",
 								"red"
 							]
 						},
@@ -486,7 +487,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bd01d3c3-09b5-48be-9206-bf9166e66490",
+								"id": "173d5072-df55-4d39-83e5-3e5392567758",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -498,7 +499,8 @@
 									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
-									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.playerId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.playerId.id !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.team !== undefined).to.eql(true);",
 									"});",
 									"",
@@ -519,7 +521,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player2_name}}/blue",
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player2_id}}/blue",
 							"protocol": "{{scheme}}",
 							"host": [
 								"{{host}}"
@@ -530,7 +532,7 @@
 								"games",
 								"{{game_id}}",
 								"players",
-								"{{player2_name}}",
+								"{{player2_id}}",
 								"blue"
 							]
 						},
@@ -630,7 +632,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_name}}/position/{{position}}",
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_id}}/position/{{position}}",
 							"protocol": "{{scheme}}",
 							"host": [
 								"{{host}}"
@@ -641,7 +643,7 @@
 								"games",
 								"{{game_id}}",
 								"players",
-								"{{player1_name}}",
+								"{{player1_id}}",
 								"position",
 								"{{position}}"
 							]
@@ -656,7 +658,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a25cd01e-56d9-4549-991d-35505ba7afad",
+								"id": "3ec67e2d-cecb-4702-872f-47d8947f7a37",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -668,7 +670,8 @@
 									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
 									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
-									"    pm.expect(jsonData.player !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.playerId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.playerId.id !== undefined).to.eql(true);",
 									"});",
 									"",
 									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
@@ -688,7 +691,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/goals/{{player1_name}}",
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/goals/{{player1_id}}",
 							"protocol": "{{scheme}}",
 							"host": [
 								"{{host}}"
@@ -699,7 +702,7 @@
 								"games",
 								"{{game_id}}",
 								"goals",
-								"{{player1_name}}"
+								"{{player1_id}}"
 							]
 						},
 						"description": null
@@ -712,7 +715,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "da0fac36-65c4-4dcd-858e-0b334bc91c93",
+								"id": "11c7dfde-3c42-41d6-a93d-14f1ae1668b6",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -812,7 +815,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_name}}",
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}/players/{{player1_id}}",
 							"protocol": "{{scheme}}",
 							"host": [
 								"{{host}}"
@@ -823,7 +826,7 @@
 								"games",
 								"{{game_id}}",
 								"players",
-								"{{player1_name}}"
+								"{{player1_id}}"
 							]
 						},
 						"description": null

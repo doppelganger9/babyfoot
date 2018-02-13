@@ -6,6 +6,7 @@ import { GameAlreadyEndedError, GameIsDeletedError, GameNotStartedError, Unknown
 import { GameCreated, GameDeleted, GameEnded, GameStarted, PlayerAddedToGameWithTeam } from '../events';
 import { Game } from '../game';
 import { GameId } from '../game-id';
+import { PlayerId } from '../../player';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;
@@ -32,20 +33,20 @@ describe('Game', () => {
       const history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
-      history.push(new PlayerAddedToGameWithTeam('player', 'red', gameId));
+      history.push(new PlayerAddedToGameWithTeam(new PlayerId('player'), 'red', gameId));
       t = new Game(history);
-      t.addGoalFromPlayer(simpleEventPublisher, 'player');
+      t.addGoalFromPlayer(simpleEventPublisher, new PlayerId('player'));
       expect(eventsRaised.length).to.equal(1);
     });
     it('should not add a goal to a player if game is deleted', () => {
       const history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
-      history.push(new PlayerAddedToGameWithTeam('player', 'red', gameId));
+      history.push(new PlayerAddedToGameWithTeam(new PlayerId('player'), 'red', gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
       expect(() =>
-        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+        t.addGoalFromPlayer(simpleEventPublisher, new PlayerId('player'))
       ).to.throw(GameIsDeletedError);
       expect(eventsRaised.length).to.equal(0);
     });
@@ -54,7 +55,7 @@ describe('Game', () => {
       history.push(new GameCreated(gameId));
       t = new Game(history);
       expect(() =>
-        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+        t.addGoalFromPlayer(simpleEventPublisher, new PlayerId('player'))
       ).to.throw(GameNotStartedError);
       expect(eventsRaised.length).to.equal(0);
     });
@@ -62,11 +63,11 @@ describe('Game', () => {
       const history: Array<Event> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
-      history.push(new PlayerAddedToGameWithTeam('player', 'red', gameId));
+      history.push(new PlayerAddedToGameWithTeam(new PlayerId('player'), 'red', gameId));
       history.push(new GameEnded(undefined, gameId));
       t = new Game(history);
       expect(() =>
-        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+        t.addGoalFromPlayer(simpleEventPublisher, new PlayerId('player'))
       ).to.throw(GameAlreadyEndedError);
       expect(eventsRaised.length).to.equal(0);
     });
@@ -76,7 +77,7 @@ describe('Game', () => {
       history.push(new GameStarted(undefined, gameId));
       t = new Game(history);
       expect(() =>
-        t.addGoalFromPlayer(simpleEventPublisher, 'player')
+        t.addGoalFromPlayer(simpleEventPublisher, new PlayerId('player'))
       ).to.throw(UnknownPlayerError);
       expect(eventsRaised.length).to.equal(0);
     });

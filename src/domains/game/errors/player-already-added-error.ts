@@ -1,4 +1,5 @@
 import { GameId, TeamColors } from '../game-id';
+import { PlayerId } from '../player';
 
 /**
  * NOTE, to extend Errors and preserve prototype chain,
@@ -8,11 +9,11 @@ import { GameId, TeamColors } from '../game-id';
 export class PlayerAlreadyAddedError extends Error {
   constructor(
     public gameId: GameId,
-    public player: string,
+    public playerId: PlayerId,
     public team: TeamColors
   ) {
     super(
-      `player "${player}" has already been added to team "${team}" in ${gameId}"`
+      `player "${playerId}" has already been added to team "${team}" in ${gameId}"`
     );
     Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
   }

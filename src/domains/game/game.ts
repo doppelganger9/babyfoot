@@ -25,7 +25,8 @@ import {
 } from './events';
 import { GameDecisionProjection } from './game-decision-projection';
 import { GameEventsApplier as GEA } from './game-events-applier';
-import { GameId, Player, PositionValue, TeamColors } from './game-id';
+import { GameId, PositionValue, TeamColors } from './game-id';
+import { PlayerId } from '../player';
 
 export class Game {
   public static createGame(eventPublisher: EventPublisher, id: string): void {
@@ -87,35 +88,35 @@ export class Game {
     eventPublisher.publish(event);
   }
 
-  public addPlayerToGame(eventPublisher: EventPublisher, player: Player, team: TeamColors): void {
+  public addPlayerToGame(eventPublisher: EventPublisher, playerId: PlayerId, team: TeamColors): void {
     if (this.projection.isDeleted) {
       throw new GameIsDeletedError(this.projection.id);
     }
     if (this.projection.currentEndDatetime) {
       throw new GameAlreadyEndedError(this.projection.id);
     }
-    this.throwErrorIfPlayerAlreadyInTeam(player, team, 'red', this.projection.teamRedMembers);
-    this.throwErrorIfPlayerAlreadyInTeam(player, team, 'blue', this.projection.teamBlueMembers);
-    const event = new PlayerAddedToGameWithTeam(player, team, this.projection.id);
+    this.throwErrorIfPlayerAlreadyInTeam(playerId, team, 'red', this.projection.teamRedMembers);
+    this.throwErrorIfPlayerAlreadyInTeam(playerId, team, 'blue', this.projection.teamBlueMembers);
+    const event = new PlayerAddedToGameWithTeam(playerId, team, this.projection.id);
     eventPublisher.publish(event);
   }
 
-  public removePlayerFromGame(eventPublisher: EventPublisher, player: Player): void {
+  public removePlayerFromGame(eventPublisher: EventPublisher, playerId: PlayerId): void {
     if (this.projection.isDeleted) {
       throw new GameIsDeletedError(this.projection.id);
     }
     if (this.projection.currentEndDatetime) {
       throw new GameAlreadyEndedError(this.projection.id);
     }
-    if (!this.projection.players!.includes(player)) {
-      throw new UnknownPlayerError(player);
+    if (!PlayerId.listIncludesId(this.projection.players!, playerId)) {
+      throw new UnknownPlayerError(playerId);
     }
 
-    const event = new PlayerRemovedFromGame(player, this.projection.id);
+    const event = new PlayerRemovedFromGame(playerId, this.projection.id);
     eventPublisher.publish(event);
   }
 
-  public addGoalFromPlayer(eventPublisher: EventPublisher, player: Player): void {
+  public addGoalFromPlayer(eventPublisher: EventPublisher, playerId: PlayerId): void {
     if (this.projection.isDeleted) {
       throw new GameIsDeletedError(this.projection.id);
     }
@@ -125,10 +126,10 @@ export class Game {
     if (this.projection.currentEndDatetime) {
       throw new GameAlreadyEndedError(this.projection.id);
     }
-    if (!this.projection.players!.includes(player)) {
-      throw new UnknownPlayerError(player);
+    if (!PlayerId.listIncludesId(this.projection.players!, playerId)) {
+      throw new UnknownPlayerError(playerId);
     }
-    const event = new AddedGoalFromPlayerToGame(player, this.projection.id);
+    const event = new AddedGoalFromPlayerToGame(playerId, this.projection.id);
     eventPublisher.publish(event);
   }
 
@@ -137,7 +138,7 @@ export class Game {
     throw new Error('not implemented');
   }
 
-  public changeUserPositionOnGame(eventPublisher: EventPublisher, player: string, position: PositionValue) {
+  public changeUserPositionOnGame(eventPublisher: EventPublisher, playerId: PlayerId, position: PositionValue) {
     if (this.projection.isDeleted) {
       throw new GameIsDeletedError(this.projection.id);
     }
@@ -147,11 +148,11 @@ export class Game {
     if (this.projection.currentEndDatetime) {
       throw new GameAlreadyEndedError(this.projection.id);
     }
-    if (!this.projection.players!.includes(player)) {
-      throw new UnknownPlayerError(player);
+    if (!PlayerId.listIncludesId(this.projection.players!, playerId)) {
+      throw new UnknownPlayerError(playerId);
     }
 
-    const event = new PlayerChangedPositionOnGame(position, player, this.projection.id);
+    const event = new PlayerChangedPositionOnGame(position, playerId, this.projection.id);
     eventPublisher.publish(event);
   }
 
@@ -194,13 +195,14 @@ export class Game {
   }
 
   private throwErrorIfPlayerAlreadyInTeam(
-    player: Player,
+    playerId: PlayerId,
     targetTeam: TeamColors,
     team: TeamColors,
-    teamMembers: Array<Player>,
+    teamMembers: Array<PlayerId>,
   ): void {
-    if (this.projection.players!.includes(player) && targetTeam === team && teamMembers!.includes(player)) {
-      throw new PlayerAlreadyAddedError(this.projection.id, player, team);
+    if (PlayerId.listIncludesId(this.projection.players!, playerId) && targetTeam === team && PlayerId.listIncludesId(teamMembers!, playerId)) {
+      throw new PlayerAlreadyAddedError(this.projection.id, playerId, team);
     }
   }
+
 }

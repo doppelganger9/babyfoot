@@ -16,7 +16,8 @@ import {
 import { GamesRepository } from './infrastructure/game-repository';
 import { GameListItemProjection } from './domains/game/game-list-item-projection';
 import { GameHandler } from './domains/game/game-handler';
-import { Player, TeamColors } from './domains/game/game-id';
+import { TeamColors } from './domains/game/game-id';
+import { PlayerId } from './domains/player';
 
 export class Routes {
   private eventsStore: EventsStore;
@@ -213,15 +214,15 @@ export class Routes {
 
   private addGoalFromPlayerToGame(req: Request, res: Response) {
     const gameId = new GameId(req.params.id);
-    const player: Player = req.params.player;
+    const playerId = new PlayerId(req.params.player);
 
     // find Aggregate for this ID in repository
     const game = this.gamesRepository.getGame(gameId);
 
     // call COMMAND on Aggregate
-    game.addGoalFromPlayer(this.eventPublisher, player);
+    game.addGoalFromPlayer(this.eventPublisher, playerId);
 
-    this.standardGameOKResponseWithAddedAttributes(res, gameId, { player });
+    this.standardGameOKResponseWithAddedAttributes(res, gameId, { playerId });
   }
 
   private getPlayersInGame(req: Request, res: Response) {
@@ -247,34 +248,34 @@ export class Routes {
 
   private addPlayerToGame(req: Request, res: Response) {
     const gameId = new GameId(req.params.id);
-    const player: Player = req.params.player;
+    const playerId = new PlayerId(req.params.player);
     const team: TeamColors = req.params.team;
 
     // find Aggregate for this ID in repository
     const found = this.gamesRepository.getGame(gameId);
 
     // call COMMAND on Aggregate
-    found.addPlayerToGame(this.eventPublisher, player, team);
+    found.addPlayerToGame(this.eventPublisher, playerId, team);
 
-    this.standardGameOKResponseWithAddedAttributes(res, gameId, { player, team }, '/players');
+    this.standardGameOKResponseWithAddedAttributes(res, gameId, { playerId, team }, '/players');
   }
 
   private removePlayerFromGame(req: Request, res: Response) {
     const gameId = new GameId(req.params.id);
-    const player: Player = req.params.player;
+    const playerId = new PlayerId(req.params.player);
 
     // find Aggregate for this ID in repository
     const found = this.gamesRepository.getGame(gameId);
 
     // call COMMAND on Aggregate
-    found.removePlayerFromGame(this.eventPublisher, player);
+    found.removePlayerFromGame(this.eventPublisher, playerId);
 
-    this.standardGameOKResponseWithAddedAttributes(res, gameId, { player }, '/players');
+    this.standardGameOKResponseWithAddedAttributes(res, gameId, { playerId }, '/players');
   }
 
   private changeUserPositionToGame(req: Request, res: Response) {
     const gameId = new GameId(req.params.id);
-    const player: Player = req.params.player;
+    const player = new PlayerId(req.params.player);
     const position: PositionValue = req.params.position;
 
     // find Aggregate for this ID in repository

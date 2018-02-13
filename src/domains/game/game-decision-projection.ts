@@ -1,5 +1,6 @@
 import { DecisionApplierFunction, DecisionProjection, Event } from '../..';
 import { GameId, TeamColors } from './game-id';
+import { Player, PlayerId } from '../player';
 
 export class GameDecisionProjection {
   private projection: DecisionProjection; // composition not inheritance
@@ -47,15 +48,15 @@ export class GameDecisionProjection {
     return this.projection.data.get('winner');
   }
 
-  get teamRedMembers(): Array<string> {
+  get teamRedMembers(): Array<PlayerId> {
     return this.projection.data.get('teamRedMembers');
   }
 
-  get teamBlueMembers(): Array<string> {
+  get teamBlueMembers(): Array<PlayerId> {
     return this.projection.data.get('teamBlueMembers');
   }
 
-  get players(): Array<string> {
+  get players(): Array<PlayerId> {
     return this.projection.data.get('players');
   }
 

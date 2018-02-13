@@ -5,7 +5,7 @@ import {
   EventPublisher,
   DecisionProjection,
   generateUUID,
-  Event
+  Event,
 } from '../..';
 
 /************** VALUE TYPES **************/
@@ -23,11 +23,7 @@ export class SessionId extends ValueType {
 /************** EVENTS **************/
 
 export class UserConnected implements Event<SessionId> {
-  constructor(
-    public sessionId: SessionId,
-    public userId: UserId,
-    public connectedAt: Date
-  ) {
+  constructor(public sessionId: SessionId, public userId: UserId, public connectedAt: Date) {
     Object.freeze(this);
   }
 
@@ -61,18 +57,12 @@ export class Session {
 
   constructor(events: Array<Event> | Event) {
     this.projection = new DecisionProjection()
-      .register('UserConnected', function(
-        this: DecisionProjection,
-        event: UserConnected
-      ): void {
+      .register('UserConnected', function(this: DecisionProjection, event: UserConnected): void {
         // warning, "this" is bound to the DecisionProjection.
         this.data.set('userId', event.userId);
         this.data.set('sessionId', event.sessionId);
       } as DecisionApplierFunction)
-      .register('UserDisconnected', function(
-        this: DecisionProjection,
-        event: UserDisconnected
-      ): void {
+      .register('UserDisconnected', function(this: DecisionProjection, event: UserDisconnected): void {
         this.data.set('isDisconnected', true);
       } as DecisionApplierFunction)
       .apply(events);
@@ -85,10 +75,7 @@ export class Session {
     }
 
     publishEvent.publish(
-      new UserDisconnected(
-        this.projection.data.get('sessionId'),
-        this.projection.data.get('userId')
-      )
+      new UserDisconnected(this.projection.data.get('sessionId'), this.projection.data.get('userId')),
     );
   }
 }

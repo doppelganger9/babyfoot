@@ -22,6 +22,7 @@ describe('Player', () => {
   changedFields.set('lastName', 'SPONGE');
   changedFields.set('email', 'sponge.bob.2@sea.com');
   changedFields.set('avatar', 'the last air bender');
+  const confirmationToken = 'fake_confirmation_token';
 
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
@@ -41,7 +42,7 @@ describe('Player', () => {
   describe('.updatePlayer should', () => {
     it('emit PlayerUpdated', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       t = new Player(history);
       t.updatePlayer(simpleEventPublisher, changedFields);
       expect(eventsRaised.length).to.equal(1);
@@ -49,7 +50,7 @@ describe('Player', () => {
     });
     it('throw PlayerIdDeleted when trying to confirm a deleted player', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       history.push(new PlayerDeleted(playerId));
       t = new Player(history);
       expect(() => t.updatePlayer(simpleEventPublisher, changedFields)).to.throw(PlayerIsDeletedError);
@@ -57,7 +58,7 @@ describe('Player', () => {
     });
     it('update its projections', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       history.push(new PlayerUpdated(playerId, changedFields));
       t = new Player(history);
       expect(t.projection.email).to.be.equal(changedFields.get('email'));

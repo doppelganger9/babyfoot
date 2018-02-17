@@ -832,6 +832,648 @@
 						"description": null
 					},
 					"response": []
+				},
+				{
+					"name": "/api/games/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4df034d0-bb8f-4bd3-a013-312453f3eb9e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.gameId !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.gameId.id !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/games/{{game_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"games",
+								"{{game_id}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Player Domain",
+			"description": "",
+			"item": [
+				{
+					"name": "/api/players",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "81829a64-f800-4f29-9e68-428eb8311492",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, email, firstName, lastName, avatar, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect('playerId', jsonData.playerId).to.not.be.undefined;",
+									"    pm.environment.set(\"player_id\", pm.response.json().playerId.id);",
+									"    pm.expect(jsonData.playerId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.firstName !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.lastName !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.email !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.avatar !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"});",
+									"",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Bob\",\n\t\"lastName\": \"Sponge\",\n\t\"email\": \"sponge.bob@sea.com\",\n\t\"avatar\": \"the last air bender\"\n}"
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/players/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "99262a18-0ad5-47a0-9087-d9650d0111f9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var playerId = pm.environment.get('player_id');",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Payload contains an id.\", function () {",
+									"    pm.expect(jsonData.playerId).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.equal(playerId);",
+									"})",
+									"",
+									"pm.test(\"Payload contains isDeleted = false.\", function () {",
+									"    pm.expect(jsonData.isDeleted).to.not.be.undefined;",
+									"    pm.expect(jsonData.isDeleted).to.be.false;",
+									"})",
+									"",
+									"pm.test(\"Payload contains isAccountConfirmed = false.\", function () {",
+									"    pm.expect(jsonData.isAccountConfirmed).to.not.be.undefined;",
+									"    pm.expect(jsonData.isAccountConfirmed).to.be.false;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an avatar.\", function () {",
+									"    pm.expect(jsonData.avatar).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    pm.expect(jsonData.firstName).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains a lastName.\", function () {",
+									"    pm.expect(jsonData.lastName).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an email.\", function () {",
+									"    pm.expect(jsonData.email).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an url.\", function () {",
+									"    pm.expect(jsonData.url).to.not.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"Payload contains a confirmationToken.\", function () {",
+									"    pm.expect(jsonData.confirmationToken !== undefined).to.eql(true);",
+									"    pm.environment.set(\"player_confirmation_token\", pm.response.json().confirmationToken);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players/{{player_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players",
+								"{{player_id}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/players/{id}/confirm (token sent by email!)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d2b9cc85-dc77-46e3-a52c-c90da1139b3e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect('playerId', jsonData.playerId).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"});",
+									"",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Bob\",\n\t\"lastName\": \"Sponge\",\n\t\"email\": \"sponge.bob@sea.com\",\n\t\"avatar\": \"the last air bender\"\n}"
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players/{{player_id}}/confirm?token={{player_confirmation_token}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players",
+								"{{player_id}}",
+								"confirm"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "{{player_confirmation_token}}",
+									"equals": true
+								}
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/players/{id} (after confirmation)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3f0f4658-cdf3-4c74-8fab-d9e556ebcac5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var playerId = pm.environment.get('player_id');",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Payload contains an id.\", function () {",
+									"    pm.expect(jsonData.playerId).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.equal(playerId);",
+									"})",
+									"",
+									"pm.test(\"Payload contains isDeleted = false.\", function () {",
+									"    pm.expect(jsonData.isDeleted).to.not.be.undefined;",
+									"    pm.expect(jsonData.isDeleted).to.be.false;",
+									"})",
+									"",
+									"pm.test(\"Payload contains isAccountConfirmed = true.\", function () {",
+									"    ",
+									"    pm.expect(jsonData.isAccountConfirmed).to.not.be.undefined;",
+									"    pm.expect(jsonData.isAccountConfirmed).to.be.true;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an avatar.\", function () {",
+									"    pm.expect(jsonData.avatar).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    pm.expect(jsonData.firstName).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains a lastName.\", function () {",
+									"    pm.expect(jsonData.lastName).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an email.\", function () {",
+									"    pm.expect(jsonData.email).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an url.\", function () {",
+									"    pm.expect(jsonData.url).to.not.be.undefined;",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6993cd44-6729-4b8f-b86e-ebf4ffa8bdff",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players/{{player_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players",
+								"{{player_id}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/players/",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d2804907-e999-4602-b363-4a87a5b5a230",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an url and a list of players\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.url !== undefined).to.eql(true);",
+									"    pm.expect(jsonData.list !== undefined).to.eql(true);",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/players/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d8fba7e9-6088-4007-8ca8-c9fd79d0b2ff",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.playerId).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.not.be.undefined;",
+									"    pm.expect(jsonData.isDeleted).to.not.be.undefined;",
+									"    pm.expect(jsonData.isAccountConfirmed).to.not.be.undefined;",
+									"    pm.expect(jsonData.avatar).to.not.be.undefined;",
+									"    pm.expect(jsonData.firstName).to.not.be.undefined;",
+									"    pm.expect(jsonData.lastName).to.not.be.undefined;",
+									"    pm.expect(jsonData.email).to.not.be.undefined;",
+									"    pm.expect(jsonData.url).to.not.be.undefined;",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"bobby\",\n\t\"lastName\": \"SONGE\",\n\t\"email\": \"songe.bobby@sea.com\",\n\t\"avatar\": \"profile image\"\n}"
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players/{{player_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players",
+								"{{player_id}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/players/{id} (after update)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3f0f4658-cdf3-4c74-8fab-d9e556ebcac5",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var playerId = pm.environment.get('player_id');",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Payload contains an id.\", function () {",
+									"    pm.expect(jsonData.playerId).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.equal(playerId);",
+									"})",
+									"",
+									"pm.test(\"Payload contains isDeleted = false.\", function () {",
+									"    pm.expect(jsonData.isDeleted).to.not.be.undefined;",
+									"    pm.expect(jsonData.isDeleted).to.be.false;",
+									"})",
+									"",
+									"pm.test(\"Payload contains isAccountConfirmed = true.\", function () {",
+									"    ",
+									"    pm.expect(jsonData.isAccountConfirmed).to.not.be.undefined;",
+									"    pm.expect(jsonData.isAccountConfirmed).to.be.true;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an avatar.\", function () {",
+									"    pm.expect(jsonData.avatar).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    pm.expect(jsonData.firstName).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains a lastName.\", function () {",
+									"    pm.expect(jsonData.lastName).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an email.\", function () {",
+									"    pm.expect(jsonData.email).to.not.be.undefined;",
+									"})",
+									"",
+									"pm.test(\"Payload contains an url.\", function () {",
+									"    pm.expect(jsonData.url).to.not.be.undefined;",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6993cd44-6729-4b8f-b86e-ebf4ffa8bdff",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players/{{player_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players",
+								"{{player_id}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/players/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f9900e0c-3daa-43ff-8058-6c072c7e6487",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Payload contains an id, etc.\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.playerId).to.not.be.undefined;",
+									"    pm.expect(jsonData.playerId.id).to.not.be.undefined;",
+									"});",
+									"",
+									"const maxExpectedResponseTime = +pm.environment.get(\"max_expected_response_time__ms\");",
+									"pm.test(\"Response time is less than \"+maxExpectedResponseTime+\"ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(maxExpectedResponseTime);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{scheme}}://{{host}}:{{port}}/api/players/{{player_id}}",
+							"protocol": "{{scheme}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"players",
+								"{{player_id}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
 				}
 			]
 		}

@@ -17,6 +17,7 @@ describe('Player', () => {
   fields.set('firstName', 'bob');
   fields.set('lastName', 'sponge');
   fields.set('email', 'sponge.bob@sea.com');
+  const confirmationToken = 'fake_confirmation_token';
 
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
@@ -36,7 +37,7 @@ describe('Player', () => {
   describe('.delete should', () => {
     it('emit PlayerDeleted', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       t = new Player(history);
       t.deletePlayer(simpleEventPublisher);
       expect(eventsRaised.length).to.equal(1);
@@ -44,7 +45,7 @@ describe('Player', () => {
     });
     it('do nothing more if Player is already deleted', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       history.push(new PlayerDeleted(playerId));
       t = new Player(history);
       t.deletePlayer(simpleEventPublisher);
@@ -52,7 +53,7 @@ describe('Player', () => {
     });
     it('update its projections', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       history.push(new PlayerConfirmedAccount(playerId, fields.get('email'), 'token'));
       t = new Player(history);
       expect(t.projection.email).to.be.equal(fields.get('email'));

@@ -24,26 +24,28 @@ export type PlayerRelatedEvent =
 export class PlayerHandler {
   constructor(public playersRepository: PlayersRepository) {}
 
-  public saveProjection(event: PlayerRelatedEvent) {
+  public updateProjection(event: PlayerRelatedEvent) {
     // TODO what do we really need to save as projection data here ?
 
     // const projection = new PlayerInGameProjection(event.playerId);
     // this.playersRepository.save(projection);
+    const player = this.playersRepository.getPlayer(event.gameId);
+    player.projection.apply(event);
   }
 
   public register(eventPublisher: EventPublisher) {
     eventPublisher
       .on(PlayerAddedToGameWithTeam, (event: PlayerAddedToGameWithTeam) => {
-        this.saveProjection(event);
+        this.updateProjection(event);
       })
       .on(PlayerChangedPositionOnGame, (event: PlayerChangedPositionOnGame) => {
-        this.saveProjection(event);
+        this.updateProjection(event);
       })
       .on(PlayerRemovedFromGame, (event: PlayerRemovedFromGame) => {
-        this.saveProjection(event);
+        this.updateProjection(event);
       })
       .on(AddedGoalFromPlayerToGame, (event: AddedGoalFromPlayerToGame) => {
-        this.saveProjection(event);
+        this.updateProjection(event);
       });
   }
 }

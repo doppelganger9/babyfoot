@@ -17,6 +17,7 @@ describe('Player', () => {
   fields.set('firstName', 'bob');
   fields.set('lastName', 'sponge');
   fields.set('email', 'sponge.bob@sea.com');
+  const confirmationToken = 'fake_confirmation_token';
 
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
@@ -36,15 +37,15 @@ describe('Player', () => {
   describe('.confirmAccount should', () => {
     it('emit PlayerConfirmedAccount', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       t = new Player(history);
-      t.confirmAccount(simpleEventPublisher, t.projection.confirmationToken);
+      t.confirmAccount(simpleEventPublisher, confirmationToken);
       expect(eventsRaised.length).to.equal(1);
       expect(eventsRaised[0]).to.be.instanceOf(PlayerConfirmedAccount);
     });
     it('throw PlayerAccountConfirmationDidNotMatchError when token is not the one sent by email', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       t = new Player(history);
       expect(() =>
         t.confirmAccount(simpleEventPublisher, 'token'),
@@ -53,7 +54,7 @@ describe('Player', () => {
     });
     it('throw PlayerIdDeleted when trying to confirm a deleted player', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       history.push(new PlayerDeleted(playerId));
       t = new Player(history);
       expect(() =>
@@ -63,7 +64,7 @@ describe('Player', () => {
     });
     it('update its projections', () => {
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, confirmationToken));
       history.push(new PlayerConfirmedAccount(playerId, fields.get('email'), 'token'));
       t = new Player(history);
       expect(t.projection.email).to.be.equal(fields.get('email'));

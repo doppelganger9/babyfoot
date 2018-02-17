@@ -49,7 +49,7 @@ describe('Player', () => {
     it('update its projections', () => {
 
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields));
+      history.push(new PlayerCreated(playerId, fields, 'fake_confirmation_token'));
       t = new Player(history);
       expect(t.projection.email).to.be.equal(fields.get('email'));
       expect(t.projection.firstName).to.be.equal(fields.get('firstName'));

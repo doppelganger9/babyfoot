@@ -8,10 +8,12 @@ import { PlayerAccountConfirmationDidNotMatchError } from './errors/confirmation
 import { PlayerIsDeletedError } from './errors/player-is-deleted-error';
 
 export class Player {
-  public static createPlayer(eventPublisher: EventPublisher, fields: Map<string, any>): void {
+  public static createPlayer(eventPublisher: EventPublisher, fields: Map<string, any>): PlayerId {
     // Id generation with high entropy lessens the chance of generating collision
     const playerId = new PlayerId(generateUUID());
-    eventPublisher.publish(new PlayerCreated(playerId, fields));
+    const confirmationToken = generateUUID();
+    eventPublisher.publish(new PlayerCreated(playerId, fields, confirmationToken));
+    return playerId;
   }
   public projection: PlayerDecisionProjection;
 

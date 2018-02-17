@@ -14,24 +14,33 @@ import {
   PositionValue,
 } from '.';
 import { GamesRepository } from './infrastructure/game-repository';
+import { PlayersRepository } from './infrastructure/player-repository';
 import { GameListItemProjection } from './domains/game/game-list-item-projection';
 import { GameHandler } from './domains/game/game-handler';
 import { TeamColors } from './domains/game/game-id';
 import { PlayerId } from './domains/player';
+import { PlayerHandler } from './domains/player/player-handler';
+import { PlayerRoutes } from './player-routes';
 
 export class Routes {
   private eventsStore: EventsStore;
   private userIdentitiesRepository: UserIdentityRepository;
   private sessionsRepository: SessionsRepository;
   private gamesRepository: GamesRepository;
+  private playersRepository: PlayersRepository;
   private eventPublisher: EventPublisher;
+
+  private playerRoutes: PlayerRoutes;
 
   constructor() {
     this.eventsStore = new EventsStore();
     this.userIdentitiesRepository = new UserIdentityRepository(this.eventsStore);
     this.sessionsRepository = new SessionsRepository(this.eventsStore);
     this.gamesRepository = new GamesRepository(this.eventsStore);
+    this.playersRepository = new PlayersRepository(this.eventsStore);
     this.eventPublisher = this.createEventPublisher(this.eventsStore);
+
+    this.playerRoutes = new PlayerRoutes(this.eventsStore, this.playersRepository, this.eventPublisher);
   }
 
   public registerRoutes(router: Router): void {
@@ -42,6 +51,7 @@ export class Routes {
     router.post('/api/games', (req, res) => this.createGame(req, res));
     router.get('/api/games', (req, res) => this.getGameList(req, res));
     router.get('/api/games/:id', (req, res) => this.getGame(req, res));
+    router.delete('/api/games/:id', (req, res) => this.deleteGame(req, res));
     router.post('/api/games/:id/start', (req, res) => this.startGame(req, res));
     router.post('/api/games/:id/end', (req, res) => this.endGame(req, res));
 
@@ -52,6 +62,8 @@ export class Routes {
     router.post('/api/games/:id/players/:player/position/:position', (req, res) =>
       this.changeUserPositionToGame(req, res),
     );
+
+    this.playerRoutes.registerRoutes(router);
 
     // router.get('/api/games/:id/comments', getCommentsOnGame);
     // router.post('/api/games/:id/comments', addCommentToGame);
@@ -75,6 +87,7 @@ export class Routes {
     // Here, Session and Timeline Update projections:
     new SessionHandler(this.sessionsRepository).register(eventPublisher);
     new GameHandler(this.gamesRepository).register(eventPublisher);
+    // new PlayerHandler(this.playersRepository).register(eventPublisher);
 
     // Later on, for the QUERY part of CQRS, you just need to query the routerropriate repository which
     // contains ready - to - use and up - to - date projections
@@ -212,6 +225,13 @@ export class Routes {
     this.standardGameOKResponseWithAddedAttributes(res, gameId, { time: now });
   }
 
+  private deleteGame(req: Request, res: Response) {
+    const gameId = new GameId(req.params.id);
+    const game = this.gamesRepository.getGame(gameId);
+    game.deleteGame(this.eventPublisher);
+    this.standardGameOKResponseWithAddedAttributes(res, gameId);
+  }
+
   private addGoalFromPlayerToGame(req: Request, res: Response) {
     const gameId = new GameId(req.params.id);
     const playerId = new PlayerId(req.params.player);
@@ -302,4 +322,5 @@ export class Routes {
       url: `/api/games/${encodeURIComponent(gameId.id)}${context}`,
     });
   }
+
 }

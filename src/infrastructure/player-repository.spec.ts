@@ -25,7 +25,7 @@ describe('Players Repository', () => {
   });
 
   it('Given PlayerCreated When getPlayer Then return Player aggregate', () => {
-    const playerCreated = new PlayerCreated(playerId, fields);
+    const playerCreated = new PlayerCreated(playerId, fields, 'confirmationToken');
     eventsStore.store(playerCreated);
 
     const userPlayer = repository.getPlayer(playerId);
@@ -39,8 +39,8 @@ describe('Players Repository', () => {
     }).to.throw(UnknownPlayerError);
   });
 
-  it('Given huge list of events When getPlayers Then return list of Players (.001ms per Player)', () => {
-    const max = 50000;
+  it('Given huge list of events When getPlayers Then return list of Players (.05ms per Player)', () => {
+    const max = 1000;
     for (let i = 0; i < max; i++) {
       repository.save(new PlayerListItemProjection(new PlayerId('Player' + i)));
     }

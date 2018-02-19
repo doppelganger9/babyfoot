@@ -5,13 +5,15 @@ import {
   PlayerChangedPositionOnGame,
   PlayerRemovedFromGame,
 } from '../..';
-import { PlayersRepository } from '../../infrastructure/player-repository';
+import { PlayersRepository, PlayerListItemProjection } from '../../infrastructure/player-repository';
+import { PlayerCreated, PlayerUpdated, PlayerDeleted, PlayerConfirmedAccount, PlayerEvent } from '.';
 
 export type PlayerRelatedEvent =
   | PlayerAddedToGameWithTeam
   | PlayerChangedPositionOnGame
   | PlayerRemovedFromGame
-  | AddedGoalFromPlayerToGame;
+  | AddedGoalFromPlayerToGame
+  ;
 
 /**
  * This class is used to map events to a projections repository.
@@ -24,18 +26,32 @@ export type PlayerRelatedEvent =
 export class PlayerHandler {
   constructor(public playersRepository: PlayersRepository) {}
 
-  public updateProjection(event: PlayerRelatedEvent) {
-    // TODO what do we really need to save as projection data here ?
+  public updateProjection(event: PlayerRelatedEvent | PlayerEvent) {
+    const player = this.playersRepository.getPlayer(event.playerId);
 
-    // const projection = new PlayerInGameProjection(event.playerId);
-    // this.playersRepository.save(projection);
-    const player = this.playersRepository.getPlayer(event.gameId);
-    player.projection.apply(event);
+    const projection = new PlayerListItemProjection(event.playerId);
+    projection.avatar = player.projection.avatar;
+    projection.firstName = player.projection.firstName;
+    projection.lastName = player.projection.lastName;
+
+    this.playersRepository.save(projection);
+
+    // TODO maybe apply events not already applied (PlayerRelatedEvents) ?
+    // player.projection.apply(event);
   }
 
   public register(eventPublisher: EventPublisher) {
     eventPublisher
-      .on(PlayerAddedToGameWithTeam, (event: PlayerAddedToGameWithTeam) => {
+      .on(PlayerCreated, (event: PlayerCreated) => {
+        this.updateProjection(event);
+      })
+      .on(PlayerUpdated, (event: PlayerUpdated) => {
+        this.updateProjection(event);
+      })
+      .on(PlayerDeleted, (event: PlayerDeleted) => {
+        this.updateProjection(event);
+      })
+      .on(PlayerConfirmedAccount, (event: PlayerConfirmedAccount) => {
         this.updateProjection(event);
       })
       .on(PlayerChangedPositionOnGame, (event: PlayerChangedPositionOnGame) => {

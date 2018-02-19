@@ -101,8 +101,7 @@ export class PlayerRoutes {
     res.status(200).send({
       list: all.map(player => {
         return {
-          playerId: player.playerId,
-
+          ...player,
           url: '/api/players/' + encodeURIComponent(player.playerId.id),
         };
       }),

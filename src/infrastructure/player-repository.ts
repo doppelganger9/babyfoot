@@ -4,8 +4,14 @@ import { PlayerId } from '../domains/player/player-id';
 import { UnknownPlayerError } from './errors';
 
 export class PlayerListItemProjection {
-  constructor(public playerId: PlayerId) {}
-  // TODO later... inspiratin from GameListItemProjection
+  public firstName: string;
+  public lastName: string;
+  public avatar: string;
+  constructor(public playerId: PlayerId) {
+    this.firstName = '';
+    this.lastName = '';
+    this.avatar = '';
+  }
 }
 
 /**
@@ -32,7 +38,17 @@ export class PlayersRepository {
   }
 
   public save(projection: PlayerListItemProjection): void {
-    this.projections.get('list').push(projection);
+    const list: Array<PlayerListItemProjection> = this.projections.get('list');
+    if (list.filter(e => e.playerId.id === projection.playerId.id).length > 0) {
+      // update
+      const filteredList = list.filter(e => e.playerId.id !== projection.playerId.id);
+      filteredList.push(projection);
+      this.projections.set('list', filteredList);
+    } else {
+      // add
+      list.push(projection);
+      this.projections.set('list', list);
+    }
   }
 
   /**

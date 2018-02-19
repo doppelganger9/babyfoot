@@ -87,7 +87,7 @@ export class Routes {
     // Here, Session and Timeline Update projections:
     new SessionHandler(this.sessionsRepository).register(eventPublisher);
     new GameHandler(this.gamesRepository).register(eventPublisher);
-    // new PlayerHandler(this.playersRepository).register(eventPublisher);
+    new PlayerHandler(this.playersRepository).register(eventPublisher);
 
     // Later on, for the QUERY part of CQRS, you just need to query the routerropriate repository which
     // contains ready - to - use and up - to - date projections

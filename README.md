@@ -1,5 +1,7 @@
 # BabyFoot
 
+![Table Football picture](https://source.unsplash.com/7de474KZIbs/270x180)
+
 [![Build Status](https://travis-ci.org/doppelganger9/babyfoot.svg?branch=master)](https://travis-ci.org/doppelganger9/babyfoot) [![Dependency Status](https://beta.gemnasium.com/badges/github.com/doppelganger9/babyfoot.svg)](https://beta.gemnasium.com/projects/github.com/doppelganger9/babyfoot) [![Coverage Status](https://coveralls.io/repos/github/doppelganger9/babyfoot/badge.svg?branch=master)](https://coveralls.io/github/doppelganger9/babyfoot?branch=master) [![Known Vulnerabilities](https://snyk.io/test/github/doppelganger9/babyfoot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doppelganger9/babyfoot?targetFile=package.json) [![BCH compliance](https://bettercodehub.com/edge/badge/doppelganger9/babyfoot?branch=master)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/22e54b8ae86b4bf2a8f6172899d4a91a)](https://www.codacy.com/app/doppelganger9/babyfoot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=doppelganger9/babyfoot&amp;utm_campaign=Badge_Grade) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot?ref=badge_shield) [![Maintainability](https://api.codeclimate.com/v1/badges/6df9f2100fc61a97bcf2/maintainability)](https://codeclimate.com/github/doppelganger9/babyfoot/maintainability)
 
 ## Goals
@@ -62,6 +64,7 @@ Also my goal is to automate this with **Newman**.
 
 - the [Devoxx 2017 session "CQRS/ES from Scratch" by Emilien Pecoul and Florian Pellet](https://www.youtube.com/watch?v=S1V4t7SXXCU)
 - the associated project : https://github.com/DevLyon/mixter
+- Photo by [Pascal Swier](https://unsplash.com/photos/7de474KZIbs?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/collections/1408473/grato?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
 
 ## Code of Conduct
 

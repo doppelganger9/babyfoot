@@ -32,6 +32,9 @@ export class PlayerDecisionProjection {
   get avatar(): string {
     return this.projection.data.get('avatar');
   }
+  get gender(): 'M'|'F' {
+    return this.projection.data.get('gender');
+  }
   // get creationDate(): string { return this.projection.data.get('creationDate'); }
   // get lastUpdateDate(): string { return this.projection.data.get('lastUpdateDate'); }
 

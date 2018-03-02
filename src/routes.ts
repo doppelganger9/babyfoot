@@ -156,10 +156,13 @@ export class Routes {
   private getGame(req: Request, res: Response) {
     // create ID value type based on request parameters
     const gameId = new GameId(req.params.id);
+    const embedded = req.query._embedded;
 
     // call COMMAND on Aggregate (this time it is a static method, because the Entity does not yet exist)
     const found: Game = this.gamesRepository.getGame(gameId);
-
+    const embedPlayers = embedded ? (list: Array<PlayerId>) => list.map(it =>
+            this.playersRepository.getPlayerFromList(it),
+          ) : (list: Array<PlayerId>) => list;
     // send response
     this.standardGameOKResponseWithAddedAttributes(res, gameId, {
       currentEndDatetime: found.projection.currentEndDatetime,
@@ -167,11 +170,11 @@ export class Routes {
       duration: found.projection.duration,
       initialDatetime: found.projection.initialDatetime,
       isDeleted: found.projection.isDeleted,
-      players: found.projection.players,
+      players: embedPlayers(found.projection.players),
       pointsTeamBlue: found.projection.pointsTeamBlue,
       pointsTeamRed: found.projection.pointsTeamRed,
-      teamBlueMembers: found.projection.teamBlueMembers,
-      teamRedMembers: found.projection.teamRedMembers,
+      teamBlueMembers: embedPlayers(found.projection.teamBlueMembers),
+      teamRedMembers: embedPlayers(found.projection.teamRedMembers),
       winner: found.projection.winner,
 
       end: `/api/games/${encodeURIComponent(gameId.id)}/end`,

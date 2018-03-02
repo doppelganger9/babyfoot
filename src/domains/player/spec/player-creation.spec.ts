@@ -16,6 +16,7 @@ describe('Player', () => {
   fields.set('firstName', 'bob');
   fields.set('lastName', 'sponge');
   fields.set('email', 'sponge.bob@sea.com');
+  fields.set('gender', 'F');
 
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
@@ -57,6 +58,7 @@ describe('Player', () => {
       expect(t.projection.avatar).to.be.equal(fields.get('avatar'));
       expect(t.projection.id.id).to.be.equal(playerId.id);
       expect(t.projection.isDeleted).to.be.false;
+      expect(t.projection.gender).to.be.equal('F');
       expect(t.projection.isAccountConfirmed).to.be.false;
       expect(t.projection.confirmationToken).to.not.be.undefined;
     });

@@ -7,10 +7,16 @@ export class PlayerListItemProjection {
   public firstName: string;
   public lastName: string;
   public avatar: string;
+  public isDeleted: boolean;
+  public isConfirmed: boolean;
+  public gender: 'M' | 'F';
   constructor(public playerId: PlayerId) {
     this.firstName = '';
     this.lastName = '';
     this.avatar = '';
+    this.isConfirmed = false;
+    this.isDeleted = false;
+    this.gender = 'M';
   }
 }
 
@@ -67,5 +73,12 @@ export class PlayersRepository {
    */
   public getPlayers(): Array<PlayerListItemProjection> {
     return this.projections.get('list');
+  }
+
+  public getPlayerFromList(playerId: PlayerId): PlayerListItemProjection {
+    return this.projections
+      .get('list')
+      .filter((x: PlayerListItemProjection) => x.playerId.id === playerId.id)
+      .pop();
   }
 }

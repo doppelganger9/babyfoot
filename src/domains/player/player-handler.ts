@@ -33,6 +33,9 @@ export class PlayerHandler {
     projection.avatar = player.projection.avatar;
     projection.firstName = player.projection.firstName;
     projection.lastName = player.projection.lastName;
+    projection.isConfirmed = player.projection.isAccountConfirmed;
+    projection.isDeleted = player.projection.isDeleted;
+    projection.gender = player.projection.gender;
 
     this.playersRepository.save(projection);
 

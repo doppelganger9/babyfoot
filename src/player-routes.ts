@@ -53,6 +53,7 @@ export class PlayerRoutes {
     }
     fields.set('email', req.body.email);
     fields.set('avatar', req.body.avatar);
+    fields.set('gender', req.body.gender);
 
     // call COMMAND on Aggregate (this time it is a static method, because the Entity does not yet exist)
     const id = Player.createPlayer(this.eventPublisher, fields);
@@ -66,6 +67,7 @@ export class PlayerRoutes {
         lastName: fields.get('lastName'),
         avatar: fields.get('avatar'),
         email: fields.get('email'),
+        gender: fields.get('gender'),
         // TODO: the HATEOAS links should be generated in some way given the state of the Player. Maybe it is a new ActionsOnPlayerProjection ?
         url: '/api/players/' + encodeURIComponent(id.id),
       });
@@ -88,6 +90,7 @@ export class PlayerRoutes {
       firstName: found.projection.firstName,
       lastName: found.projection.lastName,
       email: found.projection.email,
+      gender: found.projection.gender,
       ...token
     });
   }
@@ -153,6 +156,7 @@ export class PlayerRoutes {
       isDeleted: updatedPlayer.projection.isDeleted,
       isAccountConfirmed: updatedPlayer.projection.isAccountConfirmed,
       email: updatedPlayer.projection.email,
+      gender: updatedPlayer.projection.gender,
     });
   }
 

@@ -4,6 +4,8 @@ import * as bodyParser from 'body-parser';
 import { Routes } from './routes';
 import { Application, Request, Response, Router } from 'express';
 import * as cors from 'cors';
+import * as helmet from 'helmet';
+
 
 function logErrors(err: any, req: Request, res: Response, next: any) {
   console.error(err.stack);
@@ -43,6 +45,7 @@ function createExpressMiddleware(port: string | number, router: Router): Applica
   const app = express();
   app.set('port', port);
 
+  app.use(helmet());
   app.use(cors());
 
   app.use(bodyParser.json());

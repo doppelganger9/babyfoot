@@ -43,9 +43,7 @@
     "nyc": "11.4.1",
     "prettier": "1.11.1",
     "source-map-support": "0.5.3",
-    "ts-node": "5.0.1",
-    "tslint": "5.9.1",
-    "typescript": "2.7.2"
+    "tslint": "5.9.1"
   },
   "nyc": {
     "include": [
@@ -69,6 +67,8 @@
   },
   "dependencies": {
     "cors": "2.8.4",
-    "express": "4.16.2"
+    "express": "4.16.2",
+    "ts-node": "5.0.1",
+    "typescript": "2.7.2"
   }
 }

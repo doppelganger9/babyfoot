@@ -8,3 +8,4 @@ export * from './missing-author-for-review-error';
 export * from './player-already-added-error';
 export * from './review-too-long-error';
 export * from './unknown-player-error';
+export * from './missing-initial-date-time-error';

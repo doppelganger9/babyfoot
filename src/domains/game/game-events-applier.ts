@@ -10,6 +10,7 @@ import {
   PlayerRemovedFromGame,
   SomeoneAddedACommentOnGame,
   SomeoneReviewedTheGame,
+  GameDateUpdated,
 } from './events';
 import { TeamColors } from './game-id';
 import { PlayerId } from '../player/player-id';
@@ -95,6 +96,10 @@ export class GameEventsApplier {
     console.error('not implemented yet');
   }
 
+  public static applyGameDateUpdated(this: DecisionProjection, event: GameDateUpdated): void {
+    this.data.set('initialDatetime', event.date);
+  }
+
   private static teamKey(color: TeamColors): string {
     return `team${color.substring(0, 1).toUpperCase()}${color.substring(1).toLowerCase()}Members`;
   }
@@ -108,4 +113,5 @@ export class GameEventsApplier {
       GameEventsApplier.removePlayerIfPresentFromTeamInProjection(dp, otherTeam, event);
     }
   }
+
 }

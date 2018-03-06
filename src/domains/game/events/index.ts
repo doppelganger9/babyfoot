@@ -4,7 +4,7 @@ export * from './game-started';
 export * from './game-created';
 export * from './game-deleted';
 export * from './game-ended';
-export * from './game-updated';
+export * from './game-date-updated';
 export * from './player-added-to-game-with-team';
 export * from './player-changed-position-on-game';
 export * from './player-removed-from-game';

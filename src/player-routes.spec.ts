@@ -11,7 +11,7 @@ describe('Player Routes', () => {
 
   beforeEach(() => {
     eventsStore = new EventsStore();
-    playersRepository = new PlayersRepository(eventsStore, new Map<string, any>())
+    playersRepository = new PlayersRepository(eventsStore, new Map<string, any>());
     eventPublisher = new EventPublisher();
   });
 

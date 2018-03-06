@@ -1,4 +1,4 @@
-import { DecisionApplierFunction as DAF, Event, EventPublisher, GameUpdated } from '../..';
+import { DecisionApplierFunction as DAF, Event, EventPublisher } from '../..';
 import {
   GameAlreadyEndedError,
   GameAlreadyStartedError,
@@ -10,6 +10,7 @@ import {
   PlayerAlreadyAddedError,
   ReviewTooLongError,
   UnknownPlayerError,
+  MissingInitialDateTimeError,
 } from './errors';
 import {
   AddedGoalFromPlayerToGame,
@@ -22,6 +23,7 @@ import {
   PlayerRemovedFromGame,
   SomeoneAddedACommentOnGame,
   SomeoneReviewedTheGame,
+  GameDateUpdated,
 } from './events';
 import { GameDecisionProjection } from './game-decision-projection';
 import { GameEventsApplier as GEA } from './game-events-applier';
@@ -48,6 +50,7 @@ export class Game {
       .register('PlayerChangedPositionOnGame', GEA.applyPlayerChangedPositionOnGame as DAF)
       .register('SomeoneAddedACommentOnGame', GEA.applySomeoneAddedACommentOnGame as DAF)
       .register('SomeoneReviewedTheGame', GEA.applySomeoneReviewedTheGame as DAF)
+      .register('GameDateUpdated', GEA.applyGameDateUpdated as DAF)
       .apply(events);
   }
 
@@ -133,9 +136,14 @@ export class Game {
     eventPublisher.publish(event);
   }
 
-  public updateGame(eventPublisher: EventPublisher): void {
-    eventPublisher.publish(new GameUpdated(this.projection.id));
-    throw new Error('not implemented');
+  public updateInitialDateTime(eventPublisher: EventPublisher, date: Date): void {
+    if (!date) {
+      throw new MissingInitialDateTimeError(this.projection.id);
+    }
+    if (this.projection.isDeleted) {
+      throw new GameIsDeletedError(this.projection.id);
+    }
+    eventPublisher.publish(new GameDateUpdated(this.projection.id, date));
   }
 
   public changeUserPositionOnGame(eventPublisher: EventPublisher, playerId: PlayerId, position: PositionValue) {

@@ -54,6 +54,7 @@ export class Routes {
     router.delete('/api/games/:id', (req, res) => this.deleteGame(req, res));
     router.post('/api/games/:id/start', (req, res) => this.startGame(req, res));
     router.post('/api/games/:id/end', (req, res) => this.endGame(req, res));
+    router.post('/api/games/:id', (req, res) => this.updateGame(req, res));
 
     router.get('/api/games/:id/players', (req, res) => this.getPlayersInGame(req, res));
     router.post('/api/games/:id/players/:player/:team', (req, res) => this.addPlayerToGame(req, res));
@@ -226,6 +227,22 @@ export class Routes {
     game.endGame(this.eventPublisher);
 
     this.standardGameOKResponseWithAddedAttributes(res, gameId, { time: now });
+  }
+
+  private updateGame(req: Request, res: Response) {
+    // create ID value type based on request parameters
+    const gameId = new GameId(req.params.id);
+    const initialDatetime = req.body.initialDatetime;
+    // find Aggregate for this ID in repository
+    const game = this.gamesRepository.getGame(gameId);
+    // call COMMAND on Aggregate
+    game.updateInitialDateTime(this.eventPublisher, initialDatetime);
+
+    // API User should make a GET after this. This endpoint does not send the updated Game projection.
+    this.standardGameOKResponseWithAddedAttributes(res, gameId, {
+      end: `/api/games/${encodeURIComponent(gameId.id)}/end`,
+      start: `/api/games/${encodeURIComponent(gameId.id)}/start`,
+    });
   }
 
   private deleteGame(req: Request, res: Response) {

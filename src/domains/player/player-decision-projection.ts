@@ -11,29 +11,17 @@ export class PlayerDecisionProjection {
   get isDeleted(): boolean {
     return this.projection.data.get('isDeleted');
   }
-  get isAccountConfirmed(): boolean {
-    return this.projection.data.get('isAccountConfirmed');
-  }
   get id(): PlayerId {
     return this.projection.data.get('id');
   }
-  get confirmationToken(): string {
-    return this.projection.data.get('confirmationToken');
-  }
-  get firstName(): string {
-    return this.projection.data.get('firstName');
-  }
-  get lastName(): string {
-    return this.projection.data.get('lastName');
+  get displayName(): string {
+    return this.projection.data.get('displayName');
   }
   get email(): string {
     return this.projection.data.get('email');
   }
   get avatar(): string {
     return this.projection.data.get('avatar');
-  }
-  get gender(): 'M'|'F' {
-    return this.projection.data.get('gender');
   }
   // get creationDate(): string { return this.projection.data.get('creationDate'); }
   // get lastUpdateDate(): string { return this.projection.data.get('lastUpdateDate'); }

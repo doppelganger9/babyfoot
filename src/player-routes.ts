@@ -33,27 +33,21 @@ export class PlayerRoutes {
     router.post('/api/players', (req, res) => this.createPlayer(req, res));
     router.get('/api/players', (req, res) => this.getPlayerList(req, res));
     router.get('/api/players/:id', (req, res) => this.getPlayer(req, res));
-    router.post('/api/players/:id/confirm', (req, res) => this.confirmAccount(req, res));
     router.post('/api/players/:id', (req, res) => this.updatePlayer(req, res));
     router.delete('/api/players/:id', (req, res) => this.deletePlayer(req, res));
   }
 
   public createPlayer(req: Request, res: Response) {
     const fields = new Map<string, any>();
-    if (!req.body.firstName) {
-      throw new Error('firstName is required');
+    if (!req.body.displayName) {
+      throw new Error('displayName is required');
     }
-    fields.set('firstName', req.body.firstName);
-    if (!req.body.lastName) {
-      throw new Error('lastName is required');
-    }
-    fields.set('lastName', req.body.lastName);
+    fields.set('displayName', req.body.displayName);
     if (!req.body.email) {
       throw new Error('email is required');
     }
     fields.set('email', req.body.email);
     fields.set('avatar', req.body.avatar);
-    fields.set('gender', req.body.gender);
 
     // call COMMAND on Aggregate (this time it is a static method, because the Entity does not yet exist)
     const id = Player.createPlayer(this.eventPublisher, fields);
@@ -63,11 +57,9 @@ export class PlayerRoutes {
       .status(201)
       .send({
         playerId: id,
-        firstName: fields.get('firstName'),
-        lastName: fields.get('lastName'),
+        displayName: fields.get('displayName'),
         avatar: fields.get('avatar'),
         email: fields.get('email'),
-        gender: fields.get('gender'),
         // TODO: the HATEOAS links should be generated in some way given the state of the Player. Maybe it is a new ActionsOnPlayerProjection ?
         url: '/api/players/' + encodeURIComponent(id.id),
       });
@@ -80,18 +72,12 @@ export class PlayerRoutes {
     // call COMMAND on Aggregate (this time it is a static method, because the Entity does not yet exist)
     const found: Player = this.playersRepository.getPlayer(playerId);
 
-    const token = process.env.NODE_ENV === 'production' ? {} : { confirmationToken: found.projection.confirmationToken };
-
     // send response
     this.standardPlayerOKResponseWithAddedAttributes(res, playerId, {
       isDeleted: found.projection.isDeleted,
-      isAccountConfirmed: found.projection.isAccountConfirmed,
       avatar: found.projection.avatar,
-      firstName: found.projection.firstName,
-      lastName: found.projection.lastName,
+      displayName: found.projection.displayName,
       email: found.projection.email,
-      gender: found.projection.gender,
-      ...token
     });
   }
 
@@ -125,14 +111,10 @@ export class PlayerRoutes {
 
   public updatePlayer(req: Request, res: Response) {
     const fields = new Map<string, any>();
-    if (!req.body.firstName) {
-      throw new Error('firstName is required');
+    if (!req.body.displayName) {
+      throw new Error('displayName is required');
     }
-    fields.set('firstName', req.body.firstName);
-    if (!req.body.lastName) {
-      throw new Error('lastName is required');
-    }
-    fields.set('lastName', req.body.lastName);
+    fields.set('displayName', req.body.displayName);
     if (!req.body.email) {
       throw new Error('email is required');
     }
@@ -150,26 +132,11 @@ export class PlayerRoutes {
     const updatedPlayer = this.playersRepository.getPlayer(playerId);
 
     this.standardPlayerOKResponseWithAddedAttributes(res, playerId, {
-      firstName: updatedPlayer.projection.firstName,
-      lastName: updatedPlayer.projection.lastName,
+      displayName: updatedPlayer.projection.displayName,
       avatar: updatedPlayer.projection.avatar,
       isDeleted: updatedPlayer.projection.isDeleted,
-      isAccountConfirmed: updatedPlayer.projection.isAccountConfirmed,
       email: updatedPlayer.projection.email,
-      gender: updatedPlayer.projection.gender,
     });
-  }
-
-  public confirmAccount(req: Request, res: Response) {
-    const token = req.query.token;
-    // create ID value type based on request parameters
-    const playerId = new PlayerId(req.params.id);
-    // find Aggregate for this ID in repository
-    const player = this.playersRepository.getPlayer(playerId);
-    // call COMMAND on Aggregate
-    player.confirmAccount(this.eventPublisher, token);
-
-    this.standardPlayerOKResponseWithAddedAttributes(res, playerId);
   }
 
   public standardPlayerOKResponseWithAddedAttributes(

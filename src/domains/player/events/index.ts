@@ -1,4 +1,3 @@
-export * from './player-confirmed-account';
 export * from './player-created';
 export * from './player-updated';
 export * from './player-deleted';

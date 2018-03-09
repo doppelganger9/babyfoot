@@ -1,5 +1,5 @@
 import { DecisionProjection } from '..';
-import { PlayerConfirmedAccount, PlayerCreated, PlayerDeleted, PlayerUpdated } from './events';
+import { PlayerCreated, PlayerDeleted, PlayerUpdated } from './events';
 import { generateUUID } from '../..';
 
 export class PlayerEventsApplier {
@@ -12,16 +12,9 @@ export class PlayerEventsApplier {
     this.data.set('isDeleted', false);
     this.data.set('creationDate', new Date());
     this.data.set('lastUpdateDate', new Date());
-    this.data.set('isAccountConfirmed', false);
-    this.data.set('confirmationToken', event.confirmationToken);
   }
   public static applyPlayerDeleted(this: DecisionProjection, event: PlayerDeleted): void {
     this.data.set('isDeleted', true);
-    this.data.set('lastUpdateDate', new Date());
-  }
-  public static applyPlayerConfirmedAccount(this: DecisionProjection, event: PlayerConfirmedAccount): void {
-    this.data.set('accountConfirmationDate', new Date());
-    this.data.set('isAccountConfirmed', true);
     this.data.set('lastUpdateDate', new Date());
   }
   public static applyPlayerUpdated(this: DecisionProjection, event: PlayerUpdated): void {

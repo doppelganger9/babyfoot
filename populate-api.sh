@@ -40,23 +40,19 @@ do
   # thanks https://stackoverflow.com/questions/5688576/how-to-use-mod-operator-in-bash
   random100="$(( $RANDOM % 100))"
   if [[ $((USER_ID % 2)) = 1 ]]; then
-    gender="M"
     avatar="https://randomuser.me/api/portraits/men/$random100.jpg"
   else
-    gender="F"
     avatar="https://randomuser.me/api/portraits/women/$random100.jpg"
   fi
-  echo "we will create a user named $firstname $lastname @$domain, gender: $gender, with avatar url : $avatar"
+  echo "we will create a user named $firstname $lastname @$domain, with avatar url : $avatar"
   curl -X POST \
     $TARGET/api/players \
     -H 'Cache-Control: no-cache' \
     -H 'Content-Type: application/json' \
     -d "{
-    \"firstName\": \"$firstname\",
-    \"lastName\": \"$(toUpperCase $lastname)\",
+    \"displayName\": \"$firstname $(toUpperCase $lastname)\",
     \"email\": \"$(toLowerCase $firstname).$(toLowerCase $lastname)@$(toLowerCase $domain).com\",
-    \"avatar\": \"$avatar\",
-    \"gender\": \"$(toUpperCase $gender)\"
+    \"avatar\": \"$avatar\"
   }"
 
 done

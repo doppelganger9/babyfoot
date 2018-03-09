@@ -4,19 +4,15 @@ import { PlayerId } from '../domains/player/player-id';
 import { UnknownPlayerError } from './errors';
 
 export class PlayerListItemProjection {
-  public firstName: string;
-  public lastName: string;
+  public displayName: string;
   public avatar: string;
   public isDeleted: boolean;
-  public isConfirmed: boolean;
-  public gender: 'M' | 'F';
+  public email: string;
   constructor(public playerId: PlayerId) {
-    this.firstName = '';
-    this.lastName = '';
+    this.displayName = '';
     this.avatar = '';
-    this.isConfirmed = false;
     this.isDeleted = false;
-    this.gender = 'M';
+    this.email = '';
   }
 }
 

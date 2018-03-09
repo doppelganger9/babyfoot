@@ -13,10 +13,8 @@ describe('Player', () => {
   const playerId: PlayerId = new PlayerId('Player1');
   let eventsRaised = [];
   const fields = new Map<string, any>();
-  fields.set('firstName', 'bob');
-  fields.set('lastName', 'sponge');
+  fields.set('displayName', 'bob sponge');
   fields.set('email', 'sponge.bob@sea.com');
-  fields.set('gender', 'F');
 
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
@@ -50,17 +48,13 @@ describe('Player', () => {
     it('update its projections', () => {
 
       const history: Array<Event> = [];
-      history.push(new PlayerCreated(playerId, fields, 'fake_confirmation_token'));
+      history.push(new PlayerCreated(playerId, fields));
       t = new Player(history);
       expect(t.projection.email).to.be.equal(fields.get('email'));
-      expect(t.projection.firstName).to.be.equal(fields.get('firstName'));
-      expect(t.projection.lastName).to.be.equal(fields.get('lastName'));
+      expect(t.projection.displayName).to.be.equal(fields.get('displayName'));
       expect(t.projection.avatar).to.be.equal(fields.get('avatar'));
       expect(t.projection.id.id).to.be.equal(playerId.id);
       expect(t.projection.isDeleted).to.be.false;
-      expect(t.projection.gender).to.be.equal('F');
-      expect(t.projection.isAccountConfirmed).to.be.false;
-      expect(t.projection.confirmationToken).to.not.be.undefined;
     });
   });
 });

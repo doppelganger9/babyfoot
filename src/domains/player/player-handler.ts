@@ -6,7 +6,7 @@ import {
   PlayerRemovedFromGame,
 } from '../..';
 import { PlayersRepository, PlayerListItemProjection } from '../../infrastructure/player-repository';
-import { PlayerCreated, PlayerUpdated, PlayerDeleted, PlayerConfirmedAccount, PlayerEvent } from '.';
+import { PlayerCreated, PlayerUpdated, PlayerDeleted, PlayerEvent } from '.';
 
 export type PlayerRelatedEvent =
   | PlayerAddedToGameWithTeam
@@ -31,11 +31,9 @@ export class PlayerHandler {
 
     const projection = new PlayerListItemProjection(event.playerId);
     projection.avatar = player.projection.avatar;
-    projection.firstName = player.projection.firstName;
-    projection.lastName = player.projection.lastName;
-    projection.isConfirmed = player.projection.isAccountConfirmed;
+    projection.displayName = player.projection.displayName;
     projection.isDeleted = player.projection.isDeleted;
-    projection.gender = player.projection.gender;
+    projection.email = player.projection.email;
 
     this.playersRepository.save(projection);
 
@@ -52,9 +50,6 @@ export class PlayerHandler {
         this.updateProjection(event);
       })
       .on(PlayerDeleted, (event: PlayerDeleted) => {
-        this.updateProjection(event);
-      })
-      .on(PlayerConfirmedAccount, (event: PlayerConfirmedAccount) => {
         this.updateProjection(event);
       })
       .on(PlayerChangedPositionOnGame, (event: PlayerChangedPositionOnGame) => {

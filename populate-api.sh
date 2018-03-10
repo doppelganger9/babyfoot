@@ -14,11 +14,12 @@ function word {
   RANDOM_CMD='od -vAn -N4 -tu4 /dev/urandom'
 
   #Number of lines in $WORDFILE
-  tL=`awk 'NF!=0 {++c} END {print c}' $WORDFILE`
+  tL=$(awk 'NF!=0 {++c} END {print c}' $WORDFILE)
 
-  for i in `seq $NUMWORDS`
+  # shellcheck disable=SC2034
+  for i in $(seq $NUMWORDS)
   do
-    rnum=$(($(${RANDOM_CMD})%$tL+1))
+    rnum=$(($($RANDOM_CMD)%tL+1))
     sed -n "$rnum p" $WORDFILE
   done
 }
@@ -32,13 +33,13 @@ function toLowerCase {
 
 TARGET="http://localhost:3000"
 
-for USER_ID in 1 2 3 4 5 6 7 8 9 10
+for USER_ID in $(seq 10)
 do
   firstname="$(word 1 propernames)"
   lastname="$(word 1 words)"
   domain="$(word 1 words)"
   # thanks https://stackoverflow.com/questions/5688576/how-to-use-mod-operator-in-bash
-  random100="$(( $RANDOM % 100))"
+  random100="$((RANDOM % 100))"
   if [[ $((USER_ID % 2)) = 1 ]]; then
     avatar="https://randomuser.me/api/portraits/men/$random100.jpg"
   else

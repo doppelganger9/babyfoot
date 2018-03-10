@@ -1,0 +1,15 @@
+postman/
+.vscode/
+.nyc_output/
+.travis.yml
+.prettier
+.editorconfig
+.codeclimate.yml
+test/
+sample-lib-client/
+dist/
+coverage/
+*.md
+*.sh
+renovate.json
+refacto.js

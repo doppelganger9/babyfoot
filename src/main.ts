@@ -1,11 +1,11 @@
 import * as express from 'express';
 import * as http from 'http';
 import * as bodyParser from 'body-parser';
-import { Routes } from './routes';
+import { Routes } from './routes/routes';
 import { Application, Request, Response, Router } from 'express';
 import * as cors from 'cors';
 import * as helmet from 'helmet';
-
+import * as admin from 'firebase-admin';
 
 function logErrors(err: any, req: Request, res: Response, next: any) {
   console.error(err.stack);
@@ -63,6 +63,26 @@ function createExpressMiddleware(port: string | number, router: Router): Applica
   return app;
 }
 
+function configureFirebaseAdminSDK(): void {
+  if (process.env.NODE_ENV === 'production') {
+    const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_JSON;
+    if (!serviceAccount) {
+      console.error('ERROR: you need to pass an environment variable named'
+        + 'FIREBASE_SERVICE_ACCOUNT_KEY_JSON containing the JSON file contents '
+        + 'for Firebase Admin SDK authentication');
+      process.exit(1);
+    } else {
+      console.log('FIREBASE_SERVICE_ACCOUNT_KEY_JSON environment variable found');
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: 'https://babyfoot-pwa.firebaseio.com',
+      });
+    }
+  } else {
+    console.warn('No firebase admin SDK init in development mode');
+  }
+}
+
 function startServer(app: Application): void {
   const server = http.createServer(app);
   server.listen(app.get('port'), () => {
@@ -76,6 +96,8 @@ export function run(port: string | number) {
   routes.registerRoutes(router);
 
   const app = createExpressMiddleware(port, router);
+
+  configureFirebaseAdminSDK();
 
   startServer(app);
 }

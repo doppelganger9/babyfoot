@@ -12,15 +12,16 @@ import {
   generateUUID,
   GameId,
   PositionValue,
-} from '.';
-import { GamesRepository } from './infrastructure/game-repository';
-import { PlayersRepository, PlayerListItemProjection } from './infrastructure/player-repository';
-import { GameListItemProjection } from './domains/game/game-list-item-projection';
-import { GameHandler } from './domains/game/game-handler';
-import { TeamColors } from './domains/game/game-id';
-import { PlayerId } from './domains/player';
-import { PlayerHandler } from './domains/player/player-handler';
-import { Player } from './domains/player';
+} from '..';
+import { GamesRepository } from '../infrastructure/game-repository';
+import { PlayersRepository, PlayerListItemProjection } from '../infrastructure/player-repository';
+import { GameListItemProjection } from '../domains/game/game-list-item-projection';
+import { GameHandler } from '../domains/game/game-handler';
+import { TeamColors } from '../domains/game/game-id';
+import { PlayerId } from '../domains/player';
+import { PlayerHandler } from '../domains/player/player-handler';
+import { Player } from '../domains/player';
+import { checkFirebaseAuthToken } from '../security';
 
 export class PlayerRoutes {
   constructor(
@@ -30,11 +31,11 @@ export class PlayerRoutes {
   ) {}
 
   public registerRoutes(router: Router): void {
-    router.post('/api/players', (req, res) => this.createPlayer(req, res));
-    router.get('/api/players', (req, res) => this.getPlayerList(req, res));
-    router.get('/api/players/:id', (req, res) => this.getPlayer(req, res));
-    router.post('/api/players/:id', (req, res) => this.updatePlayer(req, res));
-    router.delete('/api/players/:id', (req, res) => this.deletePlayer(req, res));
+    router.post('/api/players', checkFirebaseAuthToken, (req, res) => this.createPlayer(req, res));
+    router.get('/api/players', checkFirebaseAuthToken, (req, res) => this.getPlayerList(req, res));
+    router.get('/api/players/:id', checkFirebaseAuthToken, (req, res) => this.getPlayer(req, res));
+    router.post('/api/players/:id', checkFirebaseAuthToken, (req, res) => this.updatePlayer(req, res));
+    router.delete('/api/players/:id', checkFirebaseAuthToken, (req, res) => this.deletePlayer(req, res));
   }
 
   public createPlayer(req: Request, res: Response) {

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { EventPublisher, EventsStore } from '.';
-import { PlayersRepository } from './infrastructure/player-repository';
+import { EventPublisher, EventsStore } from '..';
+import { PlayersRepository } from '../infrastructure/player-repository';
 import { PlayerRoutes } from './player-routes';
 
 describe('Player Routes', () => {

@@ -12,132 +12,58 @@ import {
   generateUUID,
   GameId,
   PositionValue,
-} from '.';
-import { GamesRepository } from './infrastructure/game-repository';
-import { PlayersRepository } from './infrastructure/player-repository';
-import { GameListItemProjection } from './domains/game/game-list-item-projection';
-import { GameHandler } from './domains/game/game-handler';
-import { TeamColors } from './domains/game/game-id';
-import { PlayerId } from './domains/player';
-import { PlayerHandler } from './domains/player/player-handler';
-import { PlayerRoutes } from './player-routes';
+} from '..';
+import { GamesRepository } from '../infrastructure/game-repository';
+import { GameListItemProjection } from '../domains/game/game-list-item-projection';
+import { GameHandler } from '../domains/game/game-handler';
+import { TeamColors } from '../domains/game/game-id';
+import { PlayerId } from '../domains/player';
+import { PlayerHandler } from '../domains/player/player-handler';
+import { Player } from '../domains/player';
+import { PlayersRepository } from '../infrastructure/player-repository';
+import { checkFirebaseAuthToken } from '../security';
 
-export class Routes {
-  private eventsStore: EventsStore;
-  private userIdentitiesRepository: UserIdentityRepository;
-  private sessionsRepository: SessionsRepository;
-  private gamesRepository: GamesRepository;
-  private playersRepository: PlayersRepository;
-  private eventPublisher: EventPublisher;
-
-  private playerRoutes: PlayerRoutes;
-
-  constructor() {
-    this.eventsStore = new EventsStore();
-    this.userIdentitiesRepository = new UserIdentityRepository(this.eventsStore);
-    this.sessionsRepository = new SessionsRepository(this.eventsStore);
-    this.gamesRepository = new GamesRepository(this.eventsStore);
-    this.playersRepository = new PlayersRepository(this.eventsStore);
-    this.eventPublisher = this.createEventPublisher(this.eventsStore);
-
-    this.playerRoutes = new PlayerRoutes(this.eventsStore, this.playersRepository, this.eventPublisher);
-  }
+export class GamesRoutes {
+  constructor(
+    public eventsStore: EventsStore,
+    public gamesRepository: GamesRepository,
+    public playersRepository: PlayersRepository,
+    public eventPublisher: EventPublisher,
+  ) {}
 
   public registerRoutes(router: Router): void {
-    router.post('/api/identity/userIdentities/register', (req, res) => this.registerUser(req, res));
-    router.post('/api/identity/userIdentities/:id/logIn', (req, res) => this.logInUser(req, res));
-    router.delete('/api/identity/sessions/:id', (req, res) => this.logOutUser(req, res));
+    router.post('/api/games', checkFirebaseAuthToken, (req, res) => this.createGame(req, res));
+    router.get('/api/games', checkFirebaseAuthToken, (req, res) => this.getGameList(req, res));
+    router.get('/api/games/:id', checkFirebaseAuthToken, (req, res) => this.getGame(req, res));
+    router.delete('/api/games/:id', checkFirebaseAuthToken, (req, res) => this.deleteGame(req, res));
+    router.post('/api/games/:id/start', checkFirebaseAuthToken, (req, res) => this.startGame(req, res));
+    router.post('/api/games/:id/end', checkFirebaseAuthToken, (req, res) => this.endGame(req, res));
+    router.post('/api/games/:id', checkFirebaseAuthToken, (req, res) => this.updateGame(req, res));
 
-    router.post('/api/games', (req, res) => this.createGame(req, res));
-    router.get('/api/games', (req, res) => this.getGameList(req, res));
-    router.get('/api/games/:id', (req, res) => this.getGame(req, res));
-    router.delete('/api/games/:id', (req, res) => this.deleteGame(req, res));
-    router.post('/api/games/:id/start', (req, res) => this.startGame(req, res));
-    router.post('/api/games/:id/end', (req, res) => this.endGame(req, res));
-    router.post('/api/games/:id', (req, res) => this.updateGame(req, res));
-
-    router.get('/api/games/:id/players', (req, res) => this.getPlayersInGame(req, res));
-    router.post('/api/games/:id/players/:player/:team', (req, res) => this.addPlayerToGame(req, res));
-    router.delete('/api/games/:id/players/:player', (req, res) => this.removePlayerFromGame(req, res));
-    router.post('/api/games/:id/goals/:player', (req, res) => this.addGoalFromPlayerToGame(req, res));
-    router.post('/api/games/:id/players/:player/position/:position', (req, res) =>
+    router.get('/api/games/:id/players', checkFirebaseAuthToken, (req, res) => this.getPlayersInGame(req, res));
+    router.post('/api/games/:id/players/:player/:team', checkFirebaseAuthToken, (req, res) =>
+      this.addPlayerToGame(req, res),
+    );
+    router.delete('/api/games/:id/players/:player', checkFirebaseAuthToken, (req, res) =>
+      this.removePlayerFromGame(req, res),
+    );
+    router.post('/api/games/:id/goals/:player', checkFirebaseAuthToken, (req, res) =>
+      this.addGoalFromPlayerToGame(req, res),
+    );
+    router.post('/api/games/:id/players/:player/position/:position', checkFirebaseAuthToken, (req, res) =>
       this.changeUserPositionToGame(req, res),
     );
 
-    this.playerRoutes.registerRoutes(router);
+    // router.get('/api/games/:id/comments', checkFirebaseAuthToken, getCommentsOnGame);
+    // router.post('/api/games/:id/comments', checkFirebaseAuthToken, addCommentToGame);
+    // router.post('/api/games/:id/comments/:commentId', checkFirebaseAuthToken, changeCommentOnGame);
+    // router.delete('/api/games/:id/comments/:commentId', checkFirebaseAuthToken, removeCommentOnGame);
 
-    // router.get('/api/games/:id/comments', getCommentsOnGame);
-    // router.post('/api/games/:id/comments', addCommentToGame);
-    // router.post('/api/games/:id/comments/:commentId', changeCommentOnGame);
-    // router.delete('/api/games/:id/comments/:commentId', removeCommentOnGame);
-
-    // router.get('/api/games/:id/reviews', getReviewsOnGame);
-    // router.post('/api/games/:id/reviews', addReviewOnGame);
-    // router.post('/api/games/:id/reviews/:reviewId', updateReviewOnGame);
-    // router.delete('/api/games/:id/reviews/:reviewId', removeReviewOnGame);
+    // router.get('/api/games/:id/reviews', checkFirebaseAuthToken, getReviewsOnGame);
+    // router.post('/api/games/:id/reviews', checkFirebaseAuthToken, addReviewOnGame);
+    // router.post('/api/games/:id/reviews/:reviewId', checkFirebaseAuthToken, updateReviewOnGame);
+    // router.delete('/api/games/:id/reviews/:reviewId', checkFirebaseAuthToken, removeReviewOnGame);
   }
-
-  private createEventPublisher(eventsStore: EventsStore) {
-    const eventPublisher = new EventPublisher();
-
-    // this will Store all events in the events' Store
-    eventPublisher.onAny(eventsStore.store);
-    // all repositories are injected with the eventsStore, and thus will benefit from the above line.
-
-    // this will also publish events for side-effects, that is, other projections listening on diverse events.
-    // Here, Session and Timeline Update projections:
-    new SessionHandler(this.sessionsRepository).register(eventPublisher);
-    new GameHandler(this.gamesRepository).register(eventPublisher);
-    new PlayerHandler(this.playersRepository).register(eventPublisher);
-
-    // Later on, for the QUERY part of CQRS, you just need to query the routerropriate repository which
-    // contains ready - to - use and up - to - date projections
-
-    return eventPublisher;
-  }
-
-  private registerUser(req: Request, res: Response) {
-    // parse request body attributes
-    const email: string = req.body.email;
-
-    // call COMMAND on Aggregate (this time it is a static method)
-    UserIdentity.register(this.eventPublisher, email);
-
-    // send response
-    res.status(201).send({
-      id: new UserId(email),
-      logIn: `/api/identity/userIdentities/${encodeURIComponent(email)}/logIn`,
-      url: '/api/identity/userIdentities/' + encodeURIComponent(email),
-    });
-  }
-
-  private logInUser(req: Request, res: Response) {
-    // create ID value type based on request parameters
-    const userId = new UserId(req.params.id);
-    // find Aggregate for this ID in repository
-    const userIdentity = this.userIdentitiesRepository.getUserIdentity(userId);
-    // call COMMAND on Aggregate
-    const sessionId = userIdentity.logIn(this.eventPublisher);
-
-    res.status(201).send({
-      id: sessionId,
-      url: '/api/identity/sessions/' + encodeURIComponent(sessionId.id),
-    });
-  }
-
-  private logOutUser(req: Request, res: Response) {
-    const sessionId = new SessionId(req.params.id);
-
-    // QUERY to retrieve Aggregate
-    const session = this.sessionsRepository.getSession(sessionId);
-
-    // COMMAND
-    session.logOut(this.eventPublisher);
-
-    res.status(200).send('User disconnected');
-  }
-
-  //// GAME /////
 
   private createGame(req: Request, res: Response) {
     const id = generateUUID();
@@ -342,5 +268,4 @@ export class Routes {
       url: `/api/games/${encodeURIComponent(gameId.id)}${context}`,
     });
   }
-
 }

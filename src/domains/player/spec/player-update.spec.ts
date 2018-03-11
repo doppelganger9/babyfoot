@@ -5,7 +5,7 @@ import { Event, EventPublisher, generateUUID } from '../../..';
 import { PlayerCreated, PlayerDeleted, PlayerUpdated } from '../events';
 import { Player } from '../player';
 import { PlayerId } from '../player-id';
-import { PlayerAccountConfirmationDidNotMatchError, PlayerIsDeletedError } from '..';
+import { PlayerIsDeletedError } from '..';
 
 chai.use(chaiAsPromised);
 const { expect, assert } = chai;

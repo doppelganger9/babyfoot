@@ -11,18 +11,12 @@ export async function checkFirebaseAuthToken(req: Request, res: Response, next: 
     if (!authHeader) {
       res.status(401).send('Authentication required.');
     }
-    console.log('Authorization Header value: ' + authHeader);
     const [, idToken] = authHeader!.split('Bearer ');
-    // idToken comes from the client app (shown above)
-    console.log('idToken: ' + idToken);
     try {
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
-      const uid = decodedToken.uid;
-      console.log('JWT is valid! Decoded uid: ' + uid);
-      // ...
+      // const decodedToken = await admin.auth().verifyIdToken(idToken);
+      // const uid = decodedToken.uid;
       next();
     } catch (error) {
-      // Handle error
       res.status(403).send({ message: 'error verifying the JWT ID token from Firebase Auth', error });
     }
   } else {

@@ -4,7 +4,6 @@ import { PlayerDecisionProjection } from './player-decision-projection';
 import { PlayerEventsApplier as PEA } from './player-events-applier';
 import { PlayerId } from './player-id';
 import { PlayerCreated, PlayerDeleted, PlayerUpdated } from './events';
-import { PlayerAccountConfirmationDidNotMatchError } from './errors/confirmation-token-did-not-match-error';
 import { PlayerIsDeletedError } from './errors/player-is-deleted-error';
 
 export class Player {

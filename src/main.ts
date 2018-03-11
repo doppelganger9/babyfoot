@@ -46,7 +46,15 @@ function createExpressMiddleware(port: string | number, router: Router): Applica
   app.set('port', port);
 
   app.use(helmet());
-  app.use(cors());
+  if (process.env.NODE_ENV === 'production') {
+    if (!process.env.BABYFOOTAPI_CORS_ORIGINS) {
+      console.error('in production mode, you need to specify BABYFOOTAPI_CORS_ORIGINS for CORS!');
+      process.exit(1);
+    }
+    app.use(cors({ origin: process.env.BABYFOOTAPI_CORS_ORIGINS!.split(' ') }));
+  } else {
+    app.use(cors());
+  }
 
   app.use(bodyParser.json());
   app.use(
@@ -65,17 +73,24 @@ function createExpressMiddleware(port: string | number, router: Router): Applica
 
 function configureFirebaseAdminSDK(): void {
   if (process.env.NODE_ENV === 'production') {
-    const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_JSON;
-    if (!serviceAccount) {
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+    const databaseURL = process.env.FIREBASE_DATABASE_URL;
+    if (!projectId || !clientEmail || !privateKey) {
       console.error('ERROR: you need to pass an environment variable named'
-        + 'FIREBASE_SERVICE_ACCOUNT_KEY_JSON containing the JSON file contents '
-        + 'for Firebase Admin SDK authentication');
+        + 'FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY'
+        + ' containing the related Firebase Admin SDK authentication information');
       process.exit(1);
     } else {
-      console.log('FIREBASE_SERVICE_ACCOUNT_KEY_JSON environment variable found');
+      console.log('FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY environment variable found');
       admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        databaseURL: 'https://babyfoot-pwa.firebaseio.com',
+        credential: admin.credential.cert({
+          projectId,
+          clientEmail,
+          privateKey,
+        }),
+        databaseURL,
       });
     }
   } else {

@@ -5,3 +5,7 @@ node_modules
 **/*.d.ts
 coverage
 .nyc_output
+run-dev.sh
+babyfoot-pwa*.json
+TODO.md
+DESIGN.md

@@ -43,7 +43,7 @@
     "mocha": "5.1.1",
     "newman": "3.9.3",
     "nyc": "11.7.1",
-    "prettier": "1.12.1",
+    "prettier": "1.13.5",
     "source-map-support": "0.5.5",
     "tslint": "5.10.0"
   },

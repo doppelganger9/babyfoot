@@ -42,7 +42,7 @@
     "coveralls": "3.0.0",
     "mocha": "5.1.1",
     "newman": "3.9.3",
-    "nyc": "11.7.1",
+    "nyc": "12.0.2",
     "prettier": "1.13.5",
     "source-map-support": "0.5.5",
     "tslint": "5.10.0"

@@ -36,7 +36,7 @@
     "@types/express": "4.16.1",
     "@types/helmet": "0.0.42",
     "@types/mocha": "5.2.5",
-    "@types/node": "9.6.30",
+    "@types/node": "9.6.41",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "coveralls": "3.0.2",

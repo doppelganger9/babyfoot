@@ -9,7 +9,7 @@ before_script:
   - ./cc-test-reporter before-build
 
 install:
- - npm install
+ - npm ci
 
 script:
  - npm test

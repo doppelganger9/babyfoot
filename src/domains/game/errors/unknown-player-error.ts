@@ -1,4 +1,4 @@
-import { PlayerId } from "../../player";
+import { PlayerId } from '../../player';
 
 /**
  * NOTE, to extend Errors and preserve prototype chain,

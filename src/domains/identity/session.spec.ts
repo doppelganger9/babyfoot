@@ -8,7 +8,7 @@ describe('Session Aggregate', () => {
   const userId = new UserId('user@mix-it.fr');
   const sessionId = new SessionId('SessionA');
 
-  let eventsRaised: any[] = [];
+  let eventsRaised: Array<any> = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();

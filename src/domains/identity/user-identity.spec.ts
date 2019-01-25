@@ -7,7 +7,7 @@ import { UserConnected } from './session';
 describe('User Identity Aggregate', () => {
   const email = 'user@mix-it.fr';
 
-  let eventsRaised: any[] = [];
+  let eventsRaised: Array<any> = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();

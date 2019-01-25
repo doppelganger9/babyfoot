@@ -12,7 +12,7 @@ const { expect, assert } = chai;
 describe('Player', () => {
   let t: Player;
   const playerId: PlayerId = new PlayerId('Player1');
-  let eventsRaised: any[] = [];
+  let eventsRaised: Array<any> = [];
   const fields = new Map<string, any>();
   fields.set('displayName', 'bob sponge');
   fields.set('email', 'sponge.bob@sea.com');

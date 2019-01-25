@@ -5,7 +5,7 @@ import {
   EventPublisher,
   DecisionProjection,
   generateUUID,
-  Event,
+  BFEvent,
 } from '../..';
 
 /************** VALUE TYPES **************/
@@ -22,7 +22,7 @@ export class SessionId extends ValueType {
 
 /************** EVENTS **************/
 
-export class UserConnected implements Event<SessionId> {
+export class UserConnected implements BFEvent<SessionId> {
   constructor(public sessionId: SessionId, public userId: UserId, public connectedAt: Date) {
     Object.freeze(this);
   }
@@ -32,7 +32,7 @@ export class UserConnected implements Event<SessionId> {
   }
 }
 
-export class UserDisconnected implements Event {
+export class UserDisconnected implements BFEvent {
   constructor(public sessionId: SessionId, public userId: UserId) {
     Object.freeze(this);
   }
@@ -55,7 +55,7 @@ export class Session {
 
   public projection: DecisionProjection;
 
-  constructor(events: Array<Event> | Event) {
+  constructor(events: Array<BFEvent> | BFEvent) {
     this.projection = new DecisionProjection()
       .register('UserConnected', function(this: DecisionProjection, event: UserConnected): void {
         // warning, "this" is bound to the DecisionProjection.

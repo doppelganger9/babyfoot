@@ -1,6 +1,6 @@
 import { Response, Application, Request, Router } from 'express';
 import {
-  EventsStore,
+  BFEventsStore,
   UserId,
   SessionsRepository,
   SessionId,
@@ -25,7 +25,7 @@ import { PlayerRoutes } from './player-routes';
 import { IdentityRoutes } from './identity-routes';
 
 export class Routes {
-  private eventsStore: EventsStore;
+  private eventsStore: BFEventsStore;
   private userIdentitiesRepository: UserIdentityRepository;
   private sessionsRepository: SessionsRepository;
   private gamesRepository: GamesRepository;
@@ -37,7 +37,7 @@ export class Routes {
   private identityRoutes: IdentityRoutes;
 
   constructor() {
-    this.eventsStore = new EventsStore();
+    this.eventsStore = new BFEventsStore();
     this.userIdentitiesRepository = new UserIdentityRepository(this.eventsStore);
     this.sessionsRepository = new SessionsRepository(this.eventsStore);
     this.gamesRepository = new GamesRepository(this.eventsStore);
@@ -65,7 +65,7 @@ export class Routes {
     this.playerRoutes.registerRoutes(router);
   }
 
-  private createEventPublisher(eventsStore: EventsStore) {
+  private createEventPublisher(eventsStore: BFEventsStore) {
     const eventPublisher = new EventPublisher();
 
     // this will Store all events in the events' Store

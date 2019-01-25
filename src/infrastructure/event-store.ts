@@ -1,8 +1,8 @@
-export interface Event<T = any> {
+export interface BFEvent<T = any> {
   getAggregateId(): T;
 }
 
-export class EventDontContainsAggregateId extends Error {
+export class BFEventDontContainsAggregateId extends Error {
   constructor(public eventName: string) {
     super();
     // see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html
@@ -10,8 +10,8 @@ export class EventDontContainsAggregateId extends Error {
   }
 }
 
-export class EventsStore {
-  public events: Array<Event>;
+export class BFEventsStore {
+  public events: Array<BFEvent>;
   constructor() {
     this.events = [];
     // need to capture "this" as that method will be called by EventEmitter which will bind itself as this...
@@ -19,16 +19,16 @@ export class EventsStore {
     this.store = this.store.bind(this);
   }
 
-  public store(event: Event): void {
+  public store(event: BFEvent): void {
     if (!event.getAggregateId()) {
-      throw new EventDontContainsAggregateId(event.constructor.name);
+      throw new BFEventDontContainsAggregateId(event.constructor.name);
     }
     this.events.push(event);
   }
 
-  public getEventsOfAggregate(aggregateId: any): Array<Event> {
+  public getEventsOfAggregate(aggregateId: any): Array<BFEvent> {
     return this.events.filter(
-      (it: Event) =>
+      (it: BFEvent) =>
         JSON.stringify(it.getAggregateId()) === JSON.stringify(aggregateId)
     );
   }

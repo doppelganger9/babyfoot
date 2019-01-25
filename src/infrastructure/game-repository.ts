@@ -1,17 +1,17 @@
-import { Event, EventsStore } from '..';
-import { Game } from '../domains/game/game';
-import { GameId } from '../domains/game/game-id';
+import { BFEvent, BFEventsStore } from '..';
+import { Game } from '../domains/game';
+import { GameId } from '../domains/game';
 import { GameListItemProjection } from '../domains/game/game-list-item-projection';
 import { UnknownGameError } from './errors';
 
 /**
  * This class stores all Game projections.
- * It basically recreates Aggregates from the stores events in the delegate EventsStore by filtering by ID.
+ * It basically recreates Aggregates from the stores events in the delegate BFEventsStore by filtering by ID.
  * It can also store other projections in a Map, with methods to access these simple projections.
  */
 export class GamesRepository {
   constructor(
-    private eventsStore: EventsStore,
+    private eventsStore: BFEventsStore,
     private projections: Map<string, any> = new Map<string, any>()
   ) {
     this.projections.set('list', new Array<GameListItemProjection>());
@@ -21,8 +21,8 @@ export class GamesRepository {
    * returns all events for a given GameId.
    * @param gameId filter
    */
-  public getAllEvents(gameId: GameId): Array<Event> {
-    const events: Array<Event> = this.eventsStore.getEventsOfAggregate(gameId);
+  public getAllEvents(gameId: GameId): Array<BFEvent> {
+    const events: Array<BFEvent> = this.eventsStore.getEventsOfAggregate(gameId);
     if (!events.length) {
       throw new UnknownGameError(gameId);
     }
@@ -40,7 +40,7 @@ export class GamesRepository {
    * @param gameId filter
    */
   public getGame(gameId: GameId): Game {
-    const events: Array<Event> = this.getAllEvents(gameId);
+    const events: Array<BFEvent> = this.getAllEvents(gameId);
     return new Game(events);
   }
 

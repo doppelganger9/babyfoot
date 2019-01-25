@@ -1,7 +1,7 @@
 import { Game } from '.';
 import {
   GamesRepository,
-  Event,
+  BFEvent,
   EventPublisher,
   GameCreated
 } from '../..';

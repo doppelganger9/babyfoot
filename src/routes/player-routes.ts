@@ -1,6 +1,6 @@
 import { Response, Application, Request, Router } from 'express';
 import {
-  EventsStore,
+  BFEventsStore,
   UserId,
   SessionsRepository,
   SessionId,
@@ -25,7 +25,7 @@ import { checkFirebaseAuthToken } from '../security';
 
 export class PlayerRoutes {
   constructor(
-    public eventsStore: EventsStore,
+    public eventsStore: BFEventsStore,
     public playersRepository: PlayersRepository,
     public eventPublisher: EventPublisher,
   ) {}

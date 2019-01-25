@@ -14,9 +14,9 @@
         "listFiles": true,
         "listEmittedFiles": true,
         "lib": [
-            "es2017",
-            "dom"
-        ]
+            "es6", "dom", "es2018"
+        ],
+        "rootDir": "./src"
     },
     "include": [
         "src/**/*"

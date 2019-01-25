@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Event } from '..';
+import { BFEvent } from '..';
 
 export class EventPublisher {
   private eventEmitter: EventEmitter;
@@ -17,7 +17,7 @@ export class EventPublisher {
     return this;
   }
 
-  public publish(event: Event): void {
+  public publish(event: BFEvent): void {
     this.eventEmitter.emit('*', event);
 
     const eventName = event.constructor.name;

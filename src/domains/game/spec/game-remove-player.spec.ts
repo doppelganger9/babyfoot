@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event, EventPublisher } from '../../..';
+import { BFEvent, EventPublisher } from '../../..';
 import { GameAlreadyEndedError, GameIsDeletedError } from '../errors';
 import {
   GameCreated,
@@ -20,12 +20,12 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
       super.publish(evt);
     }
@@ -38,7 +38,7 @@ describe('Game', () => {
 
   describe('.removePlayerFromGame should', () => {
     it('not remove an unknown player from a game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
       expect(() =>
@@ -46,7 +46,7 @@ describe('Game', () => {
       ).to.throw(Error, /unknown/);
     });
     it('not remove a player from a deleted game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
@@ -55,7 +55,7 @@ describe('Game', () => {
       ).to.throw(GameIsDeletedError);
     });
     it('not remove a player from an already ended game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -65,7 +65,7 @@ describe('Game', () => {
       ).to.throw(GameAlreadyEndedError);
     });
     it('remove an existing red team player from a game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
       t = new Game(history);
@@ -74,7 +74,7 @@ describe('Game', () => {
       expect(eventsRaised.pop()).to.be.an.instanceOf(PlayerRemovedFromGame);
     });
     it('should remove the red player from decision projections', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
       history.push(new PlayerRemovedFromGame(new PlayerId('toto'), gameId));
@@ -84,7 +84,7 @@ describe('Game', () => {
       expect(PlayerId.listIncludesId(t.projection.teamBlueMembers, new PlayerId('toto'))).to.be.false;
     });
     it('should remove the blue player from decision projections', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       history.push(new PlayerRemovedFromGame(new PlayerId('toto'), gameId));
@@ -94,7 +94,7 @@ describe('Game', () => {
       expect(PlayerId.listIncludesId(t.projection.teamBlueMembers, new PlayerId('toto'))).to.be.false;
     });
     it('remove an existing blue team player from a game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       t = new Game(history);

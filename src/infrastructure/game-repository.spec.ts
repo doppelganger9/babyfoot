@@ -1,20 +1,20 @@
 import { expect } from 'chai';
 import { GameCreated, GameStarted, GameEnded } from '../domains/game/events';
 import { UnknownGameError } from './errors';
-import { GamesRepository, EventsStore } from '.';
+import { GamesRepository, BFEventsStore } from '.';
 import { Game } from '../domains/game/game';
 import { GameId } from '../domains/game/game-id';
 import { GameListItemProjection } from '../domains/game/game-list-item-projection';
 
 describe('Games Repository', () => {
-  let eventsStore: EventsStore;
+  let eventsStore: BFEventsStore;
   let repository: GamesRepository;
   let projections: Map<string, any>;
 
   const gameId: GameId = new GameId('GameA');
 
   beforeEach(() => {
-    eventsStore = new EventsStore();
+    eventsStore = new BFEventsStore();
     projections = new Map<string, any>();
     repository = new GamesRepository(eventsStore, projections);
   });

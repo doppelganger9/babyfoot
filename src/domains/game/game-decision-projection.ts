@@ -1,4 +1,4 @@
-import { DecisionApplierFunction, DecisionProjection, Event } from '../..';
+import { DecisionApplierFunction, DecisionProjection, BFEvent } from '../..';
 import { GameId, TeamColors } from './game-id';
 import { Player, PlayerId } from '../player';
 
@@ -6,7 +6,7 @@ export class GameDecisionProjection {
   private projection: DecisionProjection; // composition not inheritance
   constructor(
     data?: Map<string, any>,
-    handlers?: Map<string, (event: Event<any>) => void>
+    handlers?: Map<string, (event: BFEvent<any>) => void>
   ) {
     this.projection = new DecisionProjection(data, handlers);
   }
@@ -68,7 +68,7 @@ export class GameDecisionProjection {
     return this;
   }
 
-  public apply(events: Array<Event> | Event): GameDecisionProjection {
+  public apply(events: Array<BFEvent> | BFEvent): GameDecisionProjection {
     this.projection.apply(events);
     return this;
   }

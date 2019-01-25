@@ -2,13 +2,13 @@ import {
   UserId,
   Session,
   DecisionProjection,
-  Event,
+  BFEvent,
   DecisionApplierFunction,
   SessionId,
   EventPublisher
 } from '../..';
 
-export class UserRegistered implements Event {
+export class UserRegistered implements BFEvent {
   constructor(public userId: UserId) {
     Object.freeze(this);
   }
@@ -26,7 +26,7 @@ export class UserIdentity {
 
   public projection: DecisionProjection;
 
-  constructor(events: Array<Event>) {
+  constructor(events: Array<BFEvent>) {
     this.projection = new DecisionProjection()
       .register('UserRegistered', function(
         this: DecisionProjection,

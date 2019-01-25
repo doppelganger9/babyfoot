@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event, EventPublisher } from '../../..';
+import { BFEvent, EventPublisher } from '../../..';
 import {
   GameIsDeletedError,
   GameNotEndedError,
@@ -18,12 +18,12 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
       super.publish(evt);
     }
@@ -36,7 +36,7 @@ describe('Game', () => {
 
   describe('reviewGame', () => {
     it('should emit SomeoneReviewedTheGame', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -46,7 +46,7 @@ describe('Game', () => {
       expect(eventsRaised[0] instanceof SomeoneReviewedTheGame).to.be.true;
     });
     it('should emit SomeoneReviewedTheGame with no comment', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -56,7 +56,7 @@ describe('Game', () => {
       expect(eventsRaised[0] instanceof SomeoneReviewedTheGame).to.be.true;
     });
     it('should not emit SomeoneReviewedTheGame if stars <= 0', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -67,7 +67,7 @@ describe('Game', () => {
       expect(eventsRaised.length).to.equal(0);
     });
     it('should not emit SomeoneReviewedTheGame if stars > 5', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -79,7 +79,7 @@ describe('Game', () => {
     });
 
     it('should not emit SomeoneReviewedTheGame if author is missing', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -91,7 +91,7 @@ describe('Game', () => {
     });
 
     it('should not emit SomeoneReviewedTheGame if comment is too long', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -104,7 +104,7 @@ describe('Game', () => {
     });
 
     it('should not emit SomeoneReviewedTheGame if Game is deleted', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
@@ -115,7 +115,7 @@ describe('Game', () => {
     });
 
     it('should not emit SomeoneReviewedTheGame if Game is not ended', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(

@@ -1,4 +1,4 @@
-import { DecisionApplierFunction as DAF, Event, EventPublisher } from '../..';
+import { DecisionApplierFunction as DAF, BFEvent, EventPublisher } from '../..';
 import {
   GameAlreadyEndedError,
   GameAlreadyStartedError,
@@ -38,7 +38,7 @@ export class Game {
   }
   public projection: GameDecisionProjection;
 
-  constructor(events: Array<Event> | Event) {
+  constructor(events: Array<BFEvent> | BFEvent) {
     this.projection = new GameDecisionProjection()
       .register('GameCreated', GEA.applyGameCreated as DAF)
       .register('GameDeleted', GEA.applyGameDeleted as DAF)
@@ -136,14 +136,14 @@ export class Game {
     eventPublisher.publish(event);
   }
 
-  public updateInitialDateTime(eventPublisher: EventPublisher, date: Date): void {
+  public updateInitialDateTime(eventPublisher: EventPublisher, date: Date|null): void {
     if (!date) {
       throw new MissingInitialDateTimeError(this.projection.id);
     }
     if (this.projection.isDeleted) {
       throw new GameIsDeletedError(this.projection.id);
     }
-    eventPublisher.publish(new GameDateUpdated(this.projection.id, date));
+    eventPublisher.publish(new GameDateUpdated(this.projection.id, date!));
   }
 
   public changeUserPositionOnGame(eventPublisher: EventPublisher, playerId: PlayerId, position: PositionValue) {
@@ -179,7 +179,7 @@ export class Game {
     eventPublisher.publish(event);
   }
 
-  public reviewGame(eventPublisher: EventPublisher, review: string, stars: number, author: string) {
+  public reviewGame(eventPublisher: EventPublisher, review: string|undefined, stars: number, author: string|undefined) {
     if (this.projection.isDeleted) {
       throw new GameIsDeletedError(this.projection.id);
     }
@@ -198,7 +198,7 @@ export class Game {
     if (!this.projection.currentEndDatetime || this.projection.currentEndDatetime.getTime() > new Date().getTime()) {
       throw new GameNotEndedError(this.projection.id);
     }
-    const event = new SomeoneReviewedTheGame(author, review, stars, this.projection.id);
+    const event = new SomeoneReviewedTheGame(author!, review!, stars, this.projection.id);
     eventPublisher.publish(event);
   }
 

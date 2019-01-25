@@ -1,7 +1,7 @@
 import { SessionProjection, Session } from '.';
 import {
   SessionsRepository,
-  Event,
+  BFEvent,
   EventPublisher,
   UserConnected,
   UserDisconnected

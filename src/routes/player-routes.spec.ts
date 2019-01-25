@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 
-import { EventPublisher, EventsStore } from '..';
+import { EventPublisher, BFEventsStore } from '..';
 import { PlayersRepository } from '../infrastructure/player-repository';
 import { PlayerRoutes } from './player-routes';
 
 describe('Player Routes', () => {
-  let eventsStore: EventsStore;
+  let eventsStore: BFEventsStore;
   let playersRepository: PlayersRepository;
   let eventPublisher: EventPublisher;
 
   beforeEach(() => {
-    eventsStore = new EventsStore();
+    eventsStore = new BFEventsStore();
     playersRepository = new PlayersRepository(eventsStore, new Map<string, any>());
     eventPublisher = new EventPublisher();
   });

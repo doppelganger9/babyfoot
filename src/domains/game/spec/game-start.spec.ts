@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event, EventPublisher } from '../../..';
+import { BFEvent, EventPublisher } from '../../..';
 import {
   GameAlreadyEndedError,
   GameAlreadyStartedError,
@@ -16,12 +16,12 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
       super.publish(evt);
     }
@@ -34,7 +34,7 @@ describe('Game', () => {
 
   describe('.startGame should', () => {
     it('emit GameStarted', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
       t.startGame(simpleEventPublisher);
@@ -42,7 +42,7 @@ describe('Game', () => {
       expect(eventsRaised.pop()).to.be.instanceOf(GameStarted);
     });
     it('not allow to start an already started Game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       t = new Game(history);
@@ -52,7 +52,7 @@ describe('Game', () => {
       expect(eventsRaised.length).to.equal(0);
     });
     it('not allow to start an already ended Game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -63,7 +63,7 @@ describe('Game', () => {
       expect(eventsRaised.length).to.equal(0);
     });
     it('not allow to start a deleted Game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);

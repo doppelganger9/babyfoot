@@ -1,4 +1,4 @@
-import { UserId, Event, SessionId, EventsStore, Session, SessionProjection } from '..';
+import { UserId, BFEvent, SessionId, BFEventsStore, Session, SessionProjection } from '..';
 
 /**
  * This class is a custom Error.
@@ -18,7 +18,7 @@ export class UnknownSession extends Error {
 export class SessionsRepository {
   public projections = new Map();
 
-  constructor(public eventsStore: EventsStore) {
+  constructor(public eventsStore: BFEventsStore) {
     this.eventsStore = eventsStore;
   }
 
@@ -46,8 +46,8 @@ export class SessionsRepository {
    * returns all events for a given SessionId.
    * @param sessionId filter
    */
-  public getAllEvents(sessionId: SessionId): Array<Event> {
-    const events: Array<Event> = this.eventsStore.getEventsOfAggregate(sessionId);
+  public getAllEvents(sessionId: SessionId): Array<BFEvent> {
+    const events: Array<BFEvent> = this.eventsStore.getEventsOfAggregate(sessionId);
     if (!events.length) {
       throw new UnknownSession(sessionId);
     }
@@ -61,7 +61,7 @@ export class SessionsRepository {
    * @param sessionId filter
    */
   public getSession(sessionId: SessionId): Session {
-    const events: Array<Event> = this.getAllEvents(sessionId);
+    const events: Array<BFEvent> = this.getAllEvents(sessionId);
     return new Session(events);
   }
 }

@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event, EventPublisher } from '../../..';
+import { BFEvent, EventPublisher } from '../../..';
 import { GameAlreadyEndedError, GameIsDeletedError, GameNotStartedError, UnknownPlayerError } from '../errors';
 import { GameCreated, GameDeleted, GameEnded, GameStarted, PlayerAddedToGameWithTeam } from '../events';
 import { Game } from '../game';
@@ -13,12 +13,12 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
       super.publish(evt);
     }
@@ -30,7 +30,7 @@ describe('Game', () => {
   });
   describe('addGoalFromPlayer', () => {
     it('happy path', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('player'), 'red', gameId));
@@ -39,7 +39,7 @@ describe('Game', () => {
       expect(eventsRaised.length).to.equal(1);
     });
     it('should not add a goal to a player if game is deleted', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('player'), 'red', gameId));
@@ -51,7 +51,7 @@ describe('Game', () => {
       expect(eventsRaised.length).to.equal(0);
     });
     it('should not add a goal to a player if game is not started', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
       expect(() =>
@@ -60,7 +60,7 @@ describe('Game', () => {
       expect(eventsRaised.length).to.equal(0);
     });
     it('should not add a goal to a player if game has already ended', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('player'), 'red', gameId));
@@ -72,7 +72,7 @@ describe('Game', () => {
       expect(eventsRaised.length).to.equal(0);
     });
     it('should not add a goal to an unknown player', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       t = new Game(history);

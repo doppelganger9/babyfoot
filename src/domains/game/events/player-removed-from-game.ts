@@ -1,5 +1,5 @@
 import { GameId } from '../game-id';
-import { PlayerId } from '../player';
+import { PlayerId } from '../../player';
 import { GameEvent } from './game-event';
 
 export class PlayerRemovedFromGame extends GameEvent {

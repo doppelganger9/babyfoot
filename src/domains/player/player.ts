@@ -1,4 +1,4 @@
-import { ValueType, EventPublisher, DecisionProjection, Event, generateUUID } from '../..';
+import { ValueType, EventPublisher, DecisionProjection, BFEvent, generateUUID } from '../..';
 import { DecisionApplierFunction as DAF } from '../..';
 import { PlayerDecisionProjection } from './player-decision-projection';
 import { PlayerEventsApplier as PEA } from './player-events-applier';
@@ -16,7 +16,7 @@ export class Player {
   }
   public projection: PlayerDecisionProjection;
 
-  constructor(events: Array<Event> | Event) {
+  constructor(events: Array<BFEvent> | BFEvent) {
     this.projection = new PlayerDecisionProjection()
       .register('PlayerCreated', PEA.applyPlayerCreated as DAF)
       .register('PlayerDeleted', PEA.applyPlayerDeleted as DAF)

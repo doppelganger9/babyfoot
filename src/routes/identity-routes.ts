@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
 
-import { EventPublisher, EventsStore, UserIdentity, UserId, SessionId, SessionsRepository } from '..';
+import { EventPublisher, BFEventsStore, UserIdentity, UserId, SessionId, SessionsRepository } from '..';
 import { PlayersRepository } from '../infrastructure/player-repository';
 import { UserIdentityRepository } from '../infrastructure/user-identity-repository';
 
 export class IdentityRoutes {
   constructor(
-    public eventsStore: EventsStore,
+    public eventsStore: BFEventsStore,
     public userIdentitiesRepository: UserIdentityRepository,
     public sessionsRepository: SessionsRepository,
     public eventPublisher: EventPublisher,

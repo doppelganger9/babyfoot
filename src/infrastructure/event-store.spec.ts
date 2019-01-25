@@ -1,11 +1,11 @@
-import { EventsStore, EventDontContainsAggregateId, Event } from './event-store';
+import { BFEventsStore, BFEventDontContainsAggregateId, BFEvent } from './event-store';
 import { ValueType } from '../value-type';
 import { expect } from 'chai';
 
-describe('EventsStore', () => {
-  let eventsStore: EventsStore;
+describe('BFEventsStore', () => {
+  let eventsStore: BFEventsStore;
   beforeEach(() => {
-    eventsStore = new EventsStore();
+    eventsStore = new BFEventsStore();
   });
 
   class TestAggregateId extends ValueType {
@@ -17,7 +17,7 @@ describe('EventsStore', () => {
     }
   }
 
-  class TestEvent implements Event<TestAggregateId> {
+  class TestEvent implements BFEvent<TestAggregateId> {
     constructor(public aggregateId: TestAggregateId, public num: number = 0) {
       this.aggregateId = aggregateId;
       this.num = num;
@@ -26,7 +26,7 @@ describe('EventsStore', () => {
       return this.aggregateId;
     }
   }
-  class BadEvent implements Event {
+  class BadEvent implements BFEvent {
     public getAggregateId(): void {
       return;
     }
@@ -61,6 +61,7 @@ describe('EventsStore', () => {
     eventsStore.store(new TestEvent(aggregateId1));
 
     const result = eventsStore.getEventsOfAggregate(aggregateId1);
+    // @ts-ignore
     const mapped = result.map((it: TestEvent) => it.aggregateId);
     expect(mapped)
       .to.contain(aggregateId1)
@@ -71,7 +72,7 @@ describe('EventsStore', () => {
   it('When store event without aggregateId Then throw exception', () => {
     expect(() => {
       eventsStore.store(new BadEvent());
-    }).to.throw(EventDontContainsAggregateId);
+    }).to.throw(BFEventDontContainsAggregateId);
   });
 
   it('Given several events When GetEventsOfAggregate Then return events and preserve order', () => {
@@ -84,6 +85,7 @@ describe('EventsStore', () => {
     const result = eventsStore.getEventsOfAggregate(aggregateId1);
 
     expect(result).to.have.length(3);
-    expect(result.sort((a: TestEvent, b: TestEvent) => a.num - b.num)).to.deep.equals(result);
+    // @ts-ignore
+    expect(result.sort((a: TestEvent, b: TestEvent) => a.num - b.num) as any).to.deep.equals(result);
   });
 });

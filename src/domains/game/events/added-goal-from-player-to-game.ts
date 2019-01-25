@@ -1,4 +1,4 @@
-import { PlayerId } from '..';
+import { PlayerId } from '../../player';
 import { GameId } from '../game-id';
 import { GameEvent } from './game-event';
 

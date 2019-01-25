@@ -1,13 +1,13 @@
 
 import { expect } from 'chai';
 import { UserIdentityRepository } from '.';
-import { UserId, UnknownUserIdentity, UserRegistered, EventsStore } from '..';
+import { UserId, UnknownUserIdentity, UserRegistered, BFEventsStore } from '..';
 
 describe('UserIdentities Repository', () => {
-  let repository;
-  let eventsStore;
+  let repository: any;
+  let eventsStore: any;
   beforeEach(() => {
-    eventsStore = new EventsStore();
+    eventsStore = new BFEventsStore();
     repository = new UserIdentityRepository(eventsStore);
   });
 

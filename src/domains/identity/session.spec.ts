@@ -2,19 +2,19 @@ import { Session, UserConnected, UserDisconnected, SessionId } from './session';
 // import { UserIdentity } from '../user-identity';
 import { UserId } from '../user-id';
 import { expect } from 'chai';
-import { EventPublisher, Event } from '../..';
+import { EventPublisher, BFEvent } from '../..';
 
 describe('Session Aggregate', () => {
   const userId = new UserId('user@mix-it.fr');
   const sessionId = new SessionId('SessionA');
 
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
 
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
     }
   }

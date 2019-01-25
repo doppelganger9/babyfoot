@@ -1,4 +1,4 @@
-import { EventsStore } from './event-store';
+import { BFEventsStore } from './event-store';
 import { SessionsRepository } from './session-repository';
 import { SessionProjection } from '../domains/identity/session-projection';
 import { Session, SessionId, UserConnected } from '../domains/identity/session';
@@ -10,10 +10,10 @@ describe('Sessions Repository', () => {
   const sessionId = new SessionId('SessionA');
   const userId = new UserId('user1@mix-it.fr');
 
-  let eventsStore;
-  let repository;
+  let eventsStore: any;
+  let repository: any;
   beforeEach(() => {
-    eventsStore = new EventsStore();
+    eventsStore = new BFEventsStore();
     repository = new SessionsRepository(eventsStore);
   });
 

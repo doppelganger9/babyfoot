@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event, EventPublisher } from '../../..';
+import { BFEvent, EventPublisher } from '../../..';
 import { GameCreated, GameDeleted, GameEnded, GameStarted, PlayerAddedToGameWithTeam } from '../events';
 import { Game } from '../game';
 import { GameId } from '../game-id';
@@ -12,12 +12,12 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
       super.publish(evt);
     }
@@ -30,7 +30,7 @@ describe('Game', () => {
 
   describe('.addPlayerToGameWithTeam should', () => {
     it('add a new red player to a new game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
       t.addPlayerToGame(simpleEventPublisher, new PlayerId('toto'), 'red');
@@ -38,7 +38,7 @@ describe('Game', () => {
       expect(eventsRaised.pop()).to.be.an.instanceOf(PlayerAddedToGameWithTeam);
     });
     it('should update the decision projection to add the red player', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
       t = new Game(history);
@@ -48,7 +48,7 @@ describe('Game', () => {
       expect(t.projection.teamBlueMembers.filter(x => x.id === 'toto').length).to.equal(0);
     });
     it('should not update the decision projection to add the red player if it is already in this team', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
@@ -63,7 +63,7 @@ describe('Game', () => {
     });
 
     it('add a new blue player to a new game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
       t.addPlayerToGame(simpleEventPublisher, new PlayerId('toto'), 'blue');
@@ -71,7 +71,7 @@ describe('Game', () => {
       expect(eventsRaised.pop()).to.be.an.instanceOf(PlayerAddedToGameWithTeam);
     });
     it('should update the decision projection to add the blue player', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       t = new Game(history);
@@ -81,7 +81,7 @@ describe('Game', () => {
       expect(t.projection.teamBlueMembers.filter(x => x.id === 'toto').length).to.equal(1);
     });
     it('should not update the decision projection to add the blue player if it is already in this team', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
@@ -96,7 +96,7 @@ describe('Game', () => {
     });
 
     it('not add a player to a deleted game', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
@@ -105,7 +105,7 @@ describe('Game', () => {
       ).to.throw(Error, /deleted/);
     });
     it('not add a player to a game that is ended', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(undefined, gameId));
       history.push(new GameEnded(undefined, gameId));
@@ -115,7 +115,7 @@ describe('Game', () => {
       ).to.throw(Error, /ended/);
     });
     it('not add a red player previously added to the red team', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
       t = new Game(history);
@@ -124,7 +124,7 @@ describe('Game', () => {
       ).to.throw(Error, /already/);
     });
     it('not add a blue player previously added to the blue team', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       t = new Game(history);
@@ -133,7 +133,7 @@ describe('Game', () => {
       ).to.throw(Error, /already/);
     });
     it('switch team for a player previously added to other team (blue to red)', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
       t = new Game(history);
@@ -147,7 +147,7 @@ describe('Game', () => {
       expect(eventsRaised.pop()).to.be.an.instanceOf(PlayerAddedToGameWithTeam);
     });
     it('update projections when switching team for a player previously added to other team (blue to red)', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
@@ -158,7 +158,7 @@ describe('Game', () => {
       expect(t.projection.teamRedMembers.filter(x => x.id === 'toto').length).to.equal(0);
     });
     it('switch team for a player previously added to other team (red to blue)', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       t = new Game(history);
@@ -173,7 +173,7 @@ describe('Game', () => {
     });
 
     it('switch team for a player previously added to other team (red to blue)', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));
@@ -183,7 +183,7 @@ describe('Game', () => {
       expect(t.projection.teamRedMembers.filter(x => x.id === 'toto').length).to.equal(1);
     });
     it('not add a player more than once in the players list', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'blue', gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('toto'), 'red', gameId));

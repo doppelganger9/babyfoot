@@ -1,7 +1,7 @@
-import { Event, EventsStore } from '..';
-import { Player } from '../domains/player/player';
-import { PlayerId } from '../domains/player/player-id';
-import { UnknownPlayerError } from './errors';
+import { BFEvent, BFEventsStore } from '..';
+import { Player } from '../domains/player';
+import { PlayerId } from '../domains/player';
+import { UnknownPlayerError } from '../domains';
 
 export class PlayerListItemProjection {
   public displayName: string;
@@ -18,11 +18,11 @@ export class PlayerListItemProjection {
 
 /**
  * This class stores all Player projections.
- * It basically recreates Aggregates from the stores events in the delegate EventsStore by filtering by ID.
+ * It basically recreates Aggregates from the stores events in the delegate BFEventsStore by filtering by ID.
  * It can also store other projections in a Map, with methods to access these simple projections.
  */
 export class PlayersRepository {
-  constructor(private eventsStore: EventsStore = new EventsStore(), private projections: Map<string, any> = new Map<string, any>()) {
+  constructor(private eventsStore: BFEventsStore = new BFEventsStore(), private projections: Map<string, any> = new Map<string, any>()) {
     this.projections.set('list', new Array<PlayerListItemProjection>());
   }
 
@@ -30,8 +30,8 @@ export class PlayersRepository {
    * returns all events for a given PlayerId.
    * @param PlayerId filter
    */
-  public getAllEvents(playerId: PlayerId): Array<Event> {
-    const events: Array<Event> = this.eventsStore.getEventsOfAggregate(playerId);
+  public getAllEvents(playerId: PlayerId): Array<BFEvent> {
+    const events: Array<BFEvent> = this.eventsStore.getEventsOfAggregate(playerId);
     if (!events.length) {
       throw new UnknownPlayerError(playerId);
     }
@@ -59,7 +59,7 @@ export class PlayersRepository {
    * @param PlayerId filter
    */
   public getPlayer(playerId: PlayerId): Player {
-    const events: Array<Event> = this.getAllEvents(playerId);
+    const events: Array<BFEvent> = this.getAllEvents(playerId);
     return new Player(events);
   }
 

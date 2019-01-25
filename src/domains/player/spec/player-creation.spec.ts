@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event, EventPublisher, generateUUID } from '../../..';
+import { BFEvent, EventPublisher, generateUUID } from '../../..';
 import { PlayerCreated } from '../events';
 import { Player } from '../player';
 import { PlayerId } from '../player-id';
@@ -11,7 +11,7 @@ const { expect, assert } = chai;
 describe('Player', () => {
   let t: Player;
   const playerId: PlayerId = new PlayerId('Player1');
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   const fields = new Map<string, any>();
   fields.set('displayName', 'bob sponge');
   fields.set('email', 'sponge.bob@sea.com');
@@ -20,7 +20,7 @@ describe('Player', () => {
     constructor() {
       super();
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
       super.publish(evt);
     }
@@ -47,7 +47,7 @@ describe('Player', () => {
     });
     it('update its projections', () => {
 
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new PlayerCreated(playerId, fields));
       t = new Player(history);
       expect(t.projection.email).to.be.equal(fields.get('email'));

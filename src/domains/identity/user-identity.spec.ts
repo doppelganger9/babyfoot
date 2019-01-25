@@ -1,19 +1,19 @@
 
 import { expect } from 'chai';
-import { Event, UserRegistered, UserId, UserEmailCannotBeEmpty, EventPublisher } from '../..';
+import { BFEvent, UserRegistered, UserId, UserEmailCannotBeEmpty, EventPublisher } from '../..';
 import { UserIdentity } from '.';
 import { UserConnected } from './session';
 
 describe('User Identity Aggregate', () => {
   const email = 'user@mix-it.fr';
 
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
     }
 
-    public publish(event: Event) {
+    public publish(event: BFEvent) {
       eventsRaised.push(event);
     }
    }
@@ -38,7 +38,7 @@ describe('User Identity Aggregate', () => {
     user.logIn(publishEvent);
 
     expect(eventsRaised).to.have.length(1);
-    const event: Event = eventsRaised[0];
+    const event: BFEvent = eventsRaised[0];
     expect(event).to.be.an.instanceof(UserConnected);
     expect((event as UserConnected).userId).to.equal(id);
     expect((event as UserConnected).connectedAt.getTime() - new Date().getTime()).to.within(-5, 5);

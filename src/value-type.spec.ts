@@ -35,10 +35,5 @@ describe('ValueType', () => {
       expect(instance.equals(instanceWithSameData)).to.be.true;
       expect(instance.equals(instanceWithoutSameData)).to.be.false;
     });
-
-    it('Then can compare with null ou undefined value', () => {
-      expect(instance.equals(null)).to.be.false;
-      expect(instance.equals(undefined)).to.be.false;
-    });
   });
 });

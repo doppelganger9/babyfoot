@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event } from '../../..';
+import { BFEvent } from '../../..';
 import { AddedGoalFromPlayerToGame, GameCreated, GameEnded, GameStarted, PlayerAddedToGameWithTeam } from '../events';
 import { Game } from '../game';
 import { GameId } from '../game-id';
@@ -16,7 +16,7 @@ describe('Game', () => {
 
   describe('happy path', () => {
     it('should work from event history', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('cédric'), 'blue', gameId));
       history.push(new PlayerAddedToGameWithTeam(new PlayerId('david'), 'blue', gameId));

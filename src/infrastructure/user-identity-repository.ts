@@ -1,4 +1,4 @@
-import { UserId, UserIdentity, EventsStore, Event } from '..';
+import { UserId, UserIdentity, BFEventsStore, BFEvent } from '..';
 
 export class UnknownUserIdentity extends Error {
   constructor(public userId: UserId) {
@@ -10,11 +10,11 @@ export class UnknownUserIdentity extends Error {
 }
 
 export class UserIdentityRepository {
-  constructor(public eventsStore: EventsStore) {
+  constructor(public eventsStore: BFEventsStore) {
   }
 
-  public getAllEvents(userId: UserId): Array<Event> {
-    const events: Array<Event> = this.eventsStore.getEventsOfAggregate(userId);
+  public getAllEvents(userId: UserId): Array<BFEvent> {
+    const events: Array<BFEvent> = this.eventsStore.getEventsOfAggregate(userId);
     if (!events.length) {
       throw new UnknownUserIdentity(userId);
     }
@@ -23,7 +23,7 @@ export class UserIdentityRepository {
   }
 
   public getUserIdentity(userId: UserId): UserIdentity {
-    const events: Array<Event> = this.getAllEvents(userId);
+    const events: Array<BFEvent> = this.getAllEvents(userId);
     return new UserIdentity(events);
   }
 }

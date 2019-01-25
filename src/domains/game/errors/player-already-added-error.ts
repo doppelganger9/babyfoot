@@ -1,5 +1,5 @@
 import { GameId, TeamColors } from '../game-id';
-import { PlayerId } from '../player';
+import { PlayerId } from '../../player';
 
 /**
  * NOTE, to extend Errors and preserve prototype chain,

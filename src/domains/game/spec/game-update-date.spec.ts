@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { Event, EventPublisher, UnknownGameError } from '../../..';
+import { BFEvent, EventPublisher, UnknownGameError } from '../../..';
 import { GameAlreadyEndedError, GameIsDeletedError, MissingInitialDateTimeError } from '../errors';
 import { GameCreated, GameDeleted, GameEnded, GameStarted, GameDateUpdated } from '../events';
 import { Game } from '../game';
@@ -13,14 +13,14 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised = [];
+  let eventsRaised: any[] = [];
   const date = new Date();
 
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();
     }
-    public publish(evt: Event): void {
+    public publish(evt: BFEvent): void {
       eventsRaised.push(evt);
       super.publish(evt);
     }
@@ -33,7 +33,7 @@ describe('Game', () => {
 
   describe('.updateInitialDateTime should', () => {
     it('emit a GameUpdated', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(new Date(), gameId));
       t = new Game(history);
@@ -43,7 +43,7 @@ describe('Game', () => {
     });
 
     it('does not emit a GameUpdated if the Game is deleted', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       history.push(new GameDeleted(gameId));
       t = new Game(history);
@@ -52,7 +52,7 @@ describe('Game', () => {
     });
 
     it('throw error and does not emit a GameUpdated if the date is null', () => {
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
       history.push(new GameCreated(gameId));
       t = new Game(history);
       expect(() => t.updateInitialDateTime(simpleEventPublisher, null)).to.throw(MissingInitialDateTimeError);
@@ -64,7 +64,7 @@ describe('Game', () => {
   describe('.update projections should', () => {
     it('emit a GameUpdated', () => {
       const updatedInitialDateTime = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 5);// 5 days ago.
-      const history: Array<Event> = [];
+      const history: Array<BFEvent> = [];
 
       history.push(new GameCreated(gameId));
       history.push(new GameStarted(new Date(), gameId));

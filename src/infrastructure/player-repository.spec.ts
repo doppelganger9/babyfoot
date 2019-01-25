@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import { UnknownPlayerError } from './errors';
+import { UnknownPlayerError } from '../domains';
 import { PlayersRepository, PlayerListItemProjection } from './player-repository';
 import { PlayerId } from '../domains/player/player-id';
 import { PlayerCreated } from '../domains/player/events';
-import { EventsStore } from '.';
+import { BFEventsStore } from '.';
 
 describe('Players Repository', () => {
-  let eventsStore: EventsStore;
+  let eventsStore: BFEventsStore;
   let repository: PlayersRepository;
   let projections: Map<string, any>;
 
@@ -14,7 +14,7 @@ describe('Players Repository', () => {
   const fields = new Map<string, any>();
 
   beforeEach(() => {
-    eventsStore = new EventsStore();
+    eventsStore = new BFEventsStore();
     projections = new Map<string, any>();
     repository = new PlayersRepository(eventsStore, projections);
   });
@@ -25,7 +25,7 @@ describe('Players Repository', () => {
   });
 
   it('Given PlayerCreated When getPlayer Then return Player aggregate', () => {
-    const playerCreated = new PlayerCreated(playerId, fields, 'confirmationToken');
+    const playerCreated = new PlayerCreated(playerId, fields);
     eventsStore.store(playerCreated);
 
     const userPlayer = repository.getPlayer(playerId);

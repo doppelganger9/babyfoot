@@ -5,12 +5,12 @@ import { BFEvent } from '..';
 describe('DecisionProjection', () => {
   class EventA implements BFEvent {
     constructor(public valueA: any  = 'TestValueA') {}
-    public getAggregateId():any { return this.valueA; }
+    public getAggregateId(): any { return this.valueA; }
   }
 
   class EventB implements BFEvent {
     constructor(public valueB: any  = 'TestValueB') {}
-    public getAggregateId():any { return this.valueB; }
+    public getAggregateId(): any { return this.valueB; }
   }
 
   it('When register BFEvent Then call action on apply of this event', () => {
@@ -25,11 +25,11 @@ describe('DecisionProjection', () => {
 
   it('Given several event registered When apply Then call good handler for each event', () => {
     // @ts-ignore
-    const daf1 : DecisionApplierFunction = function (event: EventA):void {
+    const daf1: DecisionApplierFunction = function(event: EventA): void {
       this.data.set('valueA', event.valueA);
     };
     // @ts-ignore
-    const daf2 : DecisionApplierFunction = function (event: EventB):void {
+    const daf2: DecisionApplierFunction = function(event: EventB): void {
       this.data.set('valueB', event.valueB);
     };
     const projection = new DecisionProjection()

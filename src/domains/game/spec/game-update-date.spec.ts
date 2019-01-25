@@ -13,7 +13,7 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised: any[] = [];
+  let eventsRaised: Array<any> = [];
   const date = new Date();
 
   class SimpleEventPublisher extends EventPublisher {

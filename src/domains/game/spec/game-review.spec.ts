@@ -18,7 +18,7 @@ const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');
-  let eventsRaised: any[] = [];
+  let eventsRaised: Array<any> = [];
   class SimpleEventPublisher extends EventPublisher {
     constructor() {
       super();

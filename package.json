@@ -44,7 +44,7 @@
     "newman": "4.3.1",
     "nyc": "13.1.0",
     "prettier": "1.16.1",
-    "source-map-support": "0.5.9",
+    "source-map-support": "0.5.10",
     "tslint": "5.12.1"
   },
   "nyc": {

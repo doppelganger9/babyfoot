@@ -1,13 +1,12 @@
 language : node_js
 
 node_js :
- - "8"
- - "9"
+ - "10"
+ - "11"
 
 cache: npm
 
 before_script:
-  - npm i -g npm@6.7.0
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build

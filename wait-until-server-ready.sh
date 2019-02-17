@@ -32,4 +32,4 @@ while [ $number_of_test -le $MAX_NB_RETRIES ]; do
   fi
   sleep 1
 done
-echo "finished after trying $(($number_of_test-1)) times"
+echo "finished after trying $((number_of_test-1)) times"

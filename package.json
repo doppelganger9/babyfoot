@@ -41,7 +41,7 @@
     "chai-as-promised": "7.1.1",
     "coveralls": "3.0.2",
     "mocha": "5.2.0",
-    "newman": "4.3.1",
+    "newman": "4.4.0",
     "nyc": "13.3.0",
     "prettier": "1.16.4",
     "source-map-support": "0.5.10",

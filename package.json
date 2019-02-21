@@ -73,6 +73,6 @@
     "firebase-admin": "7.0.0",
     "helmet": "3.15.1",
     "ts-node": "8.0.2",
-    "typescript": "3.3.3"
+    "typescript": "3.3.3333"
   }
 }

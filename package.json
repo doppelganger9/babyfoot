@@ -39,7 +39,7 @@
     "@types/node": "11.9.4",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
-    "coveralls": "3.0.2",
+    "coveralls": "3.0.3",
     "mocha": "5.2.0",
     "newman": "4.4.0",
     "nyc": "13.3.0",

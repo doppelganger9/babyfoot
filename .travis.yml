@@ -1,5 +1,9 @@
 language : node_js
 
+addons:
+  sonarcloud:
+    organization: "doppelganger9-github"
+
 node_js :
  - "lts/*"
 
@@ -20,6 +24,7 @@ script:
  - npm run newman
  - kill %1
  - npm run coveralls
+ - sonar-scanner -Dsonar.projectKey=doppelganger9_babyfoot -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.exclusions=node_modules/**/*,coverage/**/*,reports/**/*,**/*.config.js,**/*.conf.js -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info -Dsonar.language=ts -Dsonar.tests=. -Dsonar.test.inclusions=**/*.spec.ts
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

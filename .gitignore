@@ -10,4 +10,7 @@ babyfoot-pwa*.json
 TODO.md
 DESIGN.md
 reports
+
 .stryker-tmp/
+!stryker.conf.js
+stryker.log

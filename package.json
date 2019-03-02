@@ -14,7 +14,8 @@
     "newman": "newman run postman/Babyfoot.postman_collection.json -e postman/Babyfoot-localhost-3000.postman_environment.json",
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
     "test:mutations": "stryker run",
-    "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug"
+    "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug",
+    "test:vulnerabilities": "npm audit --check && snyk test"
   },
   "repository": {
     "type": "git",
@@ -52,6 +53,7 @@
     "newman": "4.4.0",
     "nyc": "13.3.0",
     "prettier": "1.16.4",
+    "snyk": "^1.135.1",
     "source-map-support": "0.5.10",
     "tslint": "5.13.1"
   },
@@ -77,10 +79,12 @@
   },
   "dependencies": {
     "cors": "2.8.5",
+    "diff": "^4.0.1",
     "express": "4.16.4",
-    "firebase-admin": "7.0.0",
+    "extend": "^3.0.2",
+    "firebase-admin": "^7.0.0",
     "helmet": "3.15.1",
-    "ts-node": "8.0.2",
+    "ts-node": "^8.0.2",
     "typescript": "3.3.3333"
   }
 }

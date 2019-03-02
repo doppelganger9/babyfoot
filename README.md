@@ -37,6 +37,20 @@ It definitely helped me:
 - debug in vscode to go step-by-step and inspect variable contents;
 - refactor blindly once everything was covered, that's the real deal 😎!
 
+### Mutation testing
+
+Code coverage is nice, but it only really tells you which part of your code is not yet covered.
+
+What it does not tell you is if the current coverage is really testing or just passing over code.
+
+Enters mutation testing! By changing parts of the tested code, it checks that related unit tests covering it should fail. If not, then the test does not really test anything, it just passes over the code.
+
+Run `npm run test:mutations` and check the generated [Stryker Mutator](https://stryker-mutator.io) in the `reports` directory.
+
+Look for surviving mutants, and test them one by one by replicating the mutation on our code and then if necessary, fix it.
+
+Fixing means either adding meaningful assertions, or removing code that is not really useful.
+
 ## PostMan collection & automated REST API testing
 
 `npm run newman`
@@ -55,7 +69,7 @@ Also my goal is to automate this with **Newman**.
 
 ## Future plans
 
-- Use Jest for Unit Testing?
+- ~~Use Jest for Unit Testing?~~ Well, as we use **Stryker Mutator** for mutation testing, keeping Mocha make it faster as it is able to only run tests for mutants as required; Jest runner is not yet capable of doing that.
 - have Continuous Deployment, etc.
 - add more API endpoints/features.
 - add a PWA client for the API.

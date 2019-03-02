@@ -13,7 +13,8 @@
     "start": "ts-node main.ts",
     "newman": "newman run postman/Babyfoot.postman_collection.json -e postman/Babyfoot-localhost-3000.postman_environment.json",
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
-    "test:mutations": "stryker run"
+    "test:mutations": "stryker run",
+    "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug"
   },
   "repository": {
     "type": "git",

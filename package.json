@@ -6,12 +6,15 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "build:test": "tsc --config test/tsconfig.json",
     "test": "nyc mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "prettier": "prettier src/**/*.ts --write",
     "start": "ts-node main.ts",
     "newman": "newman run postman/Babyfoot.postman_collection.json -e postman/Babyfoot-localhost-3000.postman_environment.json",
-    "tslint": "tslint -c tslint.json 'src/**/*.ts'"
+    "tslint": "tslint -c tslint.json 'src/**/*.ts'",
+    "test:mutations": "stryker run",
+    "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug"
   },
   "repository": {
     "type": "git",
@@ -30,6 +33,11 @@
   "author": "David LACOURT <david.lacourt@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@stryker-mutator/core": "^1.0.3",
+    "@stryker-mutator/html-reporter": "^1.0.3",
+    "@stryker-mutator/mocha-framework": "^1.0.3",
+    "@stryker-mutator/mocha-runner": "^1.0.3",
+    "@stryker-mutator/typescript": "^1.0.3",
     "@types/chai": "4.1.7",
     "@types/chai-as-promised": "7.1.0",
     "@types/cors": "2.8.4",

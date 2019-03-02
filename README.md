@@ -2,7 +2,7 @@
 
 ![Table Football picture](https://source.unsplash.com/7de474KZIbs/270x180)
 
-[![Build Status](https://travis-ci.org/doppelganger9/babyfoot.svg?branch=master)](https://travis-ci.org/doppelganger9/babyfoot) [![Coverage Status](https://coveralls.io/repos/github/doppelganger9/babyfoot/badge.svg?branch=master)](https://coveralls.io/github/doppelganger9/babyfoot?branch=master) [![Known Vulnerabilities](https://snyk.io/test/github/doppelganger9/babyfoot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doppelganger9/babyfoot?targetFile=package.json) [![BCH compliance](https://bettercodehub.com/edge/badge/doppelganger9/babyfoot?branch=master)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/22e54b8ae86b4bf2a8f6172899d4a91a)](https://www.codacy.com/app/doppelganger9/babyfoot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=doppelganger9/babyfoot&amp;utm_campaign=Badge_Grade) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot?ref=badge_shield) [![Maintainability](https://api.codeclimate.com/v1/badges/6df9f2100fc61a97bcf2/maintainability)](https://codeclimate.com/github/doppelganger9/babyfoot/maintainability)
+[![Build Status](https://travis-ci.org/doppelganger9/babyfoot.svg?branch=master)](https://travis-ci.org/doppelganger9/babyfoot) [![Coverage Status](https://coveralls.io/repos/github/doppelganger9/babyfoot/badge.svg?branch=master)](https://coveralls.io/github/doppelganger9/babyfoot?branch=master) [![Mutation testing badge](https://badge.stryker-mutator.io/github.com/doppelganger9/babyfoot/master)](https://stryker-mutator.github.io) [![Known Vulnerabilities](https://snyk.io/test/github/doppelganger9/babyfoot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/doppelganger9/babyfoot?targetFile=package.json) [![BCH compliance](https://bettercodehub.com/edge/badge/doppelganger9/babyfoot?branch=master)](https://bettercodehub.com/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/22e54b8ae86b4bf2a8f6172899d4a91a)](https://www.codacy.com/app/doppelganger9/babyfoot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=doppelganger9/babyfoot&amp;utm_campaign=Badge_Grade) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdoppelganger9%2Fbabyfoot?ref=badge_shield) [![Maintainability](https://api.codeclimate.com/v1/badges/6df9f2100fc61a97bcf2/maintainability)](https://codeclimate.com/github/doppelganger9/babyfoot/maintainability)
 
 ## Goals
 
@@ -37,6 +37,20 @@ It definitely helped me:
 - debug in vscode to go step-by-step and inspect variable contents;
 - refactor blindly once everything was covered, that's the real deal 😎!
 
+### Mutation testing
+
+Code coverage is nice, but it only really tells you which part of your code is not yet covered.
+
+What it does not tell you is if the current coverage is really testing or just passing over code.
+
+Enters mutation testing! By changing parts of the tested code, it checks that related unit tests covering it should fail. If not, then the test does not really test anything, it just passes over the code.
+
+Run `npm run test:mutations` and check the generated [Stryker Mutator](https://stryker-mutator.io) in the `reports` directory.
+
+Look for surviving mutants, and test them one by one by replicating the mutation on our code and then if necessary, fix it.
+
+Fixing means either adding meaningful assertions, or removing code that is not really useful.
+
 ## PostMan collection & automated REST API testing
 
 `npm run newman`
@@ -55,7 +69,7 @@ Also my goal is to automate this with **Newman**.
 
 ## Future plans
 
-- Use Jest for Unit Testing?
+- ~~Use Jest for Unit Testing?~~ Well, as we use **Stryker Mutator** for mutation testing, keeping Mocha make it faster as it is able to only run tests for mutants as required; Jest runner is not yet capable of doing that.
 - have Continuous Deployment, etc.
 - add more API endpoints/features.
 - add a PWA client for the API.

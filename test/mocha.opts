@@ -1,3 +1,2 @@
-src
+src/**/*.spec.ts
 --require ts-node/register
---recursive **/*.spec.ts

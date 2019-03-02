@@ -10,9 +10,9 @@ module.exports = function(config) {
     tsconfigFile: "test/tsconfig.json",
     mutate: ["src/**/*.ts", "!src/**/*.spec.ts"],
     mochaOptions: {
-        opts: 'test/mocha.opts',
+        opts: "test/mocha.opts",
         files: "dist/**/*.spec.js",
-        ui: 'bdd',
+        ui: "bdd",
         timeout: 3000,
         grep: /.*/
     }

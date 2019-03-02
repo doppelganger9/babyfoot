@@ -6,6 +6,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "build:test": "tsc --config test/tsconfig.json",
     "test": "nyc mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "prettier": "prettier src/**/*.ts --write",

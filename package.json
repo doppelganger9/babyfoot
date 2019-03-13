@@ -55,7 +55,7 @@
     "prettier": "1.16.4",
     "snyk": "1.136.1",
     "source-map-support": "0.5.11",
-    "tslint": "5.13.1"
+    "tslint": "5.14.0"
   },
   "nyc": {
     "include": [

@@ -50,7 +50,7 @@
     "chai-as-promised": "7.1.1",
     "coveralls": "3.0.3",
     "mocha": "^6.1.4",
-    "newman": "^4.4.1",
+    "newman": "^4.5.1",
     "nyc": "^14.1.0",
     "prettier": "1.16.4",
     "snyk": "1.136.1",

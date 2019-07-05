@@ -15,7 +15,9 @@
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
     "test:mutations": "stryker run",
     "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug",
-    "test:vulnerabilities": "npm audit --check && snyk test"
+    "test:vulnerabilities": "npm audit --check && snyk test",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -53,7 +55,6 @@
     "newman": "4.5.1",
     "nyc": "14.1.0",
     "prettier": "1.16.4",
-    "snyk": "1.185.5",
     "source-map-support": "0.5.11",
     "tslint": "5.14.0"
   },
@@ -89,6 +90,8 @@
     "firebase-admin": "^8.0.0",
     "helmet": "3.18.0",
     "ts-node": "^8.0.2",
-    "typescript": "3.3.3333"
-  }
+    "typescript": "3.3.3333",
+    "snyk": "^1.192.0"
+  },
+  "snyk": true
 }

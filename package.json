@@ -15,7 +15,8 @@
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
     "test:mutations": "stryker run",
     "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug",
-    "test:vulnerabilities": "npm audit --check && snyk test"
+    "test:vulnerabilities": "npm audit --check && snyk test",
+    "test:integration": "start-server-and-test start http-get://localhost:3000/api/health newman"
   },
   "repository": {
     "type": "git",
@@ -49,12 +50,14 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "coveralls": "3.0.4",
+    "lodash": "^4.17.12",
     "mocha": "6.1.4",
     "newman": "4.5.1",
     "nyc": "14.1.0",
     "prettier": "1.16.4",
-    "snyk": "1.185.5",
+    "snyk": "1.193.3",
     "source-map-support": "0.5.11",
+    "start-server-and-test": "1.9.1",
     "tslint": "5.14.0"
   },
   "nyc": {

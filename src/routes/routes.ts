@@ -20,6 +20,7 @@ import { GameHandler } from '../domains/game/game-handler';
 import { TeamColors } from '../domains/game/game-id';
 import { PlayerId } from '../domains/player';
 import { PlayerHandler } from '../domains/player/player-handler';
+import { UptimeRoutes } from './uptime-routes';
 import { GamesRoutes } from './games-routes';
 import { PlayerRoutes } from './player-routes';
 import { IdentityRoutes } from './identity-routes';
@@ -32,6 +33,7 @@ export class Routes {
   private playersRepository: PlayersRepository;
   private eventPublisher: EventPublisher;
 
+  private uptimeRoutes: UptimeRoutes;
   private playerRoutes: PlayerRoutes;
   private gamesRoutes: GamesRoutes;
   private identityRoutes: IdentityRoutes;
@@ -57,9 +59,11 @@ export class Routes {
       this.playersRepository,
       this.eventPublisher,
     );
+    this.uptimeRoutes = new UptimeRoutes();
   }
 
   public registerRoutes(router: Router): void {
+    this.uptimeRoutes.registerRoutes(router);
     this.identityRoutes.registerRoutes(router);
     this.gamesRoutes.registerRoutes(router);
     this.playerRoutes.registerRoutes(router);

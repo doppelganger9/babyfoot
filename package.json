@@ -80,7 +80,8 @@
       "lcov"
     ],
     "sourceMap": true,
-    "instrument": true
+    "instrument": true,
+    "all": true
   },
   "dependencies": {
     "@types/cors": "2.8.4",

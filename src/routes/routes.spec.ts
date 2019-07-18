@@ -7,6 +7,10 @@ import { Router, Request, Response } from 'express';
 
 describe('Routes', () => {
   let t: Routes;
+  const routerRegisteredWithRoute =
+    (mock: any, route: string): any => (mock as sinon.SinonSpy).getCalls().find(call => call.args[0] === route);
+  const expectRouterToHaveRegisteredRoute =
+    (mock: any, route: string): Chai.Assertion => expect(routerRegisteredWithRoute(mock, route)).to.not.be.undefined;
 
   beforeEach(() => {
     t = new Routes();
@@ -25,7 +29,7 @@ describe('Routes', () => {
 
     t.registerRoutes(mockRouter);
 
-    expect((mockRouter.get as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/health')).to.not.be.undefined;
+    expectRouterToHaveRegisteredRoute(mockRouter.get, '/api/health');
   });
 
   it('should register identity routes', () => {
@@ -37,9 +41,9 @@ describe('Routes', () => {
 
     t.registerRoutes(mockRouter);
 
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/identity/userIdentities/register')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/identity/userIdentities/:id/logIn')).to.not.be.undefined;
-    expect((mockRouter.delete as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/identity/sessions/:id')).to.not.be.undefined;
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/identity/userIdentities/register');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/identity/userIdentities/:id/logIn');
+    expectRouterToHaveRegisteredRoute(mockRouter.delete, '/api/identity/sessions/:id');
   });
 
   it('should register games routes', () => {
@@ -51,18 +55,18 @@ describe('Routes', () => {
 
     t.registerRoutes(mockRouter);
 
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games')).to.not.be.undefined;
-    expect((mockRouter.get as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games')).to.not.be.undefined;
-    expect((mockRouter.get as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id')).to.not.be.undefined;
-    expect((mockRouter.delete as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id/start')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id/end')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id')).to.not.be.undefined;
-    expect((mockRouter.get as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id/players')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id/players/:player/:team')).to.not.be.undefined;
-    expect((mockRouter.delete as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id/players/:player')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id/goals/:player')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/games/:id/players/:player/position/:position')).to.not.be.undefined;
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/games');
+    expectRouterToHaveRegisteredRoute(mockRouter.get, '/api/games');
+    expectRouterToHaveRegisteredRoute(mockRouter.get, '/api/games/:id');
+    expectRouterToHaveRegisteredRoute(mockRouter.delete, '/api/games/:id');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/games/:id/start');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/games/:id/end');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/games/:id');
+    expectRouterToHaveRegisteredRoute(mockRouter.get, '/api/games/:id/players');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/games/:id/players/:player/:team');
+    expectRouterToHaveRegisteredRoute(mockRouter.delete, '/api/games/:id/players/:player');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/games/:id/goals/:player');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/games/:id/players/:player/position/:position');
   });
 
   it('should register players routes', () => {
@@ -74,11 +78,11 @@ describe('Routes', () => {
 
     t.registerRoutes(mockRouter);
 
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/players')).to.not.be.undefined;
-    expect((mockRouter.get as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/players')).to.not.be.undefined;
-    expect((mockRouter.get as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/players/:id')).to.not.be.undefined;
-    expect((mockRouter.post as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/players/:id')).to.not.be.undefined;
-    expect((mockRouter.delete as sinon.SinonSpy).getCalls().find(call => call.args[0] === '/api/players/:id')).to.not.be.undefined;
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/players');
+    expectRouterToHaveRegisteredRoute(mockRouter.get, '/api/players');
+    expectRouterToHaveRegisteredRoute(mockRouter.get, '/api/players/:id');
+    expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/players/:id');
+    expectRouterToHaveRegisteredRoute(mockRouter.delete, '/api/players/:id');
   });
 
 });

@@ -59,7 +59,7 @@
     "sinon": "7.4.2",
     "snyk": "1.195.0",
     "source-map-support": "0.5.11",
-    "start-server-and-test": "1.9.1",
+    "start-server-and-test": "1.10.0",
     "tslint": "5.14.0"
   },
   "nyc": {

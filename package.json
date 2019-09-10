@@ -60,7 +60,7 @@
     "snyk": "1.195.0",
     "source-map-support": "0.5.11",
     "start-server-and-test": "1.10.0",
-    "tslint": "5.14.0"
+    "tslint": "5.20.0"
   },
   "nyc": {
     "include": [

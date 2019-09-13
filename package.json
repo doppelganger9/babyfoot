@@ -55,7 +55,7 @@
     "mocha": "6.2.0",
     "newman": "4.5.4",
     "nyc": "14.1.1",
-    "prettier": "1.16.4",
+    "prettier": "1.18.2",
     "sinon": "7.4.2",
     "snyk": "1.226.2",
     "source-map-support": "0.5.11",

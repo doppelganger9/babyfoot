@@ -16,7 +16,9 @@
     "test:mutations": "stryker run",
     "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug",
     "test:vulnerabilities": "npm audit --check && snyk test",
-    "test:integration": "start-server-and-test start http-get://localhost:3000/api/health newman"
+    "test:integration": "start-server-and-test start http-get://localhost:3000/api/health newman",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -57,7 +59,6 @@
     "nyc": "14.1.1",
     "prettier": "1.16.4",
     "sinon": "7.4.2",
-    "snyk": "1.226.2",
     "source-map-support": "0.5.11",
     "start-server-and-test": "1.10.0",
     "tslint": "5.14.0"
@@ -93,8 +94,10 @@
     "express": "4.16.4",
     "extend": "^3.0.2",
     "firebase-admin": "^8.0.0",
-    "helmet": "3.21.0",
+    "helmet": "3.21.1",
     "ts-node": "^8.0.2",
-    "typescript": "3.3.3333"
-  }
+    "typescript": "3.3.3333",
+    "snyk": "^1.230.5"
+  },
+  "snyk": true
 }

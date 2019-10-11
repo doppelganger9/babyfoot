@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.3
+version: v1.13.5
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   SNYK-JS-LODASHMERGE-173732:
@@ -10,4 +10,8 @@ ignore:
     - firebase-admin > @google-cloud/firestore > lodash.merge:
         reason: no remediation yet
         expires: '2019-04-30T19:43:01.108Z'
-patch: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - firebase-admin > @google-cloud/storage > gaxios > https-proxy-agent:
+        patched: '2019-10-11T19:38:21.360Z'

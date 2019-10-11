@@ -92,7 +92,7 @@
     "diff": "^4.0.1",
     "express": "4.16.4",
     "extend": "^3.0.2",
-    "firebase-admin": "^8.0.0",
+    "firebase-admin": "^8.3.0",
     "helmet": "3.21.0",
     "ts-node": "^8.0.2",
     "typescript": "3.3.3333"

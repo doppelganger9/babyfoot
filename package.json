@@ -16,7 +16,9 @@
     "test:mutations": "stryker run",
     "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug",
     "test:vulnerabilities": "npm audit --check && snyk test",
-    "test:integration": "start-server-and-test start http-get://localhost:3000/api/health newman"
+    "test:integration": "start-server-and-test start http-get://localhost:3000/api/health newman",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -50,14 +52,13 @@
     "@types/sinon": "7.0.13",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
-    "coveralls": "3.0.7",
+    "coveralls": "3.0.6",
     "lodash": "4.17.13",
     "mocha": "6.2.0",
     "newman": "4.5.4",
     "nyc": "14.1.1",
     "prettier": "1.16.4",
     "sinon": "7.4.2",
-    "snyk": "1.226.2",
     "source-map-support": "0.5.11",
     "start-server-and-test": "1.10.0",
     "tslint": "5.14.0"
@@ -95,6 +96,8 @@
     "firebase-admin": "^8.3.0",
     "helmet": "3.21.0",
     "ts-node": "^8.0.2",
-    "typescript": "3.3.3333"
-  }
+    "typescript": "3.3.3333",
+    "snyk": "^1.234.2"
+  },
+  "snyk": true
 }

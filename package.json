@@ -96,7 +96,7 @@
     "firebase-admin": "^8.3.0",
     "helmet": "3.21.2",
     "ts-node": "^8.0.2",
-    "typescript": "3.3.3333",
+    "typescript": "3.6.4",
     "snyk": "^1.234.2"
   },
   "snyk": true

@@ -215,7 +215,7 @@ export class GamesRoutes {
   private addPlayerToGame(req: Request, res: Response) {
     const gameId = new GameId(req.params.id);
     const playerId = new PlayerId(req.params.player);
-    const team: TeamColors = req.params.team;
+    const team: TeamColors = req.params.team as TeamColors;
 
     // find Aggregate for this ID in repository
     const found = this.gamesRepository.getGame(gameId);
@@ -242,7 +242,7 @@ export class GamesRoutes {
   private changeUserPositionToGame(req: Request, res: Response) {
     const gameId = new GameId(req.params.id);
     const player = new PlayerId(req.params.player);
-    const position: PositionValue = req.params.position;
+    const position: PositionValue = req.params.position as PositionValue;
 
     // find Aggregate for this ID in repository
     const found = this.gamesRepository.getGame(gameId);

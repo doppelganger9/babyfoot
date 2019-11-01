@@ -15,6 +15,7 @@ module.exports = function(config) {
         ui: "bdd",
         timeout: 3000,
         grep: /.*/
-    }
+    },
+    logLevel: 'debug'
   });
 };

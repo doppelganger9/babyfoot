@@ -19,7 +19,7 @@ module.exports = function(config) {
     ],
     mochaOptions: {
         spec: [
-          'dist/**/*.spec.js',
+          "dist/**/*.spec.js",
         ],
         opts: "test/mocha.opts",
         ui: "bdd",

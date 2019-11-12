@@ -44,7 +44,7 @@
     "@stryker-mutator/mocha-framework": "2.2.1",
     "@stryker-mutator/mocha-runner": "2.2.1",
     "@stryker-mutator/typescript": "2.2.1",
-    "@types/chai": "4.2.4",
+    "@types/chai": "4.2.5",
     "@types/chai-as-promised": "7.1.2",
     "@types/mocha": "5.2.7",
     "@types/sinon": "7.5.0",

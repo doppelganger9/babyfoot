@@ -93,7 +93,7 @@
     "firebase-admin": "8.9.2",
     "helmet": "3.21.2",
     "ts-node": "8.6.2",
-    "typescript": "3.7.5"
+    "typescript": "3.8.2"
   },
   "snyk": true
 }

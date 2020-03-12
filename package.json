@@ -90,7 +90,7 @@
     "diff": "4.0.2",
     "express": "4.17.1",
     "extend": "3.0.2",
-    "firebase-admin": "8.9.2",
+    "firebase-admin": "8.10.0",
     "helmet": "3.21.3",
     "ts-node": "8.6.2",
     "typescript": "3.8.3"

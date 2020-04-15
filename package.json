@@ -58,7 +58,7 @@
     "sinon": "7.5.0",
     "snyk": "1.305.1",
     "start-server-and-test": "1.11.0",
-    "tslint": "5.20.1"
+    "tslint": "6.1.1"
   },
   "nyc": {
     "include": [

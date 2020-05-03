@@ -92,7 +92,7 @@
     "extend": "3.0.2",
     "firebase-admin": "8.11.0",
     "helmet": "3.22.0",
-    "ts-node": "8.9.1",
+    "ts-node": "8.10.1",
     "typescript": "3.8.3"
   },
   "snyk": true

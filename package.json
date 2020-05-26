@@ -56,7 +56,7 @@
     "nyc": "14.1.1",
     "prettier": "1.19.1",
     "sinon": "7.5.0",
-    "snyk": "1.328.0",
+    "snyk": "1.329.0",
     "start-server-and-test": "1.11.0",
     "tslint": "5.20.1"
   },

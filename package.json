@@ -83,7 +83,7 @@
   },
   "dependencies": {
     "@types/cors": "2.8.6",
-    "@types/express": "4.17.6",
+    "@types/express": "4.17.7",
     "@types/helmet": "0.0.47",
     "@types/node": "12.12.48",
     "cors": "2.8.5",

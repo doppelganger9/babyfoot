@@ -57,7 +57,7 @@
     "prettier": "1.19.1",
     "sinon": "7.5.0",
     "snyk": "1.370.1",
-    "start-server-and-test": "1.11.2",
+    "start-server-and-test": "1.11.3",
     "tslint": "5.20.1"
   },
   "nyc": {

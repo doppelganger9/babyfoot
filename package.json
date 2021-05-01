@@ -39,7 +39,7 @@
   "author": "David LACOURT <david.lacourt@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/traverse": "7.13.17",
+    "@babel/traverse": "7.14.0",
     "@stryker-mutator/core": "4.6.0",
     "@stryker-mutator/mocha-runner": "4.6.0",
     "@types/chai": "4.2.16",

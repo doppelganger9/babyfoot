@@ -40,8 +40,8 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/traverse": "7.14.5",
-    "@stryker-mutator/core": "5.0.1",
-    "@stryker-mutator/mocha-runner": "5.0.1",
+    "@stryker-mutator/core": "5.1.1",
+    "@stryker-mutator/mocha-runner": "5.1.1",
     "@types/chai": "4.2.18",
     "@types/chai-as-promised": "7.1.4",
     "@types/mocha": "5.2.7",

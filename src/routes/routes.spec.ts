@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { EventPublisher, BFEventsStore } from '..';
 import { Routes } from './routes';

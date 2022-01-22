@@ -1,11 +1,10 @@
-import * as express from 'express';
-import * as http from 'http';
-import * as bodyParser from 'body-parser';
+import express from 'express';
+import http from 'http';
 import { Routes } from './routes/routes';
 import { Application, Request, Response, Router } from 'express';
-import * as cors from 'cors';
-import * as helmet from 'helmet';
-import * as admin from 'firebase-admin';
+import cors from 'cors';
+import helmet from "helmet";
+import admin from 'firebase-admin';
 
 function logErrors(err: any, req: Request, res: Response, next: any) {
   console.error(err.stack);
@@ -25,9 +24,9 @@ function manageError(err: any, req: Request, res: Response, next: any) {
     console.log(err);
 
     const isLocal =
-      req.connection.remoteAddress &&
+      req.socket.remoteAddress &&
       ['localhost', '::1', '127.0.0.1'].includes(
-        req.connection.remoteAddress
+        req.socket.remoteAddress
       );
     const stack = isLocal ? err.stack!.split('\n') : undefined;
 
@@ -56,9 +55,9 @@ function createExpressMiddleware(port: string | number, router: Router): Applica
     app.use(cors());
   }
 
-  app.use(bodyParser.json());
+  app.use(express.json());
   app.use(
-    bodyParser.urlencoded({
+    express.urlencoded({
       extended: false
     })
   );

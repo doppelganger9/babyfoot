@@ -17,4 +17,8 @@ module.exports = {
     "src/**/*.ts",
     "!src/**/*.spec.ts",
   ],
+  mochaOptions: {
+    spec: [ "src/**/*.spec.ts" ],
+    require: [ "ts-node/register" ],
+  },
 };

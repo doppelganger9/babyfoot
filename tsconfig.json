@@ -5,6 +5,7 @@
         "noImplicitAny": true,
         "removeComments": true,
         "sourceMap": true,
+        "esModuleInterop": true,
         "declaration": true,
         "strict": true,
         "outDir": "./dist",

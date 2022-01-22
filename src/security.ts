@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import * as admin from 'firebase-admin';
+import admin from 'firebase-admin';
 /**
  * Express Middleware to check Firebase Auth token.
  * see https://firebase.google.com/docs/admin/setup

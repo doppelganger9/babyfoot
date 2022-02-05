@@ -1,7 +1,6 @@
 postman/
 .vscode/
 .nyc_output/
-.travis.yml
 .prettier
 .editorconfig
 .codeclimate.yml

@@ -12,3 +12,4 @@ coverage/
 *.sh
 renovate.json
 refacto.js
+.github/

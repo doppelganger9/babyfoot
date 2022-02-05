@@ -1,0 +1,53 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 14.x
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+    - name: integration testing
+      run: npm run test:integration
+    - name: Coveralls reporting
+      run: npm run coveralls
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        COVERALLS_SERVICE_NAME: Github Actions main.workflow
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      with:
+        args: >
+          -Dsonar.organization=doppelganger9-github
+          -Dsonar.projectKey=doppelganger9_babyfoot
+          -Dsonar.typescript.exclusions=**/node_modules/** 
+          -Dsonar.exclusions=node_modules/**/*,coverage/**/*,reports/**/*,**/*.config.js,**/*.conf.js
+          -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info          
+          -Dsonar.language=ts
+          -Dsonar.tests=.
+          -Dsonar.test.inclusions=**/*.spec.ts
+          -Dsonar.typescript.tsconfigPath=tsconfig.json
+          -Dsonar.sources=.
+          -Dsonar.verbose=true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - run: npm run test:mutations
+      env:
+        STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

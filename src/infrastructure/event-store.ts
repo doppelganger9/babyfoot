@@ -27,9 +27,6 @@ export class BFEventsStore {
   }
 
   public getEventsOfAggregate(aggregateId: any): Array<BFEvent> {
-    return this.events.filter(
-      (it: BFEvent) =>
-        JSON.stringify(it.getAggregateId()) === JSON.stringify(aggregateId)
-    );
+    return this.events.filter((it: BFEvent) => JSON.stringify(it.getAggregateId()) === JSON.stringify(aggregateId));
   }
 }

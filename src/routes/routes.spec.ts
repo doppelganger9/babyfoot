@@ -7,10 +7,10 @@ import { Router, Request, Response } from 'express';
 
 describe('Routes', () => {
   let t: Routes;
-  const routerRegisteredWithRoute =
-    (mock: any, route: string): any => (mock as sinon.SinonSpy).getCalls().find(call => call.args[0] === route);
-  const expectRouterToHaveRegisteredRoute =
-    (mock: any, route: string): Chai.Assertion => expect(routerRegisteredWithRoute(mock, route)).to.not.be.undefined;
+  const routerRegisteredWithRoute = (mock: any, route: string): any =>
+    (mock as sinon.SinonSpy).getCalls().find(call => call.args[0] === route);
+  const expectRouterToHaveRegisteredRoute = (mock: any, route: string): Chai.Assertion =>
+    expect(routerRegisteredWithRoute(mock, route)).to.not.be.undefined;
 
   beforeEach(() => {
     t = new Routes();
@@ -84,5 +84,4 @@ describe('Routes', () => {
     expectRouterToHaveRegisteredRoute(mockRouter.post, '/api/players/:id');
     expectRouterToHaveRegisteredRoute(mockRouter.delete, '/api/players/:id');
   });
-
 });

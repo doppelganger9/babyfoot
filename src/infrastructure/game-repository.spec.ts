@@ -37,9 +37,7 @@ describe('Games Repository', () => {
   it('Given huge list of events When getGames Then return list of games (.001ms per Game)', () => {
     const max = 50000;
     for (let i = 0; i < max; i++) {
-      repository.save(
-        new GameListItemProjection(new GameId('Game' + i), new Date())
-      );
+      repository.save(new GameListItemProjection(new GameId('Game' + i), new Date()));
     }
     const t0 = new Date().getTime();
     const list = repository.getGames();

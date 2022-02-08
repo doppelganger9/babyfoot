@@ -41,15 +41,9 @@ export class GamesRoutes {
     router.post('/api/games/:id', checkFirebaseAuthToken, (req, res) => this.updateGame(req, res));
 
     router.get('/api/games/:id/players', checkFirebaseAuthToken, (req, res) => this.getPlayersInGame(req, res));
-    router.post('/api/games/:id/players/:player/:team', checkFirebaseAuthToken, (req, res) =>
-      this.addPlayerToGame(req, res),
-    );
-    router.delete('/api/games/:id/players/:player', checkFirebaseAuthToken, (req, res) =>
-      this.removePlayerFromGame(req, res),
-    );
-    router.post('/api/games/:id/goals/:player', checkFirebaseAuthToken, (req, res) =>
-      this.addGoalFromPlayerToGame(req, res),
-    );
+    router.post('/api/games/:id/players/:player/:team', checkFirebaseAuthToken, (req, res) => this.addPlayerToGame(req, res));
+    router.delete('/api/games/:id/players/:player', checkFirebaseAuthToken, (req, res) => this.removePlayerFromGame(req, res));
+    router.post('/api/games/:id/goals/:player', checkFirebaseAuthToken, (req, res) => this.addGoalFromPlayerToGame(req, res));
     router.post('/api/games/:id/players/:player/position/:position', checkFirebaseAuthToken, (req, res) =>
       this.changeUserPositionToGame(req, res),
     );
@@ -87,9 +81,9 @@ export class GamesRoutes {
 
     // call COMMAND on Aggregate (this time it is a static method, because the Entity does not yet exist)
     const found: Game = this.gamesRepository.getGame(gameId);
-    const embedPlayers = embedded ? (list: Array<PlayerId>) => list.map(it =>
-            this.playersRepository.getPlayerFromList(it),
-          ) : (list: Array<PlayerId>) => list;
+    const embedPlayers = embedded
+      ? (list: Array<PlayerId>) => list.map(it => this.playersRepository.getPlayerFromList(it))
+      : (list: Array<PlayerId>) => list;
     // send response
     this.standardGameOKResponseWithAddedAttributes(res, gameId, {
       currentEndDatetime: found.projection.currentEndDatetime,

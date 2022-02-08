@@ -24,62 +24,30 @@ describe('Sessions Repository', () => {
   });
 
   it('Given several user connected When getUserIdOfSession Then userId of this session', () => {
+    repository.save(new SessionProjection(sessionId, userId, SessionProjection.SESSION_ENABLED));
     repository.save(
-      new SessionProjection(
-        sessionId,
-        userId,
-        SessionProjection.SESSION_ENABLED
-      )
-    );
-    repository.save(
-      new SessionProjection(
-        new SessionId('SessionB'),
-        new UserId('user2@mix-it.fr'),
-        SessionProjection.SESSION_ENABLED
-      )
+      new SessionProjection(new SessionId('SessionB'), new UserId('user2@mix-it.fr'), SessionProjection.SESSION_ENABLED),
     );
 
     expect(repository.getUserIdOfSession(sessionId)).to.eql(userId);
   });
 
   it('Given user disconnected When getUserIdOfSession Then return empty', () => {
-    repository.save(
-      new SessionProjection(
-        sessionId,
-        userId,
-        SessionProjection.SESSION_DISABLED
-      )
-    );
+    repository.save(new SessionProjection(sessionId, userId, SessionProjection.SESSION_DISABLED));
 
     expect(repository.getUserIdOfSession(sessionId)).to.be.null;
   });
 
   it('Given already projection When save same projection Then update projection', () => {
-    repository.save(
-      new SessionProjection(
-        sessionId,
-        userId,
-        SessionProjection.SESSION_ENABLED
-      )
-    );
+    repository.save(new SessionProjection(sessionId, userId, SessionProjection.SESSION_ENABLED));
 
-    repository.save(
-      new SessionProjection(
-        sessionId,
-        userId,
-        SessionProjection.SESSION_DISABLED
-      )
-    );
+    repository.save(new SessionProjection(sessionId, userId, SessionProjection.SESSION_DISABLED));
 
     expect(repository.getUserIdOfSession(sessionId)).to.be.null;
   });
 
   it('Given UserConnected When getSession Then return Session aggregate', () => {
-    const userConnected = new UserConnected(
-      sessionId,
-      userId,
-      new Date()
-    );
+    const userConnected = new UserConnected(sessionId, userId, new Date());
     eventsStore.store(userConnected);
 
     const userSession = repository.getSession(userConnected.sessionId);

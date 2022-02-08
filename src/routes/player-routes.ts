@@ -54,16 +54,14 @@ export class PlayerRoutes {
     const id = Player.createPlayer(this.eventPublisher, fields);
 
     // send response
-    res
-      .status(201)
-      .send({
-        playerId: id,
-        displayName: fields.get('displayName'),
-        avatar: fields.get('avatar'),
-        email: fields.get('email'),
-        // TODO: the HATEOAS links should be generated in some way given the state of the Player. Maybe it is a new ActionsOnPlayerProjection ?
-        url: '/api/players/' + encodeURIComponent(id.id),
-      });
+    res.status(201).send({
+      playerId: id,
+      displayName: fields.get('displayName'),
+      avatar: fields.get('avatar'),
+      email: fields.get('email'),
+      // TODO: the HATEOAS links should be generated in some way given the state of the Player. Maybe it is a new ActionsOnPlayerProjection ?
+      url: '/api/players/' + encodeURIComponent(id.id),
+    });
   }
 
   public getPlayer(req: Request, res: Response) {

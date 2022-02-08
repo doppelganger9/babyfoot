@@ -17,7 +17,7 @@ describe('Uptime Routes', () => {
   });
 
   it('should register route /api/health', () => {
-    const mockRouter = {get: sinon.fake() as any} as Router;
+    const mockRouter = { get: sinon.fake() as any } as Router;
 
     t.registerRoutes(mockRouter);
 
@@ -35,7 +35,6 @@ describe('Uptime Routes', () => {
     expect(memo.status).to.equal(200);
     expect(JSON.stringify(memo.send)).to.equal('{"status":"OK"}');
   });
-
 });
 
 class MockResponse {

@@ -22,7 +22,10 @@ export class PlayerListItemProjection {
  * It can also store other projections in a Map, with methods to access these simple projections.
  */
 export class PlayersRepository {
-  constructor(private eventsStore: BFEventsStore = new BFEventsStore(), private projections: Map<string, any> = new Map<string, any>()) {
+  constructor(
+    private eventsStore: BFEventsStore = new BFEventsStore(),
+    private projections: Map<string, any> = new Map<string, any>(),
+  ) {
     this.projections.set('list', new Array<PlayerListItemProjection>());
   }
 

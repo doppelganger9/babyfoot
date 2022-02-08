@@ -1,4 +1,3 @@
-
 import { expect } from 'chai';
 import { UserIdentityRepository } from '.';
 import { UserId, UnknownUserIdentity, UserRegistered, BFEventsStore } from '..';
@@ -12,9 +11,7 @@ describe('UserIdentities Repository', () => {
   });
 
   it('Given UserRegistered When getUserIdentity Then return UserIdentity aggregate', () => {
-    const userRegistered = new UserRegistered(
-      new UserId('user@mix-it.fr')
-    );
+    const userRegistered = new UserRegistered(new UserId('user@mix-it.fr'));
     eventsStore.store(userRegistered);
 
     const user = repository.getUserIdentity(userRegistered.userId);

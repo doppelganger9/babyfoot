@@ -25,7 +25,9 @@ describe('EventPublisher', () => {
 
   it('Given handler When publish Then call handler', () => {
     let called = false;
-    publisher.on(BFEventA, () => called = true);
+    publisher.on(BFEventA, () => {
+      called = true;
+    });
     const eventA = new BFEventA();
     publisher.publish(eventA);
 
@@ -34,9 +36,13 @@ describe('EventPublisher', () => {
   });
 
   it('Given different handlers When publish Then call right handler', () => {
-    publisher.on(BFEventA, () => { throw new Error('Publish EventB, not EventA'); });
+    publisher.on(BFEventA, () => {
+      throw new Error('Publish EventB, not EventA');
+    });
     let eventBReceived = false;
-    publisher.on(BFEventB, () => eventBReceived = true);
+    publisher.on(BFEventB, () => {
+      eventBReceived = true;
+    });
 
     const eventB = new BFEventB();
     publisher.publish(eventB);
@@ -47,7 +53,9 @@ describe('EventPublisher', () => {
 
   it('Given handler When publish Then pass event to action', () => {
     let eventReceived: any;
-    publisher.on(BFEventA, event => eventReceived = event);
+    publisher.on(BFEventA, event => {
+      eventReceived = event;
+    });
 
     publisher.publish(new BFEventA());
     expect(eventReceived).to.be.not.undefined;
@@ -66,9 +74,13 @@ describe('EventPublisher', () => {
 
   it('Given several global handlers When publish Then all handlers are called', () => {
     let handler1Called = false;
-    publisher.onAny(() => handler1Called = true );
+    publisher.onAny(() => {
+      handler1Called = true;
+    });
     let handler2Called = false;
-    publisher.onAny(() => handler2Called = true);
+    publisher.onAny(() => {
+      handler2Called = true;
+    });
 
     publisher.publish(new BFEventA());
 

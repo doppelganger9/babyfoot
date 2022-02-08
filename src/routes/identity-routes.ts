@@ -10,13 +10,13 @@ export class IdentityRoutes {
     public userIdentitiesRepository: UserIdentityRepository,
     public sessionsRepository: SessionsRepository,
     public eventPublisher: EventPublisher,
-  ) { }
+  ) {}
 
   public registerRoutes(router: Router): void {
     router.post('/api/identity/userIdentities/register', (req, res) => this.registerUser(req, res));
     router.post('/api/identity/userIdentities/:id/logIn', (req, res) => this.logInUser(req, res));
     router.delete('/api/identity/sessions/:id', (req, res) => this.logOutUser(req, res));
- }
+  }
 
   private registerUser(req: Request, res: Response) {
     // parse request body attributes

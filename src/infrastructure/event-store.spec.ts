@@ -63,9 +63,7 @@ describe('BFEventsStore', () => {
     const result = eventsStore.getEventsOfAggregate(aggregateId1);
     // @ts-ignore
     const mapped = result.map((it: TestEvent) => it.aggregateId);
-    expect(mapped)
-      .to.contain(aggregateId1)
-      .and.not.contain(aggregateId2);
+    expect(mapped).to.contain(aggregateId1).and.not.contain(aggregateId2);
     expect(result).to.have.length(2);
   });
 

@@ -10,10 +10,7 @@ import { UnknownGameError } from './errors';
  * It can also store other projections in a Map, with methods to access these simple projections.
  */
 export class GamesRepository {
-  constructor(
-    private eventsStore: BFEventsStore,
-    private projections: Map<string, any> = new Map<string, any>()
-  ) {
+  constructor(private eventsStore: BFEventsStore, private projections: Map<string, any> = new Map<string, any>()) {
     this.projections.set('list', new Array<GameListItemProjection>());
   }
 

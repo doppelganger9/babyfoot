@@ -19,5 +19,4 @@ describe('Player Routes', () => {
     const t = new PlayerRoutes(eventsStore, playersRepository, eventPublisher);
     expect(t).not.to.be.undefined;
   });
-
 });

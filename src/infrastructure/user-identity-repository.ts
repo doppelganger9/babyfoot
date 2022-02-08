@@ -10,8 +10,7 @@ export class UnknownUserIdentity extends Error {
 }
 
 export class UserIdentityRepository {
-  constructor(public eventsStore: BFEventsStore) {
-  }
+  constructor(public eventsStore: BFEventsStore) {}
 
   public getAllEvents(userId: UserId): Array<BFEvent> {
     const events: Array<BFEvent> = this.eventsStore.getEventsOfAggregate(userId);

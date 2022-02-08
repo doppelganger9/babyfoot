@@ -53,12 +53,7 @@ export class Routes {
       this.eventPublisher,
     );
     this.playerRoutes = new PlayerRoutes(this.eventsStore, this.playersRepository, this.eventPublisher);
-    this.gamesRoutes = new GamesRoutes(
-      this.eventsStore,
-      this.gamesRepository,
-      this.playersRepository,
-      this.eventPublisher,
-    );
+    this.gamesRoutes = new GamesRoutes(this.eventsStore, this.gamesRepository, this.playersRepository, this.eventPublisher);
     this.uptimeRoutes = new UptimeRoutes();
   }
 

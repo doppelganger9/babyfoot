@@ -3,16 +3,16 @@ import { expect } from 'chai';
 import { BFEvent } from '..';
 
 describe('DecisionProjection', () => {
-  class EventA implements BFEvent {
-    constructor(public valueA: any = 'TestValueA') {}
-    public getAggregateId(): any {
+  class EventA implements BFEvent<string> {
+    constructor(public valueA: string = 'TestValueA') {}
+    public getAggregateId(): string {
       return this.valueA;
     }
   }
 
-  class EventB implements BFEvent {
-    constructor(public valueB: any = 'TestValueB') {}
-    public getAggregateId(): any {
+  class EventB implements BFEvent<string> {
+    constructor(public valueB: string = 'TestValueB') {}
+    public getAggregateId(): string {
       return this.valueB;
     }
   }

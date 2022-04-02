@@ -54,7 +54,7 @@
     "lodash": "4.17.21",
     "mocha": "9.2.2",
     "nyc": "15.1.0",
-    "prettier": "2.6.1",
+    "prettier": "2.6.2",
     "sinon": "13.0.1",
     "snyk": "1.893.0",
     "start-server-and-test": "1.14.0",

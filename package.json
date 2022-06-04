@@ -95,7 +95,7 @@
     "firebase-admin": "10.2.0",
     "helmet": "5.1.0",
     "ts-node": "10.8.0",
-    "typescript": "4.7.2"
+    "typescript": "4.7.3"
   },
   "snyk": true
 }

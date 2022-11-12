@@ -55,7 +55,7 @@
     "mocha": "9.2.2",
     "nyc": "15.1.0",
     "prettier": "2.7.1",
-    "sinon": "13.0.2",
+    "sinon": "14.0.2",
     "snyk": "1.1058.0",
     "start-server-and-test": "1.14.0",
     "tslint": "5.20.1"

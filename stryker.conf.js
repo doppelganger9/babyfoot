@@ -13,6 +13,7 @@ module.exports = {
   buildCommand: "tsc -b",
   coverageAnalysis: "perTest",
   tsconfigFile: "test/tsconfig.json",
+  disableTypeChecks: "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}",
   mutate: [
     "src/**/*.ts",
     "!src/**/*.spec.ts",

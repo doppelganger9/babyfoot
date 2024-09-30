@@ -1,5 +1,5 @@
 import { DecisionProjection, DecisionApplierFunction } from './decision-projection';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 import { BFEvent } from '..';
 
 describe('DecisionProjection', () => {

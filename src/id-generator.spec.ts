@@ -1,5 +1,5 @@
 import { generateUUID } from './id-generator';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 
 describe('idGenerator', () => {
   it('When generate several id Then return always different id', () => {

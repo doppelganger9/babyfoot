@@ -1,5 +1,4 @@
-
-import { expect } from 'chai';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { BFEvent, UserRegistered, UserId, UserEmailCannotBeEmpty, EventPublisher } from '../..';
 import { UserIdentity } from '.';
 import { UserConnected } from './session';

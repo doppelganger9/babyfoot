@@ -28,7 +28,7 @@
 
 `npm test`
 
-Unit Testing was done by leveraging [Chai](https://www.chaijs.com/), [Mocha](https://mochajs.org/) and [TypeScript](https://www.typescriptlang.org/).
+Unit Testing was done by leveraging [Vitest](https://vitest.dev/) and [TypeScript](https://www.typescriptlang.org/).
 
 It definitely helped me:
 
@@ -69,7 +69,6 @@ Also my goal is to automate this with **Newman**.
 
 ## Future plans
 
-- ~~Use Jest for Unit Testing?~~ Well, as we use **Stryker Mutator** for mutation testing, keeping Mocha make it faster as it is able to only run tests for mutants as required; Jest runner is not yet capable of doing that.
 - have Continuous Deployment, etc.
 - add more API endpoints/features.
 - add a PWA client for the API.

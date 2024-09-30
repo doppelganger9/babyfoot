@@ -1,29 +1,36 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "noImplicitAny": true,
-        "removeComments": true,
-        "sourceMap": true,
-        "esModuleInterop": true,
-        "declaration": true,
-        "strict": true,
-        "outDir": "./dist",
-        "moduleResolution": "node",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "listFiles": true,
-        "listEmittedFiles": true,
-        "lib": [
-            "es6", "dom", "es2018"
-        ],
-        "rootDir": "./src"
-    },
-    "include": [
-        "src/**/*"
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2022",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "strict": true,
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "listFiles": true,
+    "listEmittedFiles": true,
+    "lib": [
+      "es6",
+      "dom",
+      "ES2023"
     ],
-    "exclude": [
-        "node_modules",
-        "**/*.spec.ts"
-    ]
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "ts-node": {
+    "esm": false,
+    "transpileOnly": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

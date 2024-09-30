@@ -1,6 +1,6 @@
 import { EventPublisher } from './event-publisher';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { BFEvent } from '..';
-import { expect } from 'chai';
 
 describe('EventPublisher', () => {
   let publisher: EventPublisher;

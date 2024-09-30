@@ -1,7 +1,6 @@
-import { expect } from 'chai';
+import { beforeEach, describe, expect, it } from 'vitest';
 import sinon from 'sinon';
 
-import { EventPublisher, BFEventsStore } from '..';
 import { UptimeRoutes } from './uptime-routes';
 import { Router, Request, Response } from 'express';
 

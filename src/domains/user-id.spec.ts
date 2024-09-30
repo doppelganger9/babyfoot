@@ -1,5 +1,5 @@
 import { UserId } from './user-id';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 import { UserEmailCannotBeEmpty } from '../index';
 
 describe('UserId', () => {

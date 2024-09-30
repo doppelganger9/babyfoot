@@ -1,5 +1,5 @@
 import { SessionsRepository, EventPublisher, SessionHandler, Session, UserId, SessionId } from '../..';
-import { expect } from 'chai';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { UserConnected, UserDisconnected } from './session';
 import { BFEventsStore } from '../../infrastructure';
 

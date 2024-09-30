@@ -9,7 +9,7 @@ module.exports = {
     "progress",
     "dashboard",
   ],
-  testRunner: "mocha",
+  testRunner: "vitest",
   buildCommand: "tsc -b",
   coverageAnalysis: "perTest",
   tsconfigFile: "test/tsconfig.json",
@@ -18,8 +18,4 @@ module.exports = {
     "src/**/*.ts",
     "!src/**/*.spec.ts",
   ],
-  mochaOptions: {
-    spec: [ "src/**/*.spec.ts" ],
-    require: [ "ts-node/register" ],
-  },
 };

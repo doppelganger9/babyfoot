@@ -1,14 +1,10 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import { describe, expect, it } from 'vitest';
 
 import { BFEvent } from '../../..';
 import { AddedGoalFromPlayerToGame, GameCreated, GameEnded, GameStarted, PlayerAddedToGameWithTeam } from '../events';
 import { Game } from '../game';
 import { GameId } from '../game-id';
 import { PlayerId } from '../../player';
-
-chai.use(chaiAsPromised);
-const { expect, assert } = chai;
 
 describe('Game', () => {
   let t: Game;

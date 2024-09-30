@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { UnknownPlayerError } from '../domains';
 import { PlayersRepository, PlayerListItemProjection } from './player-repository';
 import { PlayerId } from '../domains/player/player-id';

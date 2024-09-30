@@ -1,7 +1,6 @@
 import { Session, UserConnected, UserDisconnected, SessionId } from './session';
-// import { UserIdentity } from '../user-identity';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { UserId } from '../user-id';
-import { expect } from 'chai';
 import { EventPublisher, BFEvent } from '../..';
 
 describe('Session Aggregate', () => {

@@ -1,10 +1,6 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import { describe, expect, it } from 'vitest';
 
 import { GameId } from '../game-id';
-
-chai.use(chaiAsPromised);
-const { expect, assert } = chai;
 
 describe('GameId', () => {
   it('When create GameId Then toString returns id', () => {

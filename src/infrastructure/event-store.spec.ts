@@ -1,6 +1,6 @@
 import { BFEventsStore, BFEventDontContainsAggregateId, BFEvent } from './event-store';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ValueType } from '../value-type';
-import { expect } from 'chai';
 
 describe('BFEventsStore', () => {
   let eventsStore: BFEventsStore;

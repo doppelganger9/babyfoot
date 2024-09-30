@@ -1,15 +1,14 @@
-import { expect } from 'chai';
+import { Assertion, beforeEach, describe, expect, it } from 'vitest';
 import sinon from 'sinon';
 
-import { EventPublisher, BFEventsStore } from '..';
 import { Routes } from './routes';
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 
 describe('Routes', () => {
   let t: Routes;
   const routerRegisteredWithRoute = (mock: any, route: string): any =>
     (mock as sinon.SinonSpy).getCalls().find(call => call.args[0] === route);
-  const expectRouterToHaveRegisteredRoute = (mock: any, route: string): Chai.Assertion =>
+  const expectRouterToHaveRegisteredRoute = (mock: any, route: string): Assertion =>
     expect(routerRegisteredWithRoute(mock, route)).to.not.be.undefined;
 
   beforeEach(() => {

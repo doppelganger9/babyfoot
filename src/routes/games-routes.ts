@@ -1,25 +1,9 @@
-import { Response, Application, Request, Router } from 'express';
-import {
-  BFEventsStore,
-  UserId,
-  SessionsRepository,
-  SessionId,
-  UserIdentity,
-  SessionHandler,
-  UserIdentityRepository,
-  EventPublisher,
-  Game,
-  generateUUID,
-  GameId,
-  PositionValue,
-} from '..';
+import { Response, Request, Router } from 'express';
+import { BFEventsStore, EventPublisher, Game, generateUUID, GameId, PositionValue } from '..';
 import { GamesRepository } from '../infrastructure/game-repository';
 import { GameListItemProjection } from '../domains/game/game-list-item-projection';
-import { GameHandler } from '../domains/game/game-handler';
 import { TeamColors } from '../domains/game/game-id';
 import { PlayerId } from '../domains/player';
-import { PlayerHandler } from '../domains/player/player-handler';
-import { Player } from '../domains/player';
 import { PlayersRepository } from '../infrastructure/player-repository';
 import { checkFirebaseAuthToken } from '../security';
 

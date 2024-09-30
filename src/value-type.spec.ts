@@ -1,5 +1,5 @@
 import { ValueType } from './value-type';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 
 describe('ValueType', () => {
   describe('Given value type When create an instance of this type', () => {

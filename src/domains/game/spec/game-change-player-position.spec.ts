@@ -1,5 +1,4 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { BFEvent, EventPublisher } from '../../..';
 import {
@@ -20,8 +19,6 @@ import { Game } from '../game';
 import { GameId } from '../game-id';
 import { PlayerId } from '../../player';
 
-chai.use(chaiAsPromised);
-const { expect, assert } = chai;
 describe('Game', () => {
   let t: Game;
   const gameId: GameId = new GameId('game1');

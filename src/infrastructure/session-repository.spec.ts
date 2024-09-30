@@ -1,9 +1,9 @@
 import { BFEventsStore } from './event-store';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { SessionsRepository } from './session-repository';
 import { SessionProjection } from '../domains/identity/session-projection';
-import { Session, SessionId, UserConnected } from '../domains/identity/session';
+import { SessionId, UserConnected } from '../domains/identity/session';
 import { UserId } from '../domains/user-id';
-import { expect } from 'chai';
 import { UnknownSession } from '..';
 
 describe('Sessions Repository', () => {

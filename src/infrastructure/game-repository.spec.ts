@@ -1,8 +1,7 @@
-import { expect } from 'chai';
-import { GameCreated, GameStarted, GameEnded } from '../domains/game/events';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { GameCreated } from '../domains/game/events';
 import { UnknownGameError } from './errors';
 import { GamesRepository, BFEventsStore } from '.';
-import { Game } from '../domains/game/game';
 import { GameId } from '../domains/game/game-id';
 import { GameListItemProjection } from '../domains/game/game-list-item-projection';
 

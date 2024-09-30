@@ -1,14 +1,11 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import { beforeEach, describe, expect, it } from 'vitest';
 
-import { BFEvent, EventPublisher, generateUUID } from '../../..';
+import { BFEvent, EventPublisher } from '../../..';
 import { PlayerCreated, PlayerDeleted, PlayerUpdated } from '../events';
 import { Player } from '../player';
 import { PlayerId } from '../player-id';
 import { PlayerIsDeletedError } from '..';
 
-chai.use(chaiAsPromised);
-const { expect, assert } = chai;
 describe('Player', () => {
   let t: Player;
   const playerId: PlayerId = new PlayerId('Player1');

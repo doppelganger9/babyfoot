@@ -3,7 +3,7 @@ import http from 'http';
 import { Routes } from './routes/routes';
 import { Application, Request, Response, Router } from 'express';
 import cors from 'cors';
-import helmet from "helmet";
+import helmet from 'helmet';
 import admin from 'firebase-admin';
 
 function logErrors(err: any, req: Request, res: Response, next: any) {

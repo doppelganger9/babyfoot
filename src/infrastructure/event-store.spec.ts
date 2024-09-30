@@ -18,7 +18,10 @@ describe('BFEventsStore', () => {
   }
 
   class TestEvent implements BFEvent<TestAggregateId> {
-    constructor(public aggregateId: TestAggregateId, public num: number = 0) {
+    constructor(
+      public aggregateId: TestAggregateId,
+      public num: number = 0,
+    ) {
       this.aggregateId = aggregateId;
       this.num = num;
     }

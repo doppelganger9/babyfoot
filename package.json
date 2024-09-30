@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "coverage": "vitest run --coverage",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "coveralls": "vitest run --coverage | coveralls",
     "prettier": "prettier src/**/*.ts",
     "prettier:write": "prettier src/**/*.ts --write",
     "prettier:check": "prettier src/**/*.ts --check",

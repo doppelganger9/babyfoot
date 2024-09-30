@@ -18,7 +18,8 @@
     "test:mutations": "stryker run",
     "test:mutations:debug": "stryker run --fileLogLevel trace --logLevel debug",
     "test:vulnerabilities": "npm audit --check && snyk test",
-    "test:integration": "start-server-and-test start http-get://localhost:3000/api/health newman"
+    "test:integration": "start-server-and-test start http-get://localhost:3000/api/health newman",
+    "test:all": "npm test && npm run prettier:check && npm run test:mutations && npm run test:integration && npm run test:vulnerabilities"
   },
   "repository": {
     "type": "git",

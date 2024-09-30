@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "coverage": "vitest run --coverage",
-    "coveralls": "vitest run --coverage && echo coverage/lcov.info | coveralls",
+    "coveralls": "vitest run --coverage && cat coverage/lcov.info | coveralls",
     "prettier": "prettier src/**/*.ts",
     "prettier:write": "prettier src/**/*.ts --write",
     "prettier:check": "prettier src/**/*.ts --check",

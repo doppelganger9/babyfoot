@@ -46,8 +46,8 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/traverse": "7.25.6",
-    "@stryker-mutator/core": "8.6.0",
-    "@stryker-mutator/vitest-runner": "8.6.0",
+    "@stryker-mutator/core": "8.7.1",
+    "@stryker-mutator/vitest-runner": "8.7.1",
     "@types/sinon": "17.0.3",
     "@vitest/coverage-v8": "2.1.1",
     "coveralls": "3.1.1",

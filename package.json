@@ -64,7 +64,7 @@
     "@types/express": "5.0.0",
     "@types/node": "22.19.1",
     "cors": "2.8.5",
-    "diff": "7.0.0",
+    "diff": "8.0.2",
     "express": "4.21.2",
     "extend": "3.0.2",
     "firebase-admin": "12.7.0",

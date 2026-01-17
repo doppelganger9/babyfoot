@@ -52,7 +52,7 @@
     "@vitest/coverage-v8": "2.1.1",
     "coveralls": "3.1.1",
     "lodash": "4.17.21",
-    "prettier": "3.7.4",
+    "prettier": "3.8.0",
     "sinon": "19.0.5",
     "snyk": "1.1301.2",
     "start-server-and-test": "2.1.3",

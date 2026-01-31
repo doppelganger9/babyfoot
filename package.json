@@ -45,7 +45,7 @@
   "author": "David LACOURT <david.lacourt@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@babel/traverse": "7.28.6",
+    "@babel/traverse": "7.29.0",
     "@stryker-mutator/core": "8.7.1",
     "@stryker-mutator/vitest-runner": "8.7.1",
     "@types/sinon": "17.0.4",

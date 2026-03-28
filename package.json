@@ -70,7 +70,7 @@
     "firebase-admin": "13.7.0",
     "helmet": "8.1.0",
     "ts-node": "10.9.2",
-    "typescript": "5.9.3"
+    "typescript": "6.0.2"
   },
   "snyk": true
 }
